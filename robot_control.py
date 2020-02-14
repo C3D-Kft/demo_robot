@@ -4,12 +4,17 @@ import math as m
 import time
 
 #Alap konfig adatok a motorokra vonatkozóan
+# Motor 200 inpuluzusra forog egy kört
+# Motor áttétel: 5,18
+# Egy fordulat full-stepen 1036 inkrement
+# A meglévő boardon a quarterstep és a sixteenth step között tudsz váltani
+
 motor_step = [4144, 4144, 4144]
-resolution = list(map(lambda x: float(x/360), motor_step))
-# resolution = [float(4144/360), float(4144/360), float(4144/360)]
+resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
+# print(resolution)
 base_frequency = 5000 # Hz
 correction = 0 #ms
-time_unit = float( float(1/float(base_frequency)/2) - correction) # ms
+time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 actual_position = [0, 0, 0] # abszolút szög-érték megadva
 
 
@@ -17,7 +22,6 @@ def deg_to_step(deg):
     """ Háromelemű relatív szög-tömbből számol relatív lépésszámot! """
     step = []
     for k in range(0,len(deg)):
-        # step.append(int(resolution[k] * deg[k]))
         step.append(m.floor(resolution[k] * deg[k]))
     return step
 
@@ -110,16 +114,6 @@ def zeroing():
 #Főprogram
 if __name__ == "__main__":
     motor_enable_set(1)
-    move(deg_to_step([180,-180,180]))
+    move(deg_to_step([360,-360,360]))
     motor_enable_set(0)
     smc.cleanup()
-
-    # try:
-    #     motor_enable_set(1)
-    #     move(deg_to_pos([25,30,45]))
-    #
-    # except:
-    #     pass
-    #
-    # finally:
-    #     motor_enable_set(0)

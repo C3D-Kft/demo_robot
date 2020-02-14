@@ -9,23 +9,15 @@ gpio.setwarnings(False)
 # Motor 0, 1 és 2 gpio portjai
 motor_gpio = [26, 24, 22]
 motor_dir = [40, 38, 36]
-# motor_enable = [0, 0, 0]
-# motor_grab = [0, 1, 2, 3]
+motor_enable = [0, 0, 0]
+motor_grab = [0, 0, 0, 0]
 
-# Gpio setupok
-gpio.setup(motor_gpio[0], gpio.OUT)
-gpio.setup(motor_gpio[1], gpio.OUT)
-gpio.setup(motor_gpio[2], gpio.OUT)
-gpio.setup(motor_dir[0], gpio.OUT)
-gpio.setup(motor_dir[1], gpio.OUT)
-gpio.setup(motor_dir[2], gpio.OUT)
-# gpio.setup(motor_enable[0], gpio.OUT)
-# gpio.setup(motor_enable[1], gpio.OUT)
-# gpio.setup(motor_enable[2], gpio.OUT)
-# gpio.setup(motor_grab[0], gpio.OUT, initial=GPIO.LOW)
-# gpio.setup(motor_grab[1], gpio.OUT, initial=GPIO.LOW)
-# gpio.setup(motor_grab[2], gpio.OUT, initial=GPIO.LOW)
-# gpio.setup(motor_grab[3], gpio.OUT, initial=GPIO.LOW)
+# Gpio setupok - ciklussal
+gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab
+
+for k in range(0,len(gpio_array)):
+    if gpio_array[k] != 0: gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
+
 
 def dir_set(mot, dir):
     """ Adott motor iránybeállítása (CW vagy CCW) """
