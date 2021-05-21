@@ -1,38 +1,62 @@
 # -*- coding: utf-8 -*-#
-import RPi.GPIO as gpio
 
-gpio.setmode(gpio.BOARD) #BOARD pin számozás használata, mindig változatlan
-# gpio.setmode(gpio.BCM) #Broadcom pin számozás, hardverspecifikus, megváltozhat!
-gpio.setwarnings(False)
+""" Stepper motor control via GPIO for Raspberry Pi module. This module is
+intended for controlling 3 stepper motor independently.
 
-# Stepper motorok gpio pinout - tomb formatumban tarolva
-# Motor 0, 1 és 2 gpio portjai
+---- Libs ----
+
+---- Help ----
+
+---- Info ----
+C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
+sokszorosításra, szerkesztésre, értékesítésre nézve, valamint az ipari
+tulajdonjog hatálya alá eső felhasználások esetén is.
+www.C3D.hu
+"""
+
+
+# Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
+# Ha az érték nulla, akkor a program átugorja
 motor_gpio = [26, 24, 22]
 motor_dir = [40, 38, 36]
 motor_enable = [0, 0, 0]
 motor_grab = [0, 0, 0, 0]
 
-# Gpio setupok - ciklussal
-gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab
 
-for k in range(0,len(gpio_array)):
-    if gpio_array[k] != 0: gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
+def init():
+    """ Raspberry Pi GPIO pinout inicializálása a fenti paraméterek alapján. """
+
+    import RPi.GPIO as gpio
+
+    gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
+    # gpio.setmode(gpio.BCM) # Broadcom pin számozás, hardverspecifikus, változhat!
+    gpio.setwarnings(False)
+
+    # GPIO pinek engedélyezése
+    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab
+
+    # Ha az érték nulla, akkor átugrom, mert nincs beállítva
+    for k in range(0,len(gpio_array)):
+        if gpio_array[k] != 0:
+            gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
 
 
 def dir_set(mot, dir):
-    """ Adott motor iránybeállítása (CW vagy CCW) """
+    """ Adott motor (0, 1, ...) iránybeállítása (CW (1) vagy CCW (0)). """
+
     if dir == 1:
-        gpio.output(motor_dir[mot], gpio.HIGH)
+        # gpio.output(motor_dir[mot], gpio.HIGH)
         print("Motor{0} forgásirány CW!".format(mot+1))
     elif dir == 0:
-        gpio.output(motor_dir[mot], gpio.LOW)
+        # gpio.output(motor_dir[mot], gpio.LOW)
         print("Motor{0} forgásirány CCW!".format(mot+1))
     else:
         print("Hibás iránybeállítás: Motor{0} - DIR:{1}!".format((mot+1), dir))
 
 
 def enable_set(mot, enable):
-    """ Adott motor engedélyezése vagy letiltása """
+    """ Adott motor (0, 1, ...) engedélyezése (1) vagy letiltása (0). """
+
     if enable == 0:
         # gpio.output(motor_enable[mot], gpio.HIGH)
         print("Motor{0} letiltva!".format(mot+1))
@@ -43,16 +67,33 @@ def enable_set(mot, enable):
         print("Hibás engedélyezés: Motor{0} - ENABLE:{1}!".format((mot+1), enable))
 
 
-def move(mot, level):
-    """ Adott motor lépésjelének kiadása (fel vagy le) """
+def step_mot(mot, level):
+    """ Adott motor (0, 1, ...) lépésjelének kiadása (fel vagy le). """
+
     if level == 1:
+        pass
         gpio.output(motor_gpio[mot], gpio.HIGH)
-        #print("Motor{0} kimenet magas!".format(mot+1))
+        # print("Motor{0} kimenet magas!".format(mot+1))
     elif level == 0:
         gpio.output(motor_gpio[mot], gpio.LOW)
-        #print("Motor{0} kimenet alacsony!".format(mot+1))
-    else:
-        print("Hibás lépésjel: Motor{0} - LEVEL:{1}!".format((mot+1), level))
+        # print("Motor{0} kimenet alacsony!".format(mot+1))
 
-def cleanup(): #GPIO pinout tisztítása
+
+def onestep_mot(mot, time_unit=0.1):
+    """ Adott motornak 1 db négszögjel kiadása. """
+
+    # Ha a mot paraméter értéke nagyobb mint a motorok száma
+    if mot not in range(0, len(motor_gpio)):
+        print("Ismeretlen motor: Motor{0}!".format((mot+1)))
+        return
+
+    # step_mot(mot, 1)
+    gpio.output(motor_gpio[mot], gpio.HIGH)
+    time.sleep(time_unit)
+    # step_mot(mot, 0)
+    gpio.output(motor_gpio[mot], gpio.LOW)
+    time.sleep(time_unit)
+
+
+def cleanup(): # GPIO pinout tisztítása
      gpio.cleanup()
