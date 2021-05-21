@@ -20,7 +20,7 @@ www.C3D.hu
 
 import stepper_mot_control as smc
 import math as m
-import time
+
 
 """ Alap konfig. adatok a motorokra vonatkozóan:
 A motor 200 impuluzusra forog egy teljes fordulatot.
@@ -68,7 +68,7 @@ def update_abs_pos(relative_deg):
     global actual_abs_position
 
     # Lépések hozzáadása a globális változóhoz
-    for t in range(0, len(relative_deg)):
+    for t in range(0, len(actual_abs_position)):
         actual_abs_position[t] += relative_deg[t]
 
 
@@ -125,6 +125,8 @@ def generate_steps(sorted_steps, mot_index):
     szekvenciát generál, amelyben az összes tengelyen egyszerre fejeződik be.
     """
 
+    global time_unit
+
     size = len(sorted_steps) # Number of axes
     actual_relative_steps = []
     fi = []
@@ -142,7 +144,7 @@ def generate_steps(sorted_steps, mot_index):
 
         if (fi[d] < 0):
             actual_relative_steps[d+1] += 1
-            smc.onestep_mot(mot[d+1], time_unit)
+            # smc.onestep_mot(mot_index[d+1], time_unit)
             print("Step with axis: {0} ({1})".format(mot_index[d+1],
             actual_relative_steps[d+1]))
 
@@ -160,7 +162,7 @@ def generate_steps(sorted_steps, mot_index):
     while (actual_relative_steps[0] < sorted_steps[0]):
         # Initial step
         actual_relative_steps[0] += 1
-        smc.onestep_mot(mot[0], time_unit)
+        # smc.onestep_mot(mot_index[0], time_unit)
         print("Step with axis: {0} ({1})".format(mot_index[0],
         actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
@@ -215,7 +217,7 @@ if __name__ == "__main__":
     try:
         # smc.init()
         motor_enable_set(1)
-        move_relative([360,-360,360])
+        move_relative([10,-15,12])
         motor_enable_set(0)
 
     finally:

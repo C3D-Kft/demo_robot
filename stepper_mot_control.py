@@ -14,6 +14,7 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
+import time
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
