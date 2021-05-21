@@ -24,12 +24,14 @@ motor_grab = [0, 0, 0, 0]
 
 
 def init():
-    """ Raspberry Pi GPIO pinout inicializálása a fenti paraméterek alapján. """
+    """ Raspberry Pi GPIO pinout inicializálása
+    a fenti paraméterek alapján.
+    """
 
     import RPi.GPIO as gpio
 
     gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
-    # gpio.setmode(gpio.BCM) # Broadcom pin számozás, hardverspecifikus, változhat!
+    # A gpio.BCM - Broadcom pin számozás hardverspecifikus ezért változhat!
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
@@ -44,27 +46,33 @@ def init():
 def dir_set(mot, dir):
     """ Adott motor (0, 1, ...) iránybeállítása (CW (1) vagy CCW (0)). """
 
-    if dir == 1:
-        # gpio.output(motor_dir[mot], gpio.HIGH)
-        print("Motor{0} forgásirány CW!".format(mot+1))
-    elif dir == 0:
-        # gpio.output(motor_dir[mot], gpio.LOW)
-        print("Motor{0} forgásirány CCW!".format(mot+1))
-    else:
-        print("Hibás iránybeállítás: Motor{0} - DIR:{1}!".format((mot+1), dir))
+    try:
+        if dir == 1:
+            # gpio.output(motor_dir[mot], gpio.HIGH)
+            print("Motor{0} forgásirány CW!".format(mot+1))
+        elif dir == 0:
+            # gpio.output(motor_dir[mot], gpio.LOW)
+            print("Motor{0} forgásirány CCW!".format(mot+1))
+
+    except:
+        print("Hibás iránybeállítás: "
+        + "Motor{0} - DIR:{1}!".format((mot+1), dir))
 
 
 def enable_set(mot, enable):
     """ Adott motor (0, 1, ...) engedélyezése (1) vagy letiltása (0). """
 
-    if enable == 0:
-        # gpio.output(motor_enable[mot], gpio.HIGH)
-        print("Motor{0} letiltva!".format(mot+1))
-    elif enable == 1:
-        # gpio.output(motor_enable[mot-1], gpio.LOW)
-        print("Motor{0} engedélyezve!".format(mot+1))
-    else:
-        print("Hibás engedélyezés: Motor{0} - ENABLE:{1}!".format((mot+1), enable))
+    try:
+        if enable == 0:
+            # gpio.output(motor_enable[mot], gpio.HIGH)
+            print("Motor{0} letiltva!".format(mot+1))
+        elif enable == 1:
+            # gpio.output(motor_enable[mot-1], gpio.LOW)
+            print("Motor{0} engedélyezve!".format(mot+1))
+
+    except:
+        print("Hibás engedélyezés: "
+        + "Motor{0} - ENABLE:{1}!".format((mot+1), enable))
 
 
 def step_mot(mot, level):
@@ -80,18 +88,11 @@ def step_mot(mot, level):
 
 
 def onestep_mot(mot, time_unit=0.1):
-    """ Adott motornak 1 db négszögjel kiadása. """
+    """ Négszögjel generálása egy adott motor tengely számára. """
 
-    # Ha a mot paraméter értéke nagyobb mint a motorok száma
-    if mot not in range(0, len(motor_gpio)):
-        print("Ismeretlen motor: Motor{0}!".format((mot+1)))
-        return
-
-    # step_mot(mot, 1)
-    gpio.output(motor_gpio[mot], gpio.HIGH)
+    # gpio.output(motor_gpio[mot], gpio.HIGH)
     time.sleep(time_unit)
-    # step_mot(mot, 0)
-    gpio.output(motor_gpio[mot], gpio.LOW)
+    # gpio.output(motor_gpio[mot], gpio.LOW)
     time.sleep(time_unit)
 
 
