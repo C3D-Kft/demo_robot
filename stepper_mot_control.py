@@ -56,6 +56,7 @@ def dir_set(mot, dir):
             print("Motor{0} forgásirány CCW!".format(mot+1))
 
     except:
+        # pass
         print("Hibás iránybeállítás: "
         + "Motor{0} - DIR:{1}!".format((mot+1), dir))
 
@@ -72,6 +73,7 @@ def enable_set(mot, enable):
             print("Motor{0} engedélyezve!".format(mot+1))
 
     except:
+        # pass
         print("Hibás engedélyezés: "
         + "Motor{0} - ENABLE:{1}!".format((mot+1), enable))
 
@@ -81,10 +83,11 @@ def step_mot(mot, level):
 
     if level == 1:
         pass
-        gpio.output(motor_gpio[mot], gpio.HIGH)
+        # gpio.output(motor_gpio[mot], gpio.HIGH)
         # print("Motor{0} kimenet magas!".format(mot+1))
     elif level == 0:
-        gpio.output(motor_gpio[mot], gpio.LOW)
+        pass
+        # gpio.output(motor_gpio[mot], gpio.LOW)
         # print("Motor{0} kimenet alacsony!".format(mot+1))
 
 
