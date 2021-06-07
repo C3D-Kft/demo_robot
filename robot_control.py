@@ -189,14 +189,14 @@ def jog(mot, direction):
 
     smc.dir_set(mot, direction)
     dir[mot] = direction
-    smc.enable_set(mot, 1) # Enable
+    smc.enable_set(mot, 1) # Enable motor
 
     while jogging == True:
         print("Jogging...")
         smc.onestep_mot(mot, jog_time_unit)
         abs_pos_one_step(mot)
 
-    smc.enable_set(mot, 0) # Disable
+    smc.enable_set(mot, 0) # Disable motor
 
 
 def abs_pos_one_step(mot):

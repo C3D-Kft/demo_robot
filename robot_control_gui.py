@@ -42,7 +42,7 @@ import sys
 # import math
 from tkinter import ttk
 import tkinter as tk
-# from tkinter import StringVar
+from tkinter import StringVar
 import threading
 # import queue
 import robot_control as RC
@@ -63,10 +63,17 @@ class App():
         self.fs="Arial"
         self.fsize=20
 
+        self.pos1 = StringVar()
+        self.pos2 = StringVar()
+        self.pos3 = StringVar()
+
         # Zeroing the robot
         RC.zeroing()
         # Get abs. pos data, which should be null
         self.abs_pos = RC.get_actual_abs_position()
+        self.pos1.set("{0:+.2f}".format(self.abs_pos[0]))
+        self.pos2.set("{0:+.2f}".format(self.abs_pos[1]))
+        self.pos3.set("{0:+.2f}".format(self.abs_pos[2]))
 
         self.init_window() # Inicializáló fv. meghívása
 
@@ -91,11 +98,12 @@ class App():
         pin_layout.grid(row = 0, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (5,2.5))
 
-        send_to_pos_panel = ttk.LabelFrame(self.frame, text="Send to position")
+        send_to_pos_panel = ttk.LabelFrame(self.frame,
+        text="Send to absolute position")
         send_to_pos_panel.grid(row = 1, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (2.5,5))
 
-        jog_panel = ttk.LabelFrame(self.frame, text="Jog arms")
+        jog_panel = ttk.LabelFrame(self.frame, text="Jogging robot arms")
         jog_panel.grid(row = 1, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (2.5,5))
 
@@ -117,20 +125,17 @@ class App():
         padx=(0,10), pady=(5,0))
 
         self.axis_1_entry = ttk.Entry(actual_pos_panel, width=8,
-        justify="right", font=(self.fs, self.fsize))
-        self.axis_1_entry.insert("0", "{0:+.2f}".format(self.abs_pos[0]))
+        justify="right", font=(self.fs, self.fsize), textvariable=self.pos1)
         self.axis_1_entry.config(state= 'disabled')
         self.axis_1_entry.grid(row = 0, column = 1, pady=(0,5))
 
         self.axis_2_entry = ttk.Entry(actual_pos_panel, width=8,
-        justify="right", font=(self.fs, self.fsize))
-        self.axis_2_entry.insert("0", "{0:+.2f}".format(self.abs_pos[1]))
+        justify="right", font=(self.fs, self.fsize), textvariable=self.pos2)
         self.axis_2_entry.config(state= 'disabled')
         self.axis_2_entry.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
         self.axis_3_entry = ttk.Entry(actual_pos_panel, width=8,
-        justify="right", font=(self.fs, self.fsize))
-        self.axis_3_entry.insert("0", "{0:+.2f}".format(self.abs_pos[2]))
+        justify="right", font=(self.fs, self.fsize), textvariable=self.pos3)
         self.axis_3_entry.config(state= 'disabled')
         self.axis_3_entry.grid(row = 2, column = 1, sticky = 'WE', pady=(5,0))
 
@@ -167,19 +172,16 @@ class App():
         self.axis_1_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_1_entry_stp.insert("0", "0") # default érték
-        # axis_1_entry_stp.config(state= 'disabled')
         self.axis_1_entry_stp.grid(row = 0, column = 1, pady=(0,5))
 
         self.axis_2_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_2_entry_stp.insert("0", "0")
-        # axis_2_entry_stp.config(state= 'disabled')
         self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
         self.axis_3_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_3_entry_stp.insert("0", "0")
-        # axis_3_entry_stp.config(state= 'disabled')
         self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE', pady=(5,5))
 
         axis_1_unit_label_stp = ttk.Label(send_to_pos_panel, text="fok",
@@ -195,9 +197,9 @@ class App():
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
 
-        send_to_position = tk.Button(send_to_pos_panel, text="Start",
+        self.send_to_position = tk.Button(send_to_pos_panel, text="Start",
         font=(self.fs, self.fsize), command=self.send_to_position)
-        send_to_position.grid(row=3, columnspan=3, sticky = "WE", pady=(5,0))
+        self.send_to_position.grid(row=3, columnspan=3, sticky = "WE", pady=(5,0))
 
 
         # Third grid
@@ -252,11 +254,11 @@ class App():
         self.mot3but2.bind('<ButtonRelease-1>', self.stop_motor)
 
 
-    def update_abs_pos_jog(self):
+    def update_abs_pos_jog(self, mot):
         """ Update abs. position when jogging! """
 
         while self.jog_thread.is_alive():
-            root.after(10, self.update_abs_pos())
+            root.after(10, self.update_abs_pos(mot))
             root.after(10, root.update_idletasks())
 
 
@@ -268,7 +270,8 @@ class App():
         args=(mot, dir )) # <-- check for syntax !!
         self.jog_thread.start()
 
-        self.update_thread = threading.Thread(target=self.update_abs_pos_jog)
+        self.update_thread = threading.Thread(target=self.update_abs_pos_jog,
+        args=(mot, ))
         self.update_thread.start()
 
 
@@ -284,29 +287,19 @@ class App():
         self.update_abs_pos()
 
 
-    def update_abs_pos(self):
+    def update_abs_pos(self, mot=None):
         """ Update actual motor positions, and then refresh entries. """
 
         self.abs_pos = RC.get_actual_abs_position()
-
-        self.axis_1_entry.config(state= 'normal')
-        self.axis_1_entry.delete("0", "end")
-        self.axis_1_entry.insert("0", "{0:+.2f}".format(self.abs_pos[0])) # default érték
-        self.axis_1_entry.config(state= 'disabled')
-
-        self.axis_2_entry.config(state= 'normal')
-        self.axis_2_entry.delete("0", "end")
-        self.axis_2_entry.insert("0", "{0:+.2f}".format(self.abs_pos[1])) # default érték
-        self.axis_2_entry.config(state= 'disabled')
-
-        self.axis_3_entry.config(state= 'normal')
-        self.axis_3_entry.delete("0", "end")
-        self.axis_3_entry.insert("0", "{0:+.2f}".format(self.abs_pos[2])) # default érték
-        self.axis_3_entry.config(state= 'disabled')
+        self.pos1.set("{0:+.2f}".format(self.abs_pos[0]))
+        self.pos2.set("{0:+.2f}".format(self.abs_pos[1]))
+        self.pos3.set("{0:+.2f}".format(self.abs_pos[2]))
 
 
     def send_to_position(self):
         """ Convert user input to absolute deg. values to go. """
+
+        self.send_to_position.config(state='disabled')
 
         try:
             # Get values from Entry fields
@@ -330,10 +323,8 @@ class App():
         except:
             print("User input error!")
 
-
-    def func():
-        """ Func. """
-        pass
+        finally:
+            self.send_to_position.config(state='normal')
 
 
     def help(self):
