@@ -105,29 +105,32 @@ class App():
 
         axis_1_label = ttk.Label(actual_pos_panel, text="Motor 1",
         font=(self.fs, self.fsize), anchor="w")
-        axis_1_label.grid(row = 0, column = 0, sticky = 'WE', padx=(0,10), pady=(0,5))
+        axis_1_label.grid(row = 0, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(0,5))
         axis_2_label = ttk.Label(actual_pos_panel, text="Motor 2",
         font=(self.fs, self.fsize), anchor="w")
-        axis_2_label.grid(row = 1, column = 0, sticky = 'WE', padx=(0,10), pady=(5,5))
+        axis_2_label.grid(row = 1, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(5,5))
         axis_3_label = ttk.Label(actual_pos_panel, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
-        axis_3_label.grid(row = 2, column = 0, sticky = 'WE', padx=(0,10), pady=(5,0))
+        axis_3_label.grid(row = 2, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(5,0))
 
-        self.axis_1_entry = ttk.Entry(actual_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
-        self.axis_1_entry.insert("0", "{0:+.2f}".format(self.abs_pos[0])) # default érték
+        self.axis_1_entry = ttk.Entry(actual_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
+        self.axis_1_entry.insert("0", "{0:+.2f}".format(self.abs_pos[0]))
         self.axis_1_entry.config(state= 'disabled')
         self.axis_1_entry.grid(row = 0, column = 1, pady=(0,5))
 
-        self.axis_2_entry = ttk.Entry(actual_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
-        self.axis_2_entry.insert("0", "{0:+.2f}".format(self.abs_pos[1])) # default érték
+        self.axis_2_entry = ttk.Entry(actual_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
+        self.axis_2_entry.insert("0", "{0:+.2f}".format(self.abs_pos[1]))
         self.axis_2_entry.config(state= 'disabled')
         self.axis_2_entry.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
-        self.axis_3_entry = ttk.Entry(actual_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
-        self.axis_3_entry.insert("0", "{0:+.2f}".format(self.abs_pos[2])) # default érték
+        self.axis_3_entry = ttk.Entry(actual_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
+        self.axis_3_entry.insert("0", "{0:+.2f}".format(self.abs_pos[2]))
         self.axis_3_entry.config(state= 'disabled')
         self.axis_3_entry.grid(row = 2, column = 1, sticky = 'WE', pady=(5,0))
 
@@ -150,28 +153,31 @@ class App():
 
         axis_1_label_stp = ttk.Label(send_to_pos_panel, text="Motor 1",
         font=(self.fs, self.fsize), anchor="w")
-        axis_1_label_stp.grid(row = 0, column = 0, sticky = 'WE', padx=(0,10), pady=(0,5))
+        axis_1_label_stp.grid(row = 0, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(0,5))
         axis_2_label_stp = ttk.Label(send_to_pos_panel, text="Motor 2",
         font=(self.fs, self.fsize), anchor="w")
-        axis_2_label_stp.grid(row = 1, column = 0, sticky = 'WE', padx=(0,10), pady=(5,5))
+        axis_2_label_stp.grid(row = 1, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(5,5))
         axis_3_label_stp = ttk.Label(send_to_pos_panel, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
-        axis_3_label_stp.grid(row = 2, column = 0, sticky = 'WE', padx=(0,10), pady=(5,5))
+        axis_3_label_stp.grid(row = 2, column = 0, sticky = 'WE',
+        padx=(0,10), pady=(5,5))
 
-        self.axis_1_entry_stp = ttk.Entry(send_to_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
+        self.axis_1_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
         self.axis_1_entry_stp.insert("0", "0") # default érték
         # axis_1_entry_stp.config(state= 'disabled')
         self.axis_1_entry_stp.grid(row = 0, column = 1, pady=(0,5))
 
-        self.axis_2_entry_stp = ttk.Entry(send_to_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
+        self.axis_2_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
         self.axis_2_entry_stp.insert("0", "0")
         # axis_2_entry_stp.config(state= 'disabled')
         self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
-        self.axis_3_entry_stp = ttk.Entry(send_to_pos_panel, width=8, justify="right",
-        font=(self.fs, self.fsize))
+        self.axis_3_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        justify="right", font=(self.fs, self.fsize))
         self.axis_3_entry_stp.insert("0", "0")
         # axis_3_entry_stp.config(state= 'disabled')
         self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE', pady=(5,5))
@@ -194,12 +200,95 @@ class App():
         send_to_position.grid(row=3, columnspan=3, sticky = "WE", pady=(5,0))
 
 
+        # Third grid
 
+        # Fourth grid
+        jog_panel.grid()
+        self.fsize2 = 18
+
+        mot1label = ttk.Label(jog_panel, text="Motor 1", font=(self.fs, self.fsize))
+        mot1label.grid(row=0, column=0, padx=(0,5))
+        self.mot1but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
+        self.mot1but1.grid(row=1, column=0, sticky="WE", padx=(0,5))
+        self.mot1but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
+        self.mot1but2.grid(row=2, column=0, sticky="WE", padx=(0,5))
+        self.mot1but3 = tk.Button(jog_panel, text="0",
+        command=lambda:self.reset_motor(0), font=(self.fs, self.fsize2))
+        self.mot1but3.grid(row=3, column=0, sticky="WE", padx=(0,5))
+
+        mot2label = ttk.Label(jog_panel, text="Motor 2", font=(self.fs, self.fsize))
+        mot2label.grid(row=0, column=1, padx=5)
+        self.mot2but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
+        self.mot2but1.grid(row=1, column=1, sticky="WE", padx=5)
+        self.mot2but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
+        self.mot2but2.grid(row=2, column=1, sticky="WE", padx=5)
+        self.mot2but3 = tk.Button(jog_panel, text="0",
+        command=lambda:self.reset_motor(1), font=(self.fs, self.fsize2))
+        self.mot2but3.grid(row=3, column=1, sticky="WE", padx=5)
+
+        mot3label = ttk.Label(jog_panel, text="Motor 3", font=(self.fs, self.fsize))
+        mot3label.grid(row=0, column=2, padx=5)
+        self.mot3but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
+        self.mot3but1.grid(row=1, column=2, sticky="WE", padx=5)
+        self.mot3but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
+        self.mot3but2.grid(row=2, column=2, sticky="WE", padx=5)
+        self.mot3but3 = tk.Button(jog_panel, text="0",
+        command=lambda:self.reset_motor(2), font=(self.fs, self.fsize2))
+        self.mot3but3.grid(row=3, column=2, sticky="WE", padx=5)
+
+        self.mot1but1.bind('<ButtonPress-1>', lambda event: self.jog_motor(0,1))
+        self.mot1but2.bind('<ButtonPress-1>', lambda event: self.jog_motor(0,0))
+        self.mot1but1.bind('<ButtonRelease-1>', self.stop_motor)
+        self.mot1but2.bind('<ButtonRelease-1>', self.stop_motor)
+
+        self.mot2but1.bind('<ButtonPress-1>', lambda event: self.jog_motor(1,1))
+        self.mot2but2.bind('<ButtonPress-1>', lambda event: self.jog_motor(1,0))
+        self.mot2but1.bind('<ButtonRelease-1>', self.stop_motor)
+        self.mot2but2.bind('<ButtonRelease-1>', self.stop_motor)
+
+        self.mot3but1.bind('<ButtonPress-1>', lambda event: self.jog_motor(2,1))
+        self.mot3but2.bind('<ButtonPress-1>', lambda event: self.jog_motor(2,0))
+        self.mot3but1.bind('<ButtonRelease-1>', self.stop_motor)
+        self.mot3but2.bind('<ButtonRelease-1>', self.stop_motor)
+
+
+    def update_abs_pos_jog(self):
+        """ Update abs. position when jogging! """
+
+        while self.jog_thread.is_alive():
+            root.after(10, self.update_abs_pos())
+            root.after(10, root.update_idletasks())
+
+
+    def jog_motor(self, mot, dir):
+
+        RC.jogging = True
+
+        self.jog_thread = threading.Thread(target=RC.jog,
+        args=(mot, dir )) # <-- check for syntax !!
+        self.jog_thread.start()
+
+        self.update_thread = threading.Thread(target=self.update_abs_pos_jog)
+        self.update_thread.start()
+
+
+    def stop_motor(self, event=None):
+        RC.jogging = False
+        self.update_abs_pos()
+        print("Jogging stopped")
+
+
+    def reset_motor(self, mot):
+        print("Reset motor{0}!".format(mot))
+        RC.actual_abs_position[mot] = 0
+        self.update_abs_pos()
 
 
     def update_abs_pos(self):
+        """ Update actual motor positions, and then refresh entries. """
 
         self.abs_pos = RC.get_actual_abs_position()
+
         self.axis_1_entry.config(state= 'normal')
         self.axis_1_entry.delete("0", "end")
         self.axis_1_entry.insert("0", "{0:+.2f}".format(self.abs_pos[0])) # default érték
@@ -217,18 +306,25 @@ class App():
 
 
     def send_to_position(self):
-        """ Convert user input to degree values to go. """
+        """ Convert user input to absolute deg. values to go. """
 
         try:
+            # Get values from Entry fields
             g1 = float(self.axis_1_entry_stp.get())
             g2 = float(self.axis_2_entry_stp.get())
             g3 = float(self.axis_3_entry_stp.get())
 
-            self.secondary_thread = threading.Thread(target=RC.move_absolute(),
-            args=([g1, g2, g3]))
+            # Start secondary thread with move function
+            self.secondary_thread = threading.Thread(target=RC.move_absolute,
+            args=([g1, g2, g3], )) # <-- check for syntax !!
             self.secondary_thread.start()
 
-            # RC.move_absolute([g1, g2, g3])
+            # While sec. thread is running, pos is being updated 5 ms interval
+            while self.secondary_thread.is_alive():
+                root.after(1, self.update_abs_pos())
+                root.after(1, root.update_idletasks())
+
+            # Final update when move ended
             self.update_abs_pos()
 
         except:

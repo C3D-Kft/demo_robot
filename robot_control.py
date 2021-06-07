@@ -48,6 +48,7 @@ time_unit))
 ## Actual position
 actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
 dir = [0,0,0] # motor dir setting
+jogging = False # jogging flag
 
 
 def deg_to_step(deg):
@@ -64,18 +65,6 @@ def deg_to_step(deg):
 def check_limits():
     # TODO: write function to check movement limits
     pass
-
-
-# def update_abs_pos(relative_deg):
-#     """ Abszolút szög-pozíció frissítése a relatív
-#     szögelmozdulás-tömb alapján.
-#     """
-#
-#     global actual_abs_position
-#
-#     # Lépések hozzáadása a globális változóhoz
-#     for t in range(0, len(actual_abs_position)):
-#         actual_abs_position[t] += relative_deg[t]
 
 
 def move_absolute(deg_to_move):
@@ -163,8 +152,7 @@ def generate_steps(sorted_steps, mot_index):
             actual_relative_steps[d+1] += 1
             # smc.onestep_mot(mot_index[d+1], time_unit)
             abs_pos_one_step(mot_index[d+1])
-            print("Step with axis: {0} ({1})".format(mot_index[d+1],
-            actual_relative_steps[d+1]))
+            # print("Step with axis: {0} ({1})".format(mot_index[d+1], actual_relative_steps[d+1]))
 
             fi[d] += sorted_steps[d]
             fi[d+1] -= sorted_steps[d+2]
@@ -182,8 +170,7 @@ def generate_steps(sorted_steps, mot_index):
         actual_relative_steps[0] += 1
         # smc.onestep_mot(mot_index[0], time_unit)
         abs_pos_one_step(mot_index[0])
-        print("Step with axis: {0} ({1})".format(mot_index[0],
-        actual_relative_steps[0]))
+        # print("Step with axis: {0} ({1})".format(mot_index[0], actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
         check_diff(0)
 
@@ -191,7 +178,22 @@ def generate_steps(sorted_steps, mot_index):
     sorted_steps = sorted_steps[:-1]
 
     # Aktuálisan lelépett stepek
-    print(actual_relative_steps)
+    print("Actual steps made: {0}".format(actual_relative_steps))
+
+
+
+def jog(mot, direction):
+    global jogging, dir, time_unit
+
+    jog_time_unit = 10 * time_unit
+
+    smc.dir_set(mot, direction)
+    dir[mot] = direction
+
+    while jogging == True:
+        print("Jogging...")
+        smc.onestep_mot(mot, jog_time_unit)
+        abs_pos_one_step(mot)
 
 
 def abs_pos_one_step(mot):
@@ -199,7 +201,7 @@ def abs_pos_one_step(mot):
     a megfelelő irányba. """
 
 
-    global actual_abs_position
+    global actual_abs_position, dir
 
     if dir[mot] == 0:
         actual_abs_position[mot] -= step_unit[mot]
@@ -274,5 +276,5 @@ if __name__ == "__main__":
 
 
     finally:
-        pass
         # smc.cleanup()
+        pass
