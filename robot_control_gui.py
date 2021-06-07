@@ -195,7 +195,7 @@ class App():
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
 
-        send_to_position = tk.Button(send_to_pos_panel, text="GO",
+        send_to_position = tk.Button(send_to_pos_panel, text="Start",
         font=(self.fs, self.fsize), command=self.send_to_position)
         send_to_position.grid(row=3, columnspan=3, sticky = "WE", pady=(5,0))
 
@@ -212,7 +212,7 @@ class App():
         self.mot1but1.grid(row=1, column=0, sticky="WE", padx=(0,5))
         self.mot1but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
         self.mot1but2.grid(row=2, column=0, sticky="WE", padx=(0,5))
-        self.mot1but3 = tk.Button(jog_panel, text="0",
+        self.mot1but3 = tk.Button(jog_panel, text="N",
         command=lambda:self.reset_motor(0), font=(self.fs, self.fsize2))
         self.mot1but3.grid(row=3, column=0, sticky="WE", padx=(0,5))
 
@@ -222,7 +222,7 @@ class App():
         self.mot2but1.grid(row=1, column=1, sticky="WE", padx=5)
         self.mot2but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
         self.mot2but2.grid(row=2, column=1, sticky="WE", padx=5)
-        self.mot2but3 = tk.Button(jog_panel, text="0",
+        self.mot2but3 = tk.Button(jog_panel, text="N",
         command=lambda:self.reset_motor(1), font=(self.fs, self.fsize2))
         self.mot2but3.grid(row=3, column=1, sticky="WE", padx=5)
 
@@ -232,7 +232,7 @@ class App():
         self.mot3but1.grid(row=1, column=2, sticky="WE", padx=5)
         self.mot3but2 = tk.Button(jog_panel, text="-", font=(self.fs, self.fsize2))
         self.mot3but2.grid(row=2, column=2, sticky="WE", padx=5)
-        self.mot3but3 = tk.Button(jog_panel, text="0",
+        self.mot3but3 = tk.Button(jog_panel, text="N",
         command=lambda:self.reset_motor(2), font=(self.fs, self.fsize2))
         self.mot3but3.grid(row=3, column=2, sticky="WE", padx=5)
 
