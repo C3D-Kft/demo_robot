@@ -27,26 +27,32 @@ A motor 200 impuluzusra forog egy teljes fordulatot.
 A motor áttétele: 5,18.
 Egy fordulat full-stepen 200 * 5,18 = 1036 inkrement.
 
-A meglévő boardon a quarterstep (4144) és a sixteenth step (16576) beállítások
+A meglévő boardon a quarterstep (4144) és a
+sixteenth step (16576) beállítások
 között lehet váltani.
 """
 
 ## Hardver parameters
 motor_step = [4144, 4144, 4144]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
+step_unit = list(map(lambda x: float(1/x), resolution))
+print("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
 base_frequency = 5000 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
+print("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
+time_unit))
 
 ## Actual position
-actual_abs_position = [] # abszolút szög-értékek megadva
+actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
+dir = [0,0,0] # motor dir setting
 
 
 def deg_to_step(deg):
-    """ Háromelemű relatív szögelmozdulás-tömbből
-    számol relatív lépésszámot!
+    """ Háromelemű relatív szögelmozdulás-tömbből számol
+    relatív lépésszámot!
     """
 
     step = []
@@ -60,20 +66,30 @@ def check_limits():
     pass
 
 
-def update_abs_pos(relative_deg):
-    """ Abszolút szög-pozíció frissítése a
-    relatív szögelmozdulás-tömb alapján.
-    """
+# def update_abs_pos(relative_deg):
+#     """ Abszolút szög-pozíció frissítése a relatív
+#     szögelmozdulás-tömb alapján.
+#     """
+#
+#     global actual_abs_position
+#
+#     # Lépések hozzáadása a globális változóhoz
+#     for t in range(0, len(actual_abs_position)):
+#         actual_abs_position[t] += relative_deg[t]
+
+
+def move_absolute(deg_to_move):
 
     global actual_abs_position
 
-    # Lépések hozzáadása a globális változóhoz
-    for t in range(0, len(actual_abs_position)):
-        actual_abs_position[t] += relative_deg[t]
+    for k in range(0, len(deg_to_move)):
+        deg_to_move[k] = deg_to_move[k] - actual_abs_position[k]
+
+    move_relative(deg_to_move)
 
 
 def sorting_steps(step):
-    """ Motoronkénti lépések abszolútértékének csökkenő sorrendbe rendezése
+    """ Motoronkénti lépésszám abszolútértékeinek csökkenő sorrendbe rendezése
     és a hozzá tartozó motortengely index kiszámítása. """
 
     abs_steps = [] # Tuple list
@@ -112,11 +128,12 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
-    # Lépések generálása
-    generate_steps(sort_steps, mot_idx)
+    motor_enable_set(1) # Motorok engedélyezése
+    generate_steps(sort_steps, mot_idx) # Lépések generálása
+    motor_enable_set(0) # Motorok engedélyezése
 
     # Update absolute position by the relative movement
-    update_abs_pos(deg_to_move)
+    print(actual_abs_position)
 
 
 def generate_steps(sorted_steps, mot_index):
@@ -145,6 +162,7 @@ def generate_steps(sorted_steps, mot_index):
         if (fi[d] < 0):
             actual_relative_steps[d+1] += 1
             # smc.onestep_mot(mot_index[d+1], time_unit)
+            abs_pos_one_step(mot_index[d+1])
             print("Step with axis: {0} ({1})".format(mot_index[d+1],
             actual_relative_steps[d+1]))
 
@@ -163,6 +181,7 @@ def generate_steps(sorted_steps, mot_index):
         # Initial step
         actual_relative_steps[0] += 1
         # smc.onestep_mot(mot_index[0], time_unit)
+        abs_pos_one_step(mot_index[0])
         print("Step with axis: {0} ({1})".format(mot_index[0],
         actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
@@ -175,6 +194,20 @@ def generate_steps(sorted_steps, mot_index):
     print(actual_relative_steps)
 
 
+def abs_pos_one_step(mot):
+    """ Lépteti az abszolút pozíció számlálót minden egyes lépésnél
+    a megfelelő irányba. """
+
+
+    global actual_abs_position
+
+    if dir[mot] == 0:
+        actual_abs_position[mot] -= step_unit[mot]
+    else:
+        actual_abs_position[mot] += step_unit[mot]
+
+
+
 def motor_dir_set(mot_step):
     """ Háromelemű tömbnek megfelelően beállítja
     a motorok forgásirányát. """
@@ -182,8 +215,10 @@ def motor_dir_set(mot_step):
     for d in range(0, len(mot_step)):
         if mot_step[d] < 0:
             smc.dir_set(d, 0)
+            dir[d] = 0
         else:
             smc.dir_set(d, 1)
+            dir[d] = 1
 
 
 def motor_enable_set(enable):
@@ -201,11 +236,19 @@ def motor_enable_set(enable):
 
 
 def reset_pos():
-    actual_abs_position = [0, 0, 0] # abszolút szög-érték megadva
+    """ Abszolút szög-értékben kifejezett pozíciók nullázása. """
+
+    global actual_abs_position
+    actual_abs_position = [0,0,0]
 
 
-def zeroing():
+def get_actual_abs_position():
+    # global actual_abs_position
+    return actual_abs_position
 
+
+def zeroing(): # Always the first function to call!
+    # smc.init()
     reset_pos()
 
 
@@ -216,9 +259,19 @@ if __name__ == "__main__":
 
     try:
         # smc.init()
-        motor_enable_set(1)
-        move_relative([10,-15,12])
-        motor_enable_set(0)
+
+        goal = [10,-15,12]
+        goal2 = [22, -35, 25]
+        move_relative(goal)
+        print(goal)
+        print(actual_abs_position)
+
+        move_absolute(goal2)
+        print(goal2)
+        print(actual_abs_position)
+
+        print(actual_abs_position)
+
 
     finally:
         pass
