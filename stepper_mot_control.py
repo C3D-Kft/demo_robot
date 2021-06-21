@@ -84,11 +84,9 @@ def step_mot(mot, level):
     if level == 1:
         pass
         # gpio.output(motor_gpio[mot], gpio.HIGH)
-        # print("Motor{0} kimenet magas!".format(mot+1))
     elif level == 0:
         pass
         # gpio.output(motor_gpio[mot], gpio.LOW)
-        # print("Motor{0} kimenet alacsony!".format(mot+1))
 
 
 def onestep_mot(mot, time_unit=0.1):

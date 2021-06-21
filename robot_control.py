@@ -181,7 +181,7 @@ def generate_steps(sorted_steps, mot_index):
         fi.append(0)
 
 
-    ## Nested function definition BEGIN
+    """ Nested function definition BEGIN """
     def check_diff(d):
 
         if (d >= (size-1)):
@@ -198,8 +198,8 @@ def generate_steps(sorted_steps, mot_index):
 
             # Recursion with nested function
             check_diff(d+1)
-            
-    ## Nested function definition END
+
+    """ Nested function definition END """
 
     # Overflow miatt hozzáadok egy nulla értékű elemet
     sorted_steps.append(0)
