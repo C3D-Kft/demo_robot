@@ -98,8 +98,8 @@ class App():
         actual_pos_panel.grid(row = 0, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (5,2.5))
 
-        pin_layout = ttk.LabelFrame(self.frame, text="Pin layout")
-        pin_layout.grid(row = 0, column = 1, sticky = 'NWSE',
+        jog_panel = ttk.LabelFrame(self.frame, text="Jogging robot arms")
+        jog_panel.grid(row = 0, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (5,2.5))
 
         send_to_pos_panel = ttk.LabelFrame(self.frame,
@@ -107,8 +107,8 @@ class App():
         send_to_pos_panel.grid(row = 1, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (2.5,5))
 
-        jog_panel = ttk.LabelFrame(self.frame, text="Jogging robot arms")
-        jog_panel.grid(row = 1, column = 1, sticky = 'NWSE',
+        gripper_layout = ttk.LabelFrame(self.frame, text="Gripper control")
+        gripper_layout.grid(row = 1, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (2.5,5))
 
 
@@ -207,8 +207,6 @@ class App():
 
 
         # Third grid
-
-        # Fourth grid
         jog_panel.grid()
         self.fsize2 = 18
 
@@ -256,6 +254,8 @@ class App():
         self.mot3but2.bind('<ButtonPress-1>', lambda event: self.jog_motor(2,0))
         self.mot3but1.bind('<ButtonRelease-1>', self.stop_motor)
         self.mot3but2.bind('<ButtonRelease-1>', self.stop_motor)
+
+        # Fourth grid
 
 
     def update_abs_pos_jog(self, mot):
