@@ -67,8 +67,12 @@ class App():
         self.pos2 = StringVar()
         self.pos3 = StringVar()
 
+        # Initialize robot
+        RC.init()
+
         # Zeroing the robot
         RC.zeroing()
+
         # Get abs. pos data, which should be null
         self.abs_pos = RC.get_actual_abs_position()
         self.pos1.set("{0:+.2f}".format(self.abs_pos[0]))
@@ -312,7 +316,7 @@ class App():
             args=([g1, g2, g3], )) # <-- check for syntax !!
             self.secondary_thread.start()
 
-            # While sec. thread is running, pos is being updated 5 ms interval
+            # While sec. thread is running, pos is being updated 1 ms interval
             while self.secondary_thread.is_alive():
                 root.after(1, self.update_abs_pos())
                 root.after(1, root.update_idletasks())
@@ -349,5 +353,6 @@ if __name__ == '__main__':
     root.wm_protocol('WM_DELETE_WINDOW', main_prog.close_window)
     root.mainloop()
 
+    RC.cleanup()
     print("Program exit!")
     sys.exit()

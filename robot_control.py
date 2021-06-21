@@ -50,6 +50,10 @@ actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
 dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
+# Axis limits
+axis_limits_min = [-180, -90, -10]
+axis_limits_max = [180, 90, 10]
+
 
 def deg_to_step(deg):
     """ Háromelemű relatív szögelmozdulás-tömbből számol
@@ -62,15 +66,50 @@ def deg_to_step(deg):
     return step
 
 
-def check_limits():
-    # TODO: write function to check movement limits
-    pass
+def check_limits(mot, pos, dir):
+    """Checks if actual position is within axis limits. """
+
+    global axis_limits_min, axis_limits_max
+
+    if dir == 0:
+        if actual_abs_position[mot] >= axis_limits_min[mot]:
+            return True
+        else:
+            print("Motor{0} min. limit reached at {1}°".format(mot+1,
+            axis_limits_min[mot]))
+            return False
+
+    if dir == 1:
+        if actual_abs_position[mot] <= axis_limits_max[mot]:
+            return True
+        else:
+            print("Motor{0} max. limit reached at {1}°".format(mot+1,
+            axis_limits_max[mot]))
+            return False
 
 
 def move_absolute(deg_to_move):
+    """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
     global actual_abs_position
 
+    # Check if intended pos is outside or inside limits
+    for m in range(0, len(deg_to_move)):
+        if deg_to_move[m] >= axis_limits_min[m]:
+            if deg_to_move[m] <= axis_limits_max[m]:
+                pass
+
+            else:
+                print("Motor{0} max. limit reached at {1}°".format(m+1,
+                axis_limits_max[m]))
+                return
+
+        else:
+            print("Motor{0} min. limit reached at {1}°".format(m+1,
+            axis_limits_min[m]))
+            return
+
+    # Calculate relative movement from absolute coords.
     for k in range(0, len(deg_to_move)):
         deg_to_move[k] = deg_to_move[k] - actual_abs_position[k]
 
@@ -159,7 +198,7 @@ def generate_steps(sorted_steps, mot_index):
 
             # Recursion with nested function
             check_diff(d+1)
-
+            
     ## Nested function definition END
 
     # Overflow miatt hozzáadok egy nulla értékű elemet
@@ -183,9 +222,17 @@ def generate_steps(sorted_steps, mot_index):
 
 
 def jog(mot, direction):
+    """ This function enables to jog motors/axes individually. The motor
+    jog until the jogging flag - which is set from a parallel thread - is
+    True. """
+
     global jogging, dir, time_unit
 
     jog_time_unit = 10 * time_unit
+
+    # Precheck if motor is at limits or not
+    if check_limits(mot, actual_abs_position[mot], direction) == False:
+        return
 
     smc.dir_set(mot, direction)
     dir[mot] = direction
@@ -194,8 +241,11 @@ def jog(mot, direction):
     print("Jogging...")
 
     while jogging == True:
-        smc.onestep_mot(mot, jog_time_unit)
-        abs_pos_one_step(mot)
+        # Check if limit is reached
+        if check_limits(mot, actual_abs_position[mot], direction) == False:
+            break
+        smc.onestep_mot(mot, jog_time_unit) # Step one
+        abs_pos_one_step(mot) # Update pos.
 
     smc.enable_set(mot, 0) # Disable motor
 
@@ -249,13 +299,31 @@ def reset_pos():
 
 
 def get_actual_abs_position():
+    """ Get actual absolute position. """
     # global actual_abs_position
     return actual_abs_position
 
 
-def zeroing(): # Always the first function to call!
+def init(): # Always the first function to call!
+    """ First function to call. This func. initializes the GPIO outputs. """
+
+    print("Robot initialized!")
     # smc.init()
+    pass
+
+
+def zeroing():
+    """ ... """
     reset_pos()
+
+
+def cleanup():
+    """ Last function to call. This func. cleanup the GPIO outputs. """
+
+    print("Robot GPIOs cleaned up!")
+    # smc.cleanup()
+    pass
+
 
 
 # Főprogram
@@ -264,21 +332,20 @@ if __name__ == "__main__":
     zeroing()
 
     try:
-        # smc.init()
+        init()
 
         goal = [10,-15,12]
         goal2 = [22, -35, 25]
+
+        # Test relative movement
         move_relative(goal)
         print(goal)
         print(actual_abs_position)
 
+        # Test absolute movement
         move_absolute(goal2)
         print(goal2)
         print(actual_abs_position)
 
-        print(actual_abs_position)
-
-
     finally:
-        # smc.cleanup()
-        pass
+        cleanup()
