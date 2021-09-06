@@ -63,10 +63,10 @@ def enable_set(mot, enable):
 
     try:
         if enable == 0:
-            gpio.output(motor_enable[mot], gpio.HIGH)
+            gpio.output(motor_enable[mot], gpio.LOW)
             print("Motor{0} letiltva!".format(mot+1))
         elif enable == 1:
-            gpio.output(motor_enable[mot], gpio.LOW)
+            gpio.output(motor_enable[mot], gpio.HIGH)
             print("Motor{0} engedélyezve!".format(mot+1))
 
     except:

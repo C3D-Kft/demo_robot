@@ -147,9 +147,9 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
-    motor_enable_set(1) # Motorok engedélyezése
+    # motor_enable_set(1) # Motorok engedélyezése
     generate_steps(sort_steps, mot_idx) # Lépések generálása
-    motor_enable_set(0) # Motorok letiltása
+    # motor_enable_set(0) # Motorok letiltása
 
     # Update absolute position by the relative movement
     print(actual_abs_position)
@@ -227,7 +227,8 @@ def jog(mot, direction):
 
     smc.dir_set(mot, direction)
     dir[mot] = direction
-    smc.enable_set(mot, 1) # Enable motor
+
+    # smc.enable_set(mot, 1) # Enable motor
 
     print("Jogging...")
 
@@ -238,7 +239,7 @@ def jog(mot, direction):
         smc.onestep_mot(mot, jog_time_unit) # Step one
         abs_pos_one_step(mot) # Update pos.
 
-    smc.enable_set(mot, 0) # Disable motor
+    # smc.enable_set(mot, 0) # Disable motor
 
 
 def abs_pos_one_step(mot):
