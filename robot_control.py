@@ -2,15 +2,6 @@
 
 """ Demo robot control program.
 
-    * App(class) -
-        * init_window -
-        * create -
-
-
----- Libs ----
-
----- Help ----
-
 ---- Info ----
 C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
 sokszorosításra, szerkesztésre, értékesítésre nézve, valamint az ipari
@@ -50,7 +41,7 @@ actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
 dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
-# Axis limits
+## Axis limits default values
 axis_limits_min = [-180.0, -90.0, -10.0]
 axis_limits_max = [180.0, 90.0, 10.0]
 

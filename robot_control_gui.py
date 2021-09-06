@@ -4,11 +4,6 @@
 """ GUI (frontend) a Demo robot vezérléshez. Ez a modul tartalmazza a
 főképernyő grafikus interface elemeit.
 
-    * App(class) - főprogram ablak
-        * init_window - ablak grafikai kinézete
-        * create - torna (szekvencia) összeállító ablak meghívása
-
-
 ---- Libs ----
 * Tkinter
 * Threading

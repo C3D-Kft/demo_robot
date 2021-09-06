@@ -3,10 +3,6 @@
 """ Stepper motor control via GPIO for Raspberry Pi module. This module is
 intended for controlling 3 stepper motor independently.
 
----- Libs ----
-
----- Help ----
-
 ---- Info ----
 C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
 sokszorosításra, szerkesztésre, értékesítésre nézve, valamint az ipari
