@@ -16,7 +16,7 @@ import time
 # Ha az érték nulla, akkor a program átugorja
 motor_gpio = [26, 24, 22]
 motor_dir = [40, 38, 36]
-motor_enable = [0, 0, 0]
+motor_enable = [37, 35, 33]
 motor_grab = [0, 0, 0, 0]
 
 
@@ -45,10 +45,10 @@ def dir_set(mot, dir):
 
     try:
         if dir == 1:
-            # gpio.output(motor_dir[mot], gpio.HIGH)
+            gpio.output(motor_dir[mot], gpio.HIGH)
             print("Motor{0} forgásirány CW!".format(mot+1))
         elif dir == 0:
-            # gpio.output(motor_dir[mot], gpio.LOW)
+            gpio.output(motor_dir[mot], gpio.LOW)
             print("Motor{0} forgásirány CCW!".format(mot+1))
 
     except:
@@ -62,10 +62,10 @@ def enable_set(mot, enable):
 
     try:
         if enable == 0:
-            # gpio.output(motor_enable[mot], gpio.HIGH)
+            gpio.output(motor_enable[mot], gpio.HIGH)
             print("Motor{0} letiltva!".format(mot+1))
         elif enable == 1:
-            # gpio.output(motor_enable[mot-1], gpio.LOW)
+            gpio.output(motor_enable[mot-1], gpio.LOW)
             print("Motor{0} engedélyezve!".format(mot+1))
 
     except:
@@ -79,18 +79,18 @@ def step_mot(mot, level):
 
     if level == 1:
         pass
-        # gpio.output(motor_gpio[mot], gpio.HIGH)
+        gpio.output(motor_gpio[mot], gpio.HIGH)
     elif level == 0:
         pass
-        # gpio.output(motor_gpio[mot], gpio.LOW)
+        gpio.output(motor_gpio[mot], gpio.LOW)
 
 
 def onestep_mot(mot, time_unit=0.1):
     """ Négszögjel generálása egy adott motor tengely számára. """
 
-    # gpio.output(motor_gpio[mot], gpio.HIGH)
+    gpio.output(motor_gpio[mot], gpio.HIGH)
     time.sleep(time_unit)
-    # gpio.output(motor_gpio[mot], gpio.LOW)
+    gpio.output(motor_gpio[mot], gpio.LOW)
     time.sleep(time_unit)
 
 
