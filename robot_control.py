@@ -24,13 +24,13 @@ között lehet váltani.
 """
 
 ## Hardver parameters
-motor_step = [4144, 4144, 4144]
+motor_step = [16576, 16576, 4144]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 print("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 5000 # Hz
+base_frequency = 2500 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 print("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
@@ -42,8 +42,8 @@ dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
 ## Axis limits default values
-axis_limits_min = [-180.0, -90.0, -10.0]
-axis_limits_max = [180.0, 90.0, 10.0]
+axis_limits_min = [-90.0, -90.0, 0.0]
+axis_limits_max = [90.0, 0.0, 45.0]
 
 
 def deg_to_step(deg):
@@ -149,7 +149,7 @@ def move_relative(deg_to_move):
 
     motor_enable_set(1) # Motorok engedélyezése
     generate_steps(sort_steps, mot_idx) # Lépések generálása
-    motor_enable_set(0) # Motorok engedélyezése
+    motor_enable_set(0) # Motorok letiltása
 
     # Update absolute position by the relative movement
     print(actual_abs_position)
@@ -343,8 +343,8 @@ if __name__ == "__main__":
     try:
         init()
 
-        goal = [10,-15,12]
-        goal2 = [22, -35, 25]
+        goal = [10,0,0]
+        goal2 = [20,0,0]
 
         # Test relative movement
         move_relative(goal)

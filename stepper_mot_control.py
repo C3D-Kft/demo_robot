@@ -11,6 +11,7 @@ www.C3D.hu
 """
 
 import time
+import RPi.GPIO as gpio
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
@@ -25,7 +26,7 @@ def init():
     a fenti paraméterek alapján.
     """
 
-    import RPi.GPIO as gpio
+    # import RPi.GPIO as gpio
 
     gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
     # A gpio.BCM - Broadcom pin számozás hardverspecifikus ezért változhat!
@@ -65,7 +66,7 @@ def enable_set(mot, enable):
             gpio.output(motor_enable[mot], gpio.HIGH)
             print("Motor{0} letiltva!".format(mot+1))
         elif enable == 1:
-            gpio.output(motor_enable[mot-1], gpio.LOW)
+            gpio.output(motor_enable[mot], gpio.LOW)
             print("Motor{0} engedélyezve!".format(mot+1))
 
     except:

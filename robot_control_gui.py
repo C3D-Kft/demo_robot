@@ -35,13 +35,12 @@ print("Program started!")
 import os
 import sys
 # import math
-from tkinter import ttk
+# from tkinter import ttk
 import tkinter as tk
 from tkinter import StringVar
 import threading
 # import queue
 import robot_control as RC
-
 
 # Globális változók
 
@@ -86,23 +85,23 @@ class App():
         self.frame.grid_rowconfigure(0, minsize=240)
         self.frame.grid_rowconfigure(1, minsize=240)
 
-        style = ttk.Style()
-        style.theme_use('vista')
+        # style = ttk.Style()
+        # style.theme_use('vista')
 
-        actual_pos_panel = ttk.LabelFrame(self.frame, text="Aktuális pozíció")
+        actual_pos_panel = tk.LabelFrame(self.frame, text="Aktuális pozíció")
         actual_pos_panel.grid(row = 0, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (5,2.5))
 
-        jog_panel = ttk.LabelFrame(self.frame, text="Robotkar jogging")
+        jog_panel = tk.LabelFrame(self.frame, text="Robotkar jogging")
         jog_panel.grid(row = 0, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (5,2.5))
 
-        send_to_pos_panel = ttk.LabelFrame(self.frame,
+        send_to_pos_panel = tk.LabelFrame(self.frame,
         text="Küldés abszolút pozícióba")
         send_to_pos_panel.grid(row = 1, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (2.5,5))
 
-        limit_panel = ttk.LabelFrame(self.frame, text="Tengely limitek")
+        limit_panel = tk.LabelFrame(self.frame, text="Tengely limitek")
         limit_panel.grid(row = 1, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (2.5,5))
 
@@ -110,43 +109,43 @@ class App():
         # First grid
         actual_pos_panel.grid()
 
-        axis_1_label = ttk.Label(actual_pos_panel, text="Motor 1",
+        axis_1_label = tk.Label(actual_pos_panel, text="Motor 1",
         font=(self.fs, self.fsize), anchor="w")
         axis_1_label.grid(row = 0, column = 0, sticky = 'WE',
         padx=(0,10), pady=(0,5))
-        axis_2_label = ttk.Label(actual_pos_panel, text="Motor 2",
+        axis_2_label = tk.Label(actual_pos_panel, text="Motor 2",
         font=(self.fs, self.fsize), anchor="w")
         axis_2_label.grid(row = 1, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
-        axis_3_label = ttk.Label(actual_pos_panel, text="Motor 3",
+        axis_3_label = tk.Label(actual_pos_panel, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
         axis_3_label.grid(row = 2, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,0))
 
-        self.axis_1_entry = ttk.Entry(actual_pos_panel, width=8,
+        self.axis_1_entry = tk.Entry(actual_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos1)
         self.axis_1_entry.config(state= 'disabled')
         self.axis_1_entry.grid(row = 0, column = 1, pady=(0,5))
 
-        self.axis_2_entry = ttk.Entry(actual_pos_panel, width=8,
+        self.axis_2_entry = tk.Entry(actual_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos2)
         self.axis_2_entry.config(state= 'disabled')
         self.axis_2_entry.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
-        self.axis_3_entry = ttk.Entry(actual_pos_panel, width=8,
+        self.axis_3_entry = tk.Entry(actual_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos3)
         self.axis_3_entry.config(state= 'disabled')
         self.axis_3_entry.grid(row = 2, column = 1, sticky = 'WE', pady=(5,0))
 
-        axis_1_unit_label = ttk.Label(actual_pos_panel, text="fok",
+        axis_1_unit_label = tk.Label(actual_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_1_unit_label.grid(row = 0, column = 2, sticky = 'WE',
         padx=(5,0), pady=(0,5))
-        axis_2_unit_label = ttk.Label(actual_pos_panel, text="fok",
+        axis_2_unit_label = tk.Label(actual_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_2_unit_label.grid(row = 1, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
-        axis_3_unit_label = ttk.Label(actual_pos_panel, text="fok",
+        axis_3_unit_label = tk.Label(actual_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_3_unit_label.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,0))
@@ -155,45 +154,45 @@ class App():
         # Second grid
         send_to_pos_panel.grid()
 
-        axis_1_label_stp = ttk.Label(send_to_pos_panel, text="Motor 1",
+        axis_1_label_stp = tk.Label(send_to_pos_panel, text="Motor 1",
         font=(self.fs, self.fsize), anchor="w")
         axis_1_label_stp.grid(row = 0, column = 0, sticky = 'WE',
         padx=(0,10), pady=(0,5))
-        axis_2_label_stp = ttk.Label(send_to_pos_panel, text="Motor 2",
+        axis_2_label_stp = tk.Label(send_to_pos_panel, text="Motor 2",
         font=(self.fs, self.fsize), anchor="w")
         axis_2_label_stp.grid(row = 1, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
-        axis_3_label_stp = ttk.Label(send_to_pos_panel, text="Motor 3",
+        axis_3_label_stp = tk.Label(send_to_pos_panel, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
         axis_3_label_stp.grid(row = 2, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
 
-        self.axis_1_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        self.axis_1_entry_stp = tk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_1_entry_stp.insert("0", "0") # default érték
         self.axis_1_entry_stp.grid(row = 0, column = 1, pady=(0,5))
 
-        self.axis_2_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        self.axis_2_entry_stp = tk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_2_entry_stp.insert("0", "0")
         self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE',
         pady=(5,5))
 
-        self.axis_3_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
+        self.axis_3_entry_stp = tk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_3_entry_stp.insert("0", "0")
         self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE',
         pady=(5,5))
 
-        axis_1_unit_label_stp = ttk.Label(send_to_pos_panel, text="fok",
+        axis_1_unit_label_stp = tk.Label(send_to_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_1_unit_label_stp.grid(row = 0, column = 2, sticky = 'WE',
         padx=(5,0), pady=(0,5))
-        axis_2_unit_label_stp = ttk.Label(send_to_pos_panel, text="fok",
+        axis_2_unit_label_stp = tk.Label(send_to_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_2_unit_label_stp.grid(row = 1, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
-        axis_3_unit_label_stp = ttk.Label(send_to_pos_panel, text="fok",
+        axis_3_unit_label_stp = tk.Label(send_to_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
@@ -207,7 +206,7 @@ class App():
         jog_panel.grid()
         self.fsize2 = 18
 
-        mot1label = ttk.Label(jog_panel, text="Motor 1", font=(self.fs, self.fsize))
+        mot1label = tk.Label(jog_panel, text="Motor 1", font=(self.fs, self.fsize))
         mot1label.grid(row=0, column=0, padx=(0,5))
         self.mot1but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
         self.mot1but1.grid(row=1, column=0, sticky="WE", padx=(0,5))
@@ -217,7 +216,7 @@ class App():
         command=lambda:self.reset_motor(0), font=(self.fs, self.fsize2))
         self.mot1but3.grid(row=3, column=0, sticky="WE", padx=(0,5))
 
-        mot2label = ttk.Label(jog_panel, text="Motor 2", font=(self.fs, self.fsize))
+        mot2label = tk.Label(jog_panel, text="Motor 2", font=(self.fs, self.fsize))
         mot2label.grid(row=0, column=1, padx=5)
         self.mot2but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
         self.mot2but1.grid(row=1, column=1, sticky="WE", padx=5)
@@ -227,7 +226,7 @@ class App():
         command=lambda:self.reset_motor(1), font=(self.fs, self.fsize2))
         self.mot2but3.grid(row=3, column=1, sticky="WE", padx=5)
 
-        mot3label = ttk.Label(jog_panel, text="Motor 3", font=(self.fs, self.fsize))
+        mot3label = tk.Label(jog_panel, text="Motor 3", font=(self.fs, self.fsize))
         mot3label.grid(row=0, column=2, padx=5)
         self.mot3but1 = tk.Button(jog_panel, text="+", font=(self.fs, self.fsize2))
         self.mot3but1.grid(row=1, column=2, sticky="WE", padx=5)
@@ -255,30 +254,30 @@ class App():
         # Fourth grid
         limit_panel.grid()
 
-        mot1lab = ttk.Label(limit_panel, text="Motor 1", font=(self.fs, self.fsize))
+        mot1lab = tk.Label(limit_panel, text="Motor 1", font=(self.fs, self.fsize))
         mot1lab.grid(row=0, column=0, padx=(5,5), pady=(0,5))
-        self.mot1ent1 = ttk.Entry(limit_panel, width=7,
+        self.mot1ent1 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot1ent1.grid(row=1, column=0, sticky="WE", padx=(5,5), pady=(0,5))
-        self.mot1ent2 = ttk.Entry(limit_panel, width=7,
+        self.mot1ent2 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot1ent2.grid(row=2, column=0, sticky="WE", padx=(5,5), pady=(0,5))
 
-        mot2lab = ttk.Label(limit_panel, text="Motor 2", font=(self.fs, self.fsize))
+        mot2lab = tk.Label(limit_panel, text="Motor 2", font=(self.fs, self.fsize))
         mot2lab.grid(row=0, column=1, padx=5, pady=(0,5))
-        self.mot2ent1 = ttk.Entry(limit_panel, width=7,
+        self.mot2ent1 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot2ent1.grid(row=1, column=1, sticky="WE", padx=(0,5), pady=(0,5))
-        self.mot2ent2 = ttk.Entry(limit_panel, width=7,
+        self.mot2ent2 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot2ent2.grid(row=2, column=1, sticky="WE", padx=(0,5), pady=(0,5))
 
-        mot3lab = ttk.Label(limit_panel, text="Motor 3", font=(self.fs, self.fsize))
+        mot3lab = tk.Label(limit_panel, text="Motor 3", font=(self.fs, self.fsize))
         mot3lab.grid(row=0, column=2, padx=5, pady=(0,5))
-        self.mot3ent1 = ttk.Entry(limit_panel, width=7,
+        self.mot3ent1 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot3ent1.grid(row=1, column=2, sticky="WE", padx=(0,5), pady=(0,5))
-        self.mot3ent2 = ttk.Entry(limit_panel, width=7,
+        self.mot3ent2 = tk.Entry(limit_panel, width=7,
         justify="right", font=(self.fs, self.fsize))
         self.mot3ent2.grid(row=2, column=2, sticky="WE", padx=(0,5), pady=(0,5))
 
