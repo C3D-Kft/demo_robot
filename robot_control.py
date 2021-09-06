@@ -42,8 +42,8 @@ dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
 ## Axis limits default values
-axis_limits_min = [-90.0, -90.0, 0.0]
-axis_limits_max = [90.0, 0.0, 45.0]
+axis_limits_min = [-90.0, -130.0, 0.0]
+axis_limits_max = [90.0, 0.0, 200.0]
 
 
 def deg_to_step(deg):
