@@ -26,8 +26,6 @@ def init():
     a fenti paraméterek alapján.
     """
 
-    # import RPi.GPIO as gpio
-
     gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
     # A gpio.BCM - Broadcom pin számozás hardverspecifikus ezért változhat!
     gpio.setwarnings(False)

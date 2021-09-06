@@ -147,9 +147,7 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
-    # motor_enable_set(1) # Motorok engedélyezése
     generate_steps(sort_steps, mot_idx) # Lépések generálása
-    # motor_enable_set(0) # Motorok letiltása
 
     # Update absolute position by the relative movement
     print(actual_abs_position)
@@ -228,8 +226,6 @@ def jog(mot, direction):
     smc.dir_set(mot, direction)
     dir[mot] = direction
 
-    # smc.enable_set(mot, 1) # Enable motor
-
     print("Jogging...")
 
     while jogging == True:
@@ -238,8 +234,6 @@ def jog(mot, direction):
             break
         smc.onestep_mot(mot, jog_time_unit) # Step one
         abs_pos_one_step(mot) # Update pos.
-
-    # smc.enable_set(mot, 0) # Disable motor
 
 
 def abs_pos_one_step(mot):
@@ -255,7 +249,6 @@ def abs_pos_one_step(mot):
         actual_abs_position[mot] += step_unit[mot]
 
 
-
 def motor_dir_set(mot_step):
     """ Háromelemű tömbnek megfelelően beállítja
     a motorok forgásirányát. """
@@ -269,18 +262,18 @@ def motor_dir_set(mot_step):
             dir[d] = 1
 
 
-def motor_enable_set(enable):
-    """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
-
-    # Motor 1-3 engedélyezése
-    if enable == 1:
-        for s in range(0,3):
-            smc.enable_set(s, 1)
-
-    # Motor 1-3 letiltás
-    else:
-        for s in range(0,3):
-            smc.enable_set(s, 0)
+# def motor_enable_set(enable):
+#     """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
+#
+#     # Motor 1-3 engedélyezése
+#     if enable == 1:
+#         for s in range(0,3):
+#             smc.enable_set(s, 1)
+#
+#     # Motor 1-3 letiltás
+#     else:
+#         for s in range(0,3):
+#             smc.enable_set(s, 0)
 
 
 def reset_pos():
