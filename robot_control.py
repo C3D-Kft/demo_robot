@@ -51,8 +51,8 @@ dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
 # Axis limits
-axis_limits_min = [-180, -90, -10]
-axis_limits_max = [180, 90, 10]
+axis_limits_min = [-180.0, -90.0, -10.0]
+axis_limits_max = [180.0, 90.0, 10.0]
 
 
 def deg_to_step(deg):
@@ -302,6 +302,24 @@ def get_actual_abs_position():
     """ Get actual absolute position. """
     # global actual_abs_position
     return actual_abs_position
+
+
+def get_limits():
+    """ Get axis limits lists. """
+
+    global axis_limits_min, axis_limits_max
+
+    return axis_limits_min, axis_limits_max
+
+
+def set_limits(limits_min, limits_max):
+    """ Set axis limits lists. """
+
+    global axis_limits_min, axis_limits_max
+
+    axis_limits_min = limits_min
+    axis_limits_max = limits_max
+    print("Limits has been set!")
 
 
 def init(): # Always the first function to call!

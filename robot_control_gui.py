@@ -55,10 +55,10 @@ class App():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
-        self.master.geometry("800x480+200+200") #Ablak mérete +xpos(v)+ypos(f)
+        self.master.geometry("700x480+200+200") #Ablak mérete +xpos(v)+ypos(f)
         self.master.resizable(width=False, height=False)
         # self.master.attributes('-fullscreen', True)
-        self.master.title("Demo robot control") # Ablak cím beállítása
+        self.master.title("Demo robot vezérlő") # Ablak cím beállítása
 
         self.fs="Arial"
         self.fsize=20
@@ -87,28 +87,28 @@ class App():
 
         self.frame.grid()
         self.frame.grid_columnconfigure(0, minsize=300)
-        self.frame.grid_columnconfigure(1, minsize=500)
+        self.frame.grid_columnconfigure(1, minsize=400)
         self.frame.grid_rowconfigure(0, minsize=240)
         self.frame.grid_rowconfigure(1, minsize=240)
 
         style = ttk.Style()
         style.theme_use('vista')
 
-        actual_pos_panel = ttk.LabelFrame(self.frame, text="Actual position")
+        actual_pos_panel = ttk.LabelFrame(self.frame, text="Aktuális pozíció")
         actual_pos_panel.grid(row = 0, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (5,2.5))
 
-        jog_panel = ttk.LabelFrame(self.frame, text="Jogging robot arms")
+        jog_panel = ttk.LabelFrame(self.frame, text="Robotkar jogging")
         jog_panel.grid(row = 0, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (5,2.5))
 
         send_to_pos_panel = ttk.LabelFrame(self.frame,
-        text="Send to absolute position")
+        text="Küldés abszolút pozícióba")
         send_to_pos_panel.grid(row = 1, column = 0, sticky = 'NWSE',
         padx = (5,2.5), pady = (2.5,5))
 
-        gripper_layout = ttk.LabelFrame(self.frame, text="Gripper control")
-        gripper_layout.grid(row = 1, column = 1, sticky = 'NWSE',
+        limit_panel = ttk.LabelFrame(self.frame, text="Tengely limitek")
+        limit_panel.grid(row = 1, column = 1, sticky = 'NWSE',
         padx = (2.5,5), pady = (2.5,5))
 
 
@@ -181,12 +181,14 @@ class App():
         self.axis_2_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_2_entry_stp.insert("0", "0")
-        self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
+        self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE',
+        pady=(5,5))
 
         self.axis_3_entry_stp = ttk.Entry(send_to_pos_panel, width=8,
         justify="right", font=(self.fs, self.fsize))
         self.axis_3_entry_stp.insert("0", "0")
-        self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE', pady=(5,5))
+        self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE',
+        pady=(5,5))
 
         axis_1_unit_label_stp = ttk.Label(send_to_pos_panel, text="fok",
         anchor="w", font=(self.fs, self.fsize))
@@ -203,8 +205,8 @@ class App():
 
         self.send_to_position = tk.Button(send_to_pos_panel, text="Start",
         font=(self.fs, self.fsize), command=self.send_to_position)
-        self.send_to_position.grid(row=3, columnspan=3, sticky = "WE", pady=(5,0))
-
+        self.send_to_position.grid(row=3, columnspan=3, sticky = "WE",
+        pady=(5,0))
 
         # Third grid
         jog_panel.grid()
@@ -256,6 +258,40 @@ class App():
         self.mot3but2.bind('<ButtonRelease-1>', self.stop_motor)
 
         # Fourth grid
+        limit_panel.grid()
+
+        mot1lab = ttk.Label(limit_panel, text="Motor 1", font=(self.fs, self.fsize))
+        mot1lab.grid(row=0, column=0, padx=(5,5), pady=(0,5))
+        self.mot1ent1 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot1ent1.grid(row=1, column=0, sticky="WE", padx=(5,5), pady=(0,5))
+        self.mot1ent2 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot1ent2.grid(row=2, column=0, sticky="WE", padx=(5,5), pady=(0,5))
+
+        mot2lab = ttk.Label(limit_panel, text="Motor 2", font=(self.fs, self.fsize))
+        mot2lab.grid(row=0, column=1, padx=5, pady=(0,5))
+        self.mot2ent1 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot2ent1.grid(row=1, column=1, sticky="WE", padx=(0,5), pady=(0,5))
+        self.mot2ent2 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot2ent2.grid(row=2, column=1, sticky="WE", padx=(0,5), pady=(0,5))
+
+        mot3lab = ttk.Label(limit_panel, text="Motor 3", font=(self.fs, self.fsize))
+        mot3lab.grid(row=0, column=2, padx=5, pady=(0,5))
+        self.mot3ent1 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot3ent1.grid(row=1, column=2, sticky="WE", padx=(0,5), pady=(0,5))
+        self.mot3ent2 = ttk.Entry(limit_panel, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot3ent2.grid(row=2, column=2, sticky="WE", padx=(0,5), pady=(0,5))
+
+        self.get_axis_limits()
+
+        self.set_limits = tk.Button(limit_panel, text="Beállítás",
+        font=(self.fs, self.fsize), command=self.set_axis_limits)
+        self.set_limits.grid(row=3, column=0, columnspan=3, padx=(5,5), pady=(0,5))
 
 
     def update_abs_pos_jog(self, mot):
@@ -329,6 +365,61 @@ class App():
 
         finally:
             self.send_to_position.config(state='normal')
+
+
+    def set_axis_limits(self):
+        """ Tengely limitek beállítása a programban. """
+
+        min, max = RC.get_limits()
+
+        a1_min = float(self.mot1ent1.get())
+        a1_max = float(self.mot1ent2.get())
+        a2_min = float(self.mot2ent1.get())
+        a2_max = float(self.mot2ent2.get())
+        a3_min = float(self.mot3ent1.get())
+        a3_max = float(self.mot3ent2.get())
+
+        if a1_max >= a1_min:
+            min[0] = a1_min
+            max[0] = a1_max
+        else:
+            print("Axis 1 limits doesn't changed!")
+
+        if a2_max >= a2_min:
+            min[1] = a2_min
+            max[1] = a2_max
+        else:
+            print("Axis 2 limits doesn't changed!")
+
+        if a3_max >= a3_min:
+            min[2] = a3_min
+            max[2] = a3_max
+        else:
+            print("Axis 3 limits doesn't changed!")
+
+        RC.set_limits(min, max)
+
+        self.get_axis_limits()
+
+
+    def get_axis_limits(self):
+        """ Tengely limitek beállítása a képernyőn. """
+
+        min, max = RC.get_limits()
+
+        self.mot1ent1.delete(0, 'end')
+        self.mot1ent2.delete(0, 'end')
+        self.mot2ent1.delete(0, 'end')
+        self.mot2ent2.delete(0, 'end')
+        self.mot3ent1.delete(0, 'end')
+        self.mot3ent2.delete(0, 'end')
+
+        self.mot1ent1.insert("0", min[0])
+        self.mot1ent2.insert("0", max[0])
+        self.mot2ent1.insert("0", min[1])
+        self.mot2ent2.insert("0", max[1])
+        self.mot3ent1.insert("0", min[2])
+        self.mot3ent2.insert("0", max[2])
 
 
     def help(self):
