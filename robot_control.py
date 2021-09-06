@@ -180,7 +180,7 @@ def generate_steps(sorted_steps, mot_index):
 
         if (fi[d] < 0):
             actual_relative_steps[d+1] += 1
-            # smc.onestep_mot(mot_index[d+1], time_unit)
+            smc.onestep_mot(mot_index[d+1], time_unit)
             abs_pos_one_step(mot_index[d+1])
             # print("Step with axis: {0} ({1})".format(mot_index[d+1], actual_relative_steps[d+1]))
 
@@ -198,7 +198,7 @@ def generate_steps(sorted_steps, mot_index):
     while (actual_relative_steps[0] < sorted_steps[0]):
         # Initial step
         actual_relative_steps[0] += 1
-        # smc.onestep_mot(mot_index[0], time_unit)
+        smc.onestep_mot(mot_index[0], time_unit)
         abs_pos_one_step(mot_index[0])
         # print("Step with axis: {0} ({1})".format(mot_index[0], actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
@@ -317,7 +317,7 @@ def init(): # Always the first function to call!
     """ First function to call. This func. initializes the GPIO outputs. """
 
     print("Robot initialized!")
-    # smc.init()
+    smc.init()
     pass
 
 
@@ -330,7 +330,7 @@ def cleanup():
     """ Last function to call. This func. cleanup the GPIO outputs. """
 
     print("Robot GPIOs cleaned up!")
-    # smc.cleanup()
+    smc.cleanup()
     pass
 
 
