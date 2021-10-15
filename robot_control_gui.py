@@ -28,21 +28,28 @@ www.C3D.hu
 """
 
 
-print("Program started!")
+# Logolás inicializálása
+import logging
+import logger
+
+logger.init_logger()
+log = logging.getLogger("Main")
+log.info("Program started!")
 
 # Modulok betöltése a logolás indítása után!
-# import time
 import os
 import sys
-# import math
-# from tkinter import ttk
 import tkinter as tk
 from tkinter import StringVar
+from tkinter import filedialog
 import threading
-# import queue
 import robot_control as RC
 
 # Globális változók
+if getattr(sys, 'frozen', False):
+    initdir = os.path.dirname(sys.executable)
+elif __file__:
+    initdir = os.path.dirname(__file__)
 
 
 class App():
@@ -84,9 +91,6 @@ class App():
         self.frame.grid_columnconfigure(1, minsize=400)
         self.frame.grid_rowconfigure(0, minsize=240)
         self.frame.grid_rowconfigure(1, minsize=240)
-
-        # style = ttk.Style()
-        # style.theme_use('vista')
 
         actual_pos_panel = tk.LabelFrame(self.frame, text="Aktuális pozíció")
         actual_pos_panel.grid(row = 0, column = 0, sticky = 'NWSE',
@@ -357,11 +361,11 @@ class App():
     def stop_motor(self, event=None):
         RC.jogging = False
         self.update_abs_pos()
-        print("Jogging stopped!")
+        log.info("Jogging stopped!")
 
 
     def reset_motor(self, mot):
-        print("Motor{0} reset!".format(mot+1))
+        log.info("Motor{0} reset!".format(mot+1))
         RC.actual_abs_position[mot] = 0
         self.update_abs_pos()
 
@@ -405,14 +409,48 @@ class App():
             self.update_abs_pos()
 
         except:
-            print("User input error!")
+            log.info("User input error!")
 
         finally:
             self.send_to_position.config(state='normal')
 
 
     def follow_route(self):
-        print("Following route....")
+        """ Opens a given .txt file. """
+
+        global initdir
+
+        file = filedialog.askopenfilenames(initialdir=initdir,
+        title='Kiválasztás', filetypes=[
+                    ("TXT file format", ".txt"),
+                ])
+
+        # Ha Cancel-lel kilépek
+        if file == "":
+            log.info("No file selected!")
+            return
+
+        try:
+            log.info("Opening file: {0}".format(file)) # Kiolvasom a fájl tartalmát
+            with open(filename, "r", encoding="cp437", errors='ignore') as input:
+                lines = input.readlines()
+
+            # Read graphical data
+
+            # Processing
+
+            # When success
+            log.info("File has been successfully opened!")
+
+            return
+
+        except FileNotFoundError as fnfe:
+            log.error("{0} not found!".format(filename).capitalize())
+            pass
+
+        except:
+            log.critical("Unexpected error: {0}".format(sys.exc_info()[0]))
+            raise
 
 
     def grip_release(self):
