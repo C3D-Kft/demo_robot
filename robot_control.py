@@ -180,7 +180,8 @@ def generate_steps(sorted_steps, mot_index):
             actual_relative_steps[d+1] += 1
             smc.onestep_mot(mot_index[d+1], time_unit)
             abs_pos_one_step(mot_index[d+1])
-            # print("Step with axis: {0} ({1})".format(mot_index[d+1], actual_relative_steps[d+1]))
+            # print("Step with axis: {0} ({1})".format(mot_index[d+1],
+            # actual_relative_steps[d+1]))
 
             fi[d] += sorted_steps[d]
             fi[d+1] -= sorted_steps[d+2]
@@ -198,7 +199,8 @@ def generate_steps(sorted_steps, mot_index):
         actual_relative_steps[0] += 1
         smc.onestep_mot(mot_index[0], time_unit)
         abs_pos_one_step(mot_index[0])
-        # print("Step with axis: {0} ({1})".format(mot_index[0], actual_relative_steps[0]))
+        # print("Step with axis: {0} ({1})".format(mot_index[0],
+        # actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
         check_diff(0)
 
@@ -232,7 +234,9 @@ def jog(mot, direction):
         # Check if limit is reached
         if check_limits(mot, actual_abs_position[mot], direction) == False:
             break
-        smc.onestep_mot(mot, jog_time_unit) # Step one
+        else:
+            smc.onestep_mot(mot, jog_time_unit) # Step one
+
         abs_pos_one_step(mot) # Update pos.
 
 
