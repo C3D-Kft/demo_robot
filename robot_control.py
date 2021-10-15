@@ -9,6 +9,12 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
+# First import should be the logging module if any!
+import logging
+import logger
+
+log = logging.getLogger("Main")
+
 import stepper_mot_control as smc
 import math as m
 
