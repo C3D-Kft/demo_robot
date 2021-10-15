@@ -1,3 +1,5 @@
-
 *.pyc
 screenshot_gui.jpg
+
+# Ignore developer folder (output for debug files, etc.)
+/log/
