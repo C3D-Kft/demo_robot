@@ -2,21 +2,18 @@
 
 """ Demo robot control program.
 
-    * App(class) -
-        * init_window -
-        * create -
-
-
----- Libs ----
-
----- Help ----
-
 ---- Info ----
 C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
 sokszorosításra, szerkesztésre, értékesítésre nézve, valamint az ipari
 tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
+
+# First import should be the logging module if any!
+import logging
+import logger
+
+log = logging.getLogger("Main")
 
 import stepper_mot_control as smc
 import math as m
@@ -33,16 +30,16 @@ között lehet váltani.
 """
 
 ## Hardver parameters
-motor_step = [4144, 4144, 4144]
+motor_step = [16576, 16576, 4144]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
-print("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
+log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 5000 # Hz
+base_frequency = 2500 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
-print("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
+log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
 time_unit))
 
 ## Actual position
@@ -50,9 +47,9 @@ actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
 dir = [0,0,0] # motor dir setting
 jogging = False # jogging flag
 
-# Axis limits
-axis_limits_min = [-180, -90, -10]
-axis_limits_max = [180, 90, 10]
+## Axis limits default values
+axis_limits_min = [-90.0, -130.0, 0.0]
+axis_limits_max = [90.0, 0.0, 200.0]
 
 
 def deg_to_step(deg):
@@ -75,7 +72,7 @@ def check_limits(mot, pos, dir):
         if actual_abs_position[mot] >= axis_limits_min[mot]:
             return True
         else:
-            print("Motor{0} min. limit reached at {1}°".format(mot+1,
+            log.info("Motor{0} min. limit reached at {1}°".format(mot+1,
             axis_limits_min[mot]))
             return False
 
@@ -83,7 +80,7 @@ def check_limits(mot, pos, dir):
         if actual_abs_position[mot] <= axis_limits_max[mot]:
             return True
         else:
-            print("Motor{0} max. limit reached at {1}°".format(mot+1,
+            log.info("Motor{0} max. limit reached at {1}°".format(mot+1,
             axis_limits_max[mot]))
             return False
 
@@ -100,12 +97,12 @@ def move_absolute(deg_to_move):
                 pass
 
             else:
-                print("Motor{0} max. limit reached at {1}°".format(m+1,
+                log.info("Motor{0} max. limit reached at {1}°".format(m+1,
                 axis_limits_max[m]))
                 return
 
         else:
-            print("Motor{0} min. limit reached at {1}°".format(m+1,
+            log.info("Motor{0} min. limit reached at {1}°".format(m+1,
             axis_limits_min[m]))
             return
 
@@ -130,7 +127,7 @@ def sorting_steps(step):
 
     abs_steps.sort(reverse = True)
 
-    print("Sorted steps acc. to motor axes: {0}".format(abs_steps))
+    log.info("Sorted steps acc. to motor axes: {0}".format(abs_steps))
 
     for ss in range(0,len(abs_steps)):
         sorted_steps.append(abs_steps[ss][0])
@@ -147,7 +144,7 @@ def move_relative(deg_to_move):
 
     steps = deg_to_step(deg_to_move)
 
-    print("Steps to move: {0}".format(steps))
+    log.info("Steps to move: {0}".format(steps))
     motor_dir_set(steps) # Motorok iránybeállítása
 
     sort_steps = [] # A, B, ... tengelyeken lelépendő lépések
@@ -156,12 +153,10 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
-    motor_enable_set(1) # Motorok engedélyezése
     generate_steps(sort_steps, mot_idx) # Lépések generálása
-    motor_enable_set(0) # Motorok engedélyezése
 
     # Update absolute position by the relative movement
-    print(actual_abs_position)
+    log.info(actual_abs_position)
 
 
 def generate_steps(sorted_steps, mot_index):
@@ -189,9 +184,10 @@ def generate_steps(sorted_steps, mot_index):
 
         if (fi[d] < 0):
             actual_relative_steps[d+1] += 1
-            # smc.onestep_mot(mot_index[d+1], time_unit)
+            smc.onestep_mot(mot_index[d+1], time_unit)
             abs_pos_one_step(mot_index[d+1])
-            # print("Step with axis: {0} ({1})".format(mot_index[d+1], actual_relative_steps[d+1]))
+            # print("Step with axis: {0} ({1})".format(mot_index[d+1],
+            # actual_relative_steps[d+1]))
 
             fi[d] += sorted_steps[d]
             fi[d+1] -= sorted_steps[d+2]
@@ -207,9 +203,10 @@ def generate_steps(sorted_steps, mot_index):
     while (actual_relative_steps[0] < sorted_steps[0]):
         # Initial step
         actual_relative_steps[0] += 1
-        # smc.onestep_mot(mot_index[0], time_unit)
+        smc.onestep_mot(mot_index[0], time_unit)
         abs_pos_one_step(mot_index[0])
-        # print("Step with axis: {0} ({1})".format(mot_index[0], actual_relative_steps[0]))
+        # print("Step with axis: {0} ({1})".format(mot_index[0],
+        # actual_relative_steps[0]))
         fi[0] -= sorted_steps[1]
         check_diff(0)
 
@@ -217,7 +214,7 @@ def generate_steps(sorted_steps, mot_index):
     sorted_steps = sorted_steps[:-1]
 
     # Aktuálisan lelépett stepek
-    print("Actual steps made: {0}".format(actual_relative_steps))
+    log.info("Actual steps made: {0}".format(actual_relative_steps))
 
 
 
@@ -236,18 +233,17 @@ def jog(mot, direction):
 
     smc.dir_set(mot, direction)
     dir[mot] = direction
-    smc.enable_set(mot, 1) # Enable motor
 
-    print("Jogging...")
+    log.info("Jogging...")
 
     while jogging == True:
         # Check if limit is reached
         if check_limits(mot, actual_abs_position[mot], direction) == False:
             break
-        smc.onestep_mot(mot, jog_time_unit) # Step one
-        abs_pos_one_step(mot) # Update pos.
+        else:
+            smc.onestep_mot(mot, jog_time_unit) # Step one
 
-    smc.enable_set(mot, 0) # Disable motor
+        abs_pos_one_step(mot) # Update pos.
 
 
 def abs_pos_one_step(mot):
@@ -263,7 +259,6 @@ def abs_pos_one_step(mot):
         actual_abs_position[mot] += step_unit[mot]
 
 
-
 def motor_dir_set(mot_step):
     """ Háromelemű tömbnek megfelelően beállítja
     a motorok forgásirányát. """
@@ -277,18 +272,18 @@ def motor_dir_set(mot_step):
             dir[d] = 1
 
 
-def motor_enable_set(enable):
-    """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
-
-    # Motor 1-3 engedélyezése
-    if enable == 1:
-        for s in range(0,3):
-            smc.enable_set(s, 1)
-
-    # Motor 1-3 letiltás
-    else:
-        for s in range(0,3):
-            smc.enable_set(s, 0)
+# def motor_enable_set(enable):
+#     """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
+#
+#     # Motor 1-3 engedélyezése
+#     if enable == 1:
+#         for s in range(0,3):
+#             smc.enable_set(s, 1)
+#
+#     # Motor 1-3 letiltás
+#     else:
+#         for s in range(0,3):
+#             smc.enable_set(s, 0)
 
 
 def reset_pos():
@@ -304,11 +299,29 @@ def get_actual_abs_position():
     return actual_abs_position
 
 
+def get_limits():
+    """ Get axis limits lists. """
+
+    global axis_limits_min, axis_limits_max
+
+    return axis_limits_min, axis_limits_max
+
+
+def set_limits(limits_min, limits_max):
+    """ Set axis limits lists. """
+
+    global axis_limits_min, axis_limits_max
+
+    axis_limits_min = limits_min
+    axis_limits_max = limits_max
+    log.info("Limits has been set!")
+
+
 def init(): # Always the first function to call!
     """ First function to call. This func. initializes the GPIO outputs. """
 
-    print("Robot initialized!")
-    # smc.init()
+    log.info("Robot initialized!")
+    smc.init()
     pass
 
 
@@ -320,8 +333,8 @@ def zeroing():
 def cleanup():
     """ Last function to call. This func. cleanup the GPIO outputs. """
 
-    print("Robot GPIOs cleaned up!")
-    # smc.cleanup()
+    log.info("Robot GPIOs cleaned up!")
+    smc.cleanup()
     pass
 
 
@@ -334,8 +347,8 @@ if __name__ == "__main__":
     try:
         init()
 
-        goal = [10,-15,12]
-        goal2 = [22, -35, 25]
+        goal = [10,0,0]
+        goal2 = [20,0,0]
 
         # Test relative movement
         move_relative(goal)
