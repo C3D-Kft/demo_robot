@@ -33,13 +33,13 @@ között lehet váltani.
 motor_step = [16576, 16576, 4144]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
-print("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
+log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
 base_frequency = 2500 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
-print("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
+log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
 time_unit))
 
 ## Actual position
@@ -72,7 +72,7 @@ def check_limits(mot, pos, dir):
         if actual_abs_position[mot] >= axis_limits_min[mot]:
             return True
         else:
-            print("Motor{0} min. limit reached at {1}°".format(mot+1,
+            log.info("Motor{0} min. limit reached at {1}°".format(mot+1,
             axis_limits_min[mot]))
             return False
 
@@ -80,7 +80,7 @@ def check_limits(mot, pos, dir):
         if actual_abs_position[mot] <= axis_limits_max[mot]:
             return True
         else:
-            print("Motor{0} max. limit reached at {1}°".format(mot+1,
+            log.info("Motor{0} max. limit reached at {1}°".format(mot+1,
             axis_limits_max[mot]))
             return False
 
@@ -97,12 +97,12 @@ def move_absolute(deg_to_move):
                 pass
 
             else:
-                print("Motor{0} max. limit reached at {1}°".format(m+1,
+                log.info("Motor{0} max. limit reached at {1}°".format(m+1,
                 axis_limits_max[m]))
                 return
 
         else:
-            print("Motor{0} min. limit reached at {1}°".format(m+1,
+            log.info("Motor{0} min. limit reached at {1}°".format(m+1,
             axis_limits_min[m]))
             return
 
@@ -127,7 +127,7 @@ def sorting_steps(step):
 
     abs_steps.sort(reverse = True)
 
-    print("Sorted steps acc. to motor axes: {0}".format(abs_steps))
+    log.info("Sorted steps acc. to motor axes: {0}".format(abs_steps))
 
     for ss in range(0,len(abs_steps)):
         sorted_steps.append(abs_steps[ss][0])
@@ -144,7 +144,7 @@ def move_relative(deg_to_move):
 
     steps = deg_to_step(deg_to_move)
 
-    print("Steps to move: {0}".format(steps))
+    log.info("Steps to move: {0}".format(steps))
     motor_dir_set(steps) # Motorok iránybeállítása
 
     sort_steps = [] # A, B, ... tengelyeken lelépendő lépések
@@ -156,7 +156,7 @@ def move_relative(deg_to_move):
     generate_steps(sort_steps, mot_idx) # Lépések generálása
 
     # Update absolute position by the relative movement
-    print(actual_abs_position)
+    log.info(actual_abs_position)
 
 
 def generate_steps(sorted_steps, mot_index):
@@ -214,7 +214,7 @@ def generate_steps(sorted_steps, mot_index):
     sorted_steps = sorted_steps[:-1]
 
     # Aktuálisan lelépett stepek
-    print("Actual steps made: {0}".format(actual_relative_steps))
+    log.info("Actual steps made: {0}".format(actual_relative_steps))
 
 
 
@@ -234,7 +234,7 @@ def jog(mot, direction):
     smc.dir_set(mot, direction)
     dir[mot] = direction
 
-    print("Jogging...")
+    log.info("Jogging...")
 
     while jogging == True:
         # Check if limit is reached
@@ -314,13 +314,13 @@ def set_limits(limits_min, limits_max):
 
     axis_limits_min = limits_min
     axis_limits_max = limits_max
-    print("Limits has been set!")
+    log.info("Limits has been set!")
 
 
 def init(): # Always the first function to call!
     """ First function to call. This func. initializes the GPIO outputs. """
 
-    print("Robot initialized!")
+    log.info("Robot initialized!")
     smc.init()
     pass
 
@@ -333,7 +333,7 @@ def zeroing():
 def cleanup():
     """ Last function to call. This func. cleanup the GPIO outputs. """
 
-    print("Robot GPIOs cleaned up!")
+    log.info("Robot GPIOs cleaned up!")
     smc.cleanup()
     pass
 
