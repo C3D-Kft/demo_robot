@@ -416,28 +416,45 @@ class App():
 
 
     def follow_route(self):
-        """ Opens a given .txt file. """
+        """ Opens a given .grt (CREO Graph Report) file. """
 
         global initdir
 
-        file = filedialog.askopenfilenames(initialdir=initdir,
+        # TODO: Change to final destination when ready!
+        initdir = os.path.join(initdir, "EXAMPLES")
+        filename = filedialog.askopenfilenames(initialdir=initdir,
         title='Kiválasztás', filetypes=[
-                    ("TXT file format", ".txt"),
+                    ("GRT file format", ".grt"),
                 ])
 
         # Ha Cancel-lel kilépek
-        if file == "":
+        if filename == "":
             log.info("No file selected!")
             return
 
         try:
-            log.info("Opening file: {0}".format(file)) # Kiolvasom a fájl tartalmát
+            filename = filename[0]
+            log.info("Opening file: {0}".format(filename))
+            # Kiolvasom a fájl tartalmát
             with open(filename, "r", encoding="cp437", errors='ignore') as input:
                 lines = input.readlines()
 
-            # Read graphical data
-
             # Processing
+            log.info("Processing {} graph!".format(lines[0][1:-2]))
+            data = []
+
+            for l in lines[4:]:
+                row = []
+
+                # Last element is '/n' (newline character)
+                for k in l.split("\t")[:-1]:
+                    row.append(float(k))
+
+                data.append(row)
+
+            for d in data:
+                print(d)
+
 
             # When success
             log.info("File has been successfully opened!")
