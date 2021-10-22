@@ -361,7 +361,6 @@ class App():
     def stop_motor(self, event=None):
         RC.jogging = False
         self.update_abs_pos()
-        log.info("Jogging stopped!")
 
 
     def reset_motor(self, mot):
