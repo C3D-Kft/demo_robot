@@ -42,18 +42,22 @@ def init():
 def dir_set(mot, dir):
     """ Adott motor (0, 1, ...) iránybeállítása (CW (1) vagy CCW (0)). """
 
+    msg = ""
+
     try:
         if dir == 1:
             gpio.output(motor_dir[mot], gpio.HIGH)
-            print("Motor{0} forgásirány CW!".format(mot+1))
+            msg = "Motor{0} forgásirány CW!".format(mot+1)
         elif dir == 0:
             gpio.output(motor_dir[mot], gpio.LOW)
-            print("Motor{0} forgásirány CCW!".format(mot+1))
+            msg = "Motor{0} forgásirány CCW!".format(mot+1)
 
     except:
-        # pass
-        print("Hibás iránybeállítás: "
+        msg = ("Hibás iránybeállítás: "
         + "Motor{0} - DIR:{1}!".format((mot+1), dir))
+
+    finally:
+        return msg
 
 
 def enable_set(mot, enable):

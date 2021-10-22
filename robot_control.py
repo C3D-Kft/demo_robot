@@ -231,7 +231,8 @@ def jog(mot, direction):
     if check_limits(mot, actual_abs_position[mot], direction) == False:
         return
 
-    smc.dir_set(mot, direction)
+    msg = smc.dir_set(mot, direction)
+    log.info(msg)
     dir[mot] = direction
 
     log.info("Jogging...")
@@ -265,10 +266,12 @@ def motor_dir_set(mot_step):
 
     for d in range(0, len(mot_step)):
         if mot_step[d] < 0:
-            smc.dir_set(d, 0)
+            msg = smc.dir_set(d, 0)
+            log.info(msg)
             dir[d] = 0
         else:
-            smc.dir_set(d, 1)
+            msg = smc.dir_set(d, 1)
+            log.info(msg)
             dir[d] = 1
 
 
@@ -295,7 +298,7 @@ def reset_pos():
 
 def get_actual_abs_position():
     """ Get actual absolute position. """
-    # global actual_abs_position
+
     return actual_abs_position
 
 
