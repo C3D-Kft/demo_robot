@@ -63,18 +63,22 @@ def dir_set(mot, dir):
 def enable_set(mot, enable):
     """ Adott motor (0, 1, ...) engedélyezése (1) vagy letiltása (0). """
 
+    msg = ""
+
     try:
         if enable == 0:
             gpio.output(motor_enable[mot], gpio.LOW)
-            print("Motor{0} letiltva!".format(mot+1))
+            msg = "Motor{0} letiltva!".format(mot+1)
         elif enable == 1:
             gpio.output(motor_enable[mot], gpio.HIGH)
-            print("Motor{0} engedélyezve!".format(mot+1))
+            msg = "Motor{0} engedélyezve!".format(mot+1)
 
     except:
-        # pass
-        print("Hibás engedélyezés: "
+        msg = ("Hibás engedélyezés: "
         + "Motor{0} - ENABLE:{1}!".format((mot+1), enable))
+
+    finally:
+        return msg
 
 
 def step_mot(mot, level):
