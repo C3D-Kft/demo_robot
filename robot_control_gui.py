@@ -494,19 +494,19 @@ class App():
             min[0] = a1_min
             max[0] = a1_max
         else:
-            print("Axis 1 limits doesn't changed!")
+            log.info("Axis 1 limits doesn't changed!")
 
         if a2_max >= a2_min:
             min[1] = a2_min
             max[1] = a2_max
         else:
-            print("Axis 2 limits doesn't changed!")
+            log.info("Axis 2 limits doesn't changed!")
 
         if a3_max >= a3_min:
             min[2] = a3_min
             max[2] = a3_max
         else:
-            print("Axis 3 limits doesn't changed!")
+            log.info("Axis 3 limits doesn't changed!")
 
         RC.set_limits(min, max)
 
@@ -542,7 +542,7 @@ class App():
     def close_window(self):
         """ Ablak bezárása. """
         self.master.destroy()
-        print("Main window terminated!")
+        log.info("Main window terminated!")
 
 
 # Főprogram
@@ -556,5 +556,5 @@ if __name__ == '__main__':
     root.mainloop()
 
     RC.cleanup()
-    print("Program exit!")
+    log.info("Program exit!")
     sys.exit()
