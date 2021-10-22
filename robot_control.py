@@ -246,6 +246,8 @@ def jog(mot, direction):
 
         abs_pos_one_step(mot) # Update pos.
 
+    log.info("Jogging stopped!")
+
 
 def abs_pos_one_step(mot):
     """ Lépteti az abszolút pozíció számlálót minden egyes lépésnél
@@ -281,12 +283,14 @@ def motor_dir_set(mot_step):
 #     # Motor 1-3 engedélyezése
 #     if enable == 1:
 #         for s in range(0,3):
-#             smc.enable_set(s, 1)
+#             msg = smc.enable_set(s, 1)
+#             log.info(msg)
 #
 #     # Motor 1-3 letiltás
 #     else:
 #         for s in range(0,3):
-#             smc.enable_set(s, 0)
+#             msg = smc.enable_set(s, 0)
+#             log.info(msg)
 
 
 def reset_pos():
