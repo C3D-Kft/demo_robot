@@ -459,7 +459,7 @@ class App():
         # Attempt to read data
         try:
             filename = filename[0]
-            log.info("Opening file: {0}".format(filename))
+            log.info("Opening file: {0}".format(os.path.relpath(filename)))
             # Kiolvasom a fájl tartalmát
             with open(filename, "r", encoding="cp437", errors='ignore') as input:
                 lines = input.readlines()
@@ -531,11 +531,11 @@ class App():
 
 
     def grip_release(self):
-        log.info("grip_release")
+        log.info("Release grip!")
 
 
     def grip_hold(self):
-        log.info("grip_hold")
+        log.info("Hold grip!")
 
 
     def enable_all_mot(self):
