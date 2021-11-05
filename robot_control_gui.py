@@ -423,8 +423,8 @@ class App():
 
             # While sec. thread is running, pos is being updated 1 ms interval
             while self.secondary_thread.is_alive():
-                root.after(1, self.update_abs_pos())
-                root.after(1, root.update_idletasks())
+                root.after(10, self.update_abs_pos())
+                root.after(10, root.update_idletasks())
 
             # Final update when move ended
             self.update_abs_pos()
@@ -476,10 +476,6 @@ class App():
 
                 data.append(row)
 
-            # for d in data:
-            #     print(d)
-                # print(d[1])
-
             # When success
             log.info("File has been successfully opened!")
 
@@ -505,8 +501,8 @@ class App():
 
             # While sec. thread is running, pos is being updated 1 ms interval
             while self.secondary_thread.is_alive():
-                root.after(1, self.update_abs_pos())
-                root.after(1, root.update_idletasks())
+                root.after(10, self.update_abs_pos())
+                root.after(10, root.update_idletasks())
 
             # Final update when move ended
             self.update_abs_pos()
