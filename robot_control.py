@@ -106,6 +106,8 @@ def move_absolute(deg_to_move):
             axis_limits_min[m]))
             return
 
+    log.info("Moving to: {0}".format(deg_to_move))
+
     # Calculate relative movement from absolute coords.
     for k in range(0, len(deg_to_move)):
         deg_to_move[k] = deg_to_move[k] - actual_abs_position[k]
@@ -156,7 +158,8 @@ def move_relative(deg_to_move):
     generate_steps(sort_steps, mot_idx) # Lépések generálása
 
     # Update absolute position by the relative movement
-    log.info(actual_abs_position)
+    log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
+    actual_abs_position[0], actual_abs_position[1], actual_abs_position[2]))
 
 
 def generate_steps(sorted_steps, mot_index):
