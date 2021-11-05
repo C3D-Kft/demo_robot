@@ -239,6 +239,7 @@ class App():
         self.follow_route.grid(row=0, column=1, sticky = "NWSE",
         pady=(5,0), padx=(2.5,2.5))
 
+
         # Third grid
         jog_panel.grid()
         jog_panel.grid_columnconfigure(0, weight=1)
@@ -407,6 +408,7 @@ class App():
         """ Convert user input to absolute deg. values to go. """
 
         self.send_to_position.config(state='disabled')
+        self.follow_route.config(state='disabled')
 
         try:
             # Get values from Entry fields
@@ -432,12 +434,15 @@ class App():
 
         finally:
             self.send_to_position.config(state='normal')
+            self.follow_route.config(state='normal')
 
 
     def follow_route(self):
         """ Opens a given .grt (CREO Graph Report) file. """
 
         global initdir
+
+        data = []
 
         # TODO: Change to final destination when ready!
         initdir = os.path.join(initdir, "EXAMPLES")
@@ -451,6 +456,7 @@ class App():
             log.info("No file selected!")
             return
 
+        # Attempt to read data
         try:
             filename = filename[0]
             log.info("Opening file: {0}".format(filename))
@@ -460,7 +466,6 @@ class App():
 
             # Processing
             log.info("Processing {} graph!".format(lines[0][1:-2]))
-            data = []
 
             for l in lines[4:]:
                 row = []
@@ -471,14 +476,13 @@ class App():
 
                 data.append(row)
 
-            for d in data:
-                print(d)
-
+            # for d in data:
+            #     print(d)
+                # print(d[1])
 
             # When success
             log.info("File has been successfully opened!")
 
-            return
 
         except FileNotFoundError as fnfe:
             log.error("{0} not found!".format(filename).capitalize())
@@ -487,6 +491,47 @@ class App():
         except:
             log.critical("Unexpected error: {0}".format(sys.exc_info()[0]))
             raise
+
+
+        # Attempt to move to given positions
+        self.send_to_position.config(state='disabled')
+        self.follow_route.config(state='disabled')
+
+        try:
+            # Start secondary thread with move function
+            self.secondary_thread = threading.Thread(target=self.move_absolute_loop,
+            args=([data])) # <-- check for syntax !!
+            self.secondary_thread.start()
+
+            # While sec. thread is running, pos is being updated 1 ms interval
+            while self.secondary_thread.is_alive():
+                root.after(1, self.update_abs_pos())
+                root.after(1, root.update_idletasks())
+
+            # Final update when move ended
+            self.update_abs_pos()
+
+        except:
+            log.critical("Unexpected error occured!")
+
+        finally:
+            self.send_to_position.config(state='normal')
+            self.follow_route.config(state='normal')
+
+
+    def move_absolute_loop(self, data):
+        """ Iterates over an absolute move list. """
+
+        k = len(data)
+        n = 1
+
+        for d in data:
+            log.info("Step {0}/{1}".format(n, k))
+            a = d[1] if len(d) >= 2 else 0
+            b = d[2] if len(d) >= 3 else 0
+            c = d[3] if len(d) >= 4 else 0
+            RC.move_absolute([a,b,c])
+            n += 1
 
 
     def grip_release(self):
