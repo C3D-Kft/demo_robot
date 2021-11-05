@@ -113,46 +113,66 @@ class App():
         # First grid
         actual_pos_panel.grid()
 
-        axis_1_label = tk.Label(actual_pos_panel, text="Motor 1",
+        ####
+        act_pos_label_frame = tk.Frame(actual_pos_panel)
+        act_pos_label_frame.grid(row = 0, column = 0, sticky = 'NWSE')
+
+        axis_1_label = tk.Label(act_pos_label_frame, text="Motor 1",
         font=(self.fs, self.fsize), anchor="w")
         axis_1_label.grid(row = 0, column = 0, sticky = 'WE',
         padx=(0,10), pady=(0,5))
-        axis_2_label = tk.Label(actual_pos_panel, text="Motor 2",
+        axis_2_label = tk.Label(act_pos_label_frame, text="Motor 2",
         font=(self.fs, self.fsize), anchor="w")
         axis_2_label.grid(row = 1, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
-        axis_3_label = tk.Label(actual_pos_panel, text="Motor 3",
+        axis_3_label = tk.Label(act_pos_label_frame, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
         axis_3_label.grid(row = 2, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,0))
 
-        self.axis_1_entry = tk.Entry(actual_pos_panel, width=8,
+        self.axis_1_entry = tk.Entry(act_pos_label_frame, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos1)
         self.axis_1_entry.config(state= 'disabled')
         self.axis_1_entry.grid(row = 0, column = 1, pady=(0,5))
 
-        self.axis_2_entry = tk.Entry(actual_pos_panel, width=8,
+        self.axis_2_entry = tk.Entry(act_pos_label_frame, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos2)
         self.axis_2_entry.config(state= 'disabled')
         self.axis_2_entry.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
-        self.axis_3_entry = tk.Entry(actual_pos_panel, width=8,
+        self.axis_3_entry = tk.Entry(act_pos_label_frame, width=8,
         justify="right", font=(self.fs, self.fsize), textvariable=self.pos3)
         self.axis_3_entry.config(state= 'disabled')
         self.axis_3_entry.grid(row = 2, column = 1, sticky = 'WE', pady=(5,0))
 
-        axis_1_unit_label = tk.Label(actual_pos_panel, text="fok",
+        axis_1_unit_label = tk.Label(act_pos_label_frame, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_1_unit_label.grid(row = 0, column = 2, sticky = 'WE',
         padx=(5,0), pady=(0,5))
-        axis_2_unit_label = tk.Label(actual_pos_panel, text="fok",
+        axis_2_unit_label = tk.Label(act_pos_label_frame, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_2_unit_label.grid(row = 1, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
-        axis_3_unit_label = tk.Label(actual_pos_panel, text="fok",
+        axis_3_unit_label = tk.Label(act_pos_label_frame, text="fok",
         anchor="w", font=(self.fs, self.fsize))
         axis_3_unit_label.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,0))
+
+        # Enable, disable gombok
+        act_pos_button_frame = tk.Frame(actual_pos_panel)
+        act_pos_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
+        act_pos_button_frame.grid_columnconfigure(0, weight=1)
+        act_pos_button_frame.grid_columnconfigure(1, weight=1)
+
+        self.enable_all_mot = tk.Button(act_pos_button_frame, text="ENBL",
+        font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
+        self.enable_all_mot.grid(row=0, column=0, sticky = "NWSE",
+        pady=(5,0), padx=(2.5,2.5))
+
+        self.disable_all_mot = tk.Button(act_pos_button_frame, text="DSBL",
+        font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
+        self.disable_all_mot.grid(row=0, column=1, sticky = "NWSE",
+        pady=(5,0), padx=(2.5,2.5))
 
 
         # Second grid
@@ -172,7 +192,7 @@ class App():
         axis_3_label_stp = tk.Label(stp_label_frame, text="Motor 3",
         font=(self.fs, self.fsize), anchor="w")
         axis_3_label_stp.grid(row = 2, column = 0, sticky = 'WE',
-        padx=(0,10), pady=(5,5))
+        padx=(0,10), pady=(5,0))
 
         self.axis_1_entry_stp = tk.Entry(stp_label_frame, width=8,
         justify="right", font=(self.fs, self.fsize))
@@ -470,11 +490,25 @@ class App():
 
 
     def grip_release(self):
-        print("grip_release")
+        log.info("grip_release")
 
 
     def grip_hold(self):
-        print("grip_hold")
+        log.info("grip_hold")
+
+
+    def enable_all_mot(self):
+        log.info("Enable all motors!")
+        RC.motor_enable_set(1)
+        self.enable_all_mot["state"] = "disabled"
+        self.disable_all_mot["state"] = "normal"
+
+
+    def disable_all_mot(self):
+        log.info("Disable all motors!")
+        RC.motor_enable_set(0)
+        self.enable_all_mot["state"] = "normal"
+        self.disable_all_mot["state"] = "disabled"
 
 
     def set_axis_limits(self):
