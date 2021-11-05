@@ -277,20 +277,20 @@ def motor_dir_set(mot_step):
             dir[d] = 1
 
 
-# def motor_enable_set(enable):
-#     """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
-#
-#     # Motor 1-3 engedélyezése
-#     if enable == 1:
-#         for s in range(0,3):
-#             msg = smc.enable_set(s, 1)
-#             log.info(msg)
-#
-#     # Motor 1-3 letiltás
-#     else:
-#         for s in range(0,3):
-#             msg = smc.enable_set(s, 0)
-#             log.info(msg)
+def motor_enable_set(enable):
+    """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
+
+    # Motor 1-3 engedélyezése
+    if enable == 1:
+        for s in range(0,3):
+            msg = smc.enable_set(s, 1)
+            log.info(msg)
+
+    # Motor 1-3 letiltás
+    else:
+        for s in range(0,3):
+            msg = smc.enable_set(s, 0)
+            log.info(msg)
 
 
 def reset_pos():
