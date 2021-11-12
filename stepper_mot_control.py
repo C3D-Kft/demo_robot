@@ -45,6 +45,7 @@ def init():
         if gpio_array[k] != 0:
             gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
 
+    # SPI Chip select beállítása
     gpio.setup(29, gpio.OUT, initial=gpio.HIGH)
 
     ### SPI ###
@@ -68,14 +69,17 @@ def init():
     msg = ""
     data = [[0x94557], [0xD001F], [0xE0010], [0x00008], [0xA8202]]
 
+    # Set Chip select to High
     gpio.output(29, gpio.HIGH)
 
     for d in data:
         log.info("Data sent: {0}".format(d))
+        # Data sending starts when chip select falls to LOW
         gpio.output(29, gpio.LOW)
         time.sleep(0.1)
         spi.xfer(d)
         time.sleep(0.1)
+        # Data sending ends when chip select rises to HIGH
         gpio.output(29, gpio.HIGH)
 
         msg = spi.readbytes(3)
