@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Demo robot
+Comment=Run Demo robot
+Exec=lxterminal -e 'python3 /home/pi/demo_robot/robot_control_gui.py'
+StartUpNotify=true
+Terminal=false
+Categories=None;
