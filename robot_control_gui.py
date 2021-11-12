@@ -56,7 +56,8 @@ class App():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
-        self.master.geometry("700x480+200+200") #Ablak mérete +xpos(v)+ypos(f)
+        self.master.geometry("800x460+0-19") #Ablak mérete +xpos(v)+ypos(f)
+
         self.master.resizable(width=False, height=False)
         # self.master.attributes('-fullscreen', True)
         self.master.title("Demo robot vezérlő") # Ablak cím beállítása
@@ -88,9 +89,10 @@ class App():
 
         self.frame.grid()
         self.frame.grid_columnconfigure(0, minsize=300)
-        self.frame.grid_columnconfigure(1, minsize=400)
+        self.frame.grid_columnconfigure(1, minsize=380)
+        self.frame.grid_columnconfigure(2, minsize=120)
         self.frame.grid_rowconfigure(0, minsize=240)
-        self.frame.grid_rowconfigure(1, minsize=240)
+        self.frame.grid_rowconfigure(1, minsize=220)
 
         actual_pos_panel = tk.LabelFrame(self.frame, text="Aktuális pozíció")
         actual_pos_panel.grid(row = 0, column = 0, sticky = 'NWSE',
@@ -98,7 +100,7 @@ class App():
 
         jog_panel = tk.LabelFrame(self.frame, text="Robotkar jogging")
         jog_panel.grid(row = 0, column = 1, sticky = 'NWSE',
-        padx = (2.5,5), pady = (5,2.5))
+        padx = (2.5,2.5), pady = (5,2.5))
 
         send_to_pos_panel = tk.LabelFrame(self.frame,
         text="Pozícióba küld")
@@ -107,13 +109,16 @@ class App():
 
         limit_panel = tk.LabelFrame(self.frame, text="Tengely limitek")
         limit_panel.grid(row = 1, column = 1, sticky = 'NWSE',
-        padx = (2.5,5), pady = (2.5,5))
+        padx = (2.5,2.5), pady = (2.5,5))
+
+        menu_panel = tk.LabelFrame(self.frame, text="Menü")
+        menu_panel.grid(row = 0, rowspan=2, column = 2, sticky = 'NWSE',
+        padx = (2.5,5), pady = (5,5))
 
 
         # First grid
         actual_pos_panel.grid()
 
-        ####
         act_pos_label_frame = tk.Frame(actual_pos_panel)
         act_pos_label_frame.grid(row = 0, column = 0, sticky = 'NWSE')
 
@@ -159,20 +164,20 @@ class App():
         padx=(5,0), pady=(5,0))
 
         # Enable, disable gombok
-        act_pos_button_frame = tk.Frame(actual_pos_panel)
-        act_pos_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
-        act_pos_button_frame.grid_columnconfigure(0, weight=1)
-        act_pos_button_frame.grid_columnconfigure(1, weight=1)
-
-        self.enable_all_mot = tk.Button(act_pos_button_frame, text="ENBL",
-        font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
-        self.enable_all_mot.grid(row=0, column=0, sticky = "NWSE",
-        pady=(5,0), padx=(2.5,2.5))
-
-        self.disable_all_mot = tk.Button(act_pos_button_frame, text="DSBL",
-        font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
-        self.disable_all_mot.grid(row=0, column=1, sticky = "NWSE",
-        pady=(5,0), padx=(2.5,2.5))
+        # act_pos_button_frame = tk.Frame(actual_pos_panel)
+        # act_pos_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
+        # act_pos_button_frame.grid_columnconfigure(0, weight=1)
+        # act_pos_button_frame.grid_columnconfigure(1, weight=1)
+        #
+        # self.enable_all_mot = tk.Button(act_pos_button_frame, text="ENBL",
+        # font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
+        # self.enable_all_mot.grid(row=0, column=0, sticky = "NWSE",
+        # pady=(5,0), padx=(2.5,2.5))
+        #
+        # self.disable_all_mot = tk.Button(act_pos_button_frame, text="DSBL",
+        # font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
+        # self.disable_all_mot.grid(row=0, column=1, sticky = "NWSE",
+        # pady=(5,0), padx=(2.5,2.5))
 
 
         # Second grid
@@ -224,24 +229,25 @@ class App():
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
 
-        stp_button_frame = tk.Frame(send_to_pos_panel)
-        stp_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
-        stp_button_frame.grid_columnconfigure(0, weight=1)
-        stp_button_frame.grid_columnconfigure(1, weight=1)
+        # stp_button_frame = tk.Frame(send_to_pos_panel)
+        # stp_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
+        # stp_button_frame.grid_columnconfigure(0, weight=1)
+        # stp_button_frame.grid_columnconfigure(1, weight=1)
 
-        self.send_to_position = tk.Button(stp_button_frame, text="Start",
-        font=(self.fs, self.fsize), command=self.send_to_position)
-        self.send_to_position.grid(row=0, column=0, sticky = "NWSE",
-        pady=(5,0), padx=(2.5,2.5))
-
-        self.follow_route = tk.Button(stp_button_frame, text="Program",
-        font=(self.fs, self.fsize), command=self.follow_route)
-        self.follow_route.grid(row=0, column=1, sticky = "NWSE",
-        pady=(5,0), padx=(2.5,2.5))
+        # self.send_to_position = tk.Button(stp_button_frame, text="Start",
+        # font=(self.fs, self.fsize), command=self.send_to_position)
+        # self.send_to_position.grid(row=0, column=0, sticky = "NWSE",
+        # pady=(5,0), padx=(2.5,2.5))
+        #
+        # self.follow_route = tk.Button(stp_button_frame, text="Program",
+        # font=(self.fs, self.fsize), command=self.follow_route)
+        # self.follow_route.grid(row=0, column=1, sticky = "NWSE",
+        # pady=(5,0), padx=(2.5,2.5))
 
 
         # Third grid
         jog_panel.grid()
+
         jog_panel.grid_columnconfigure(0, weight=1)
         jog_panel.grid_columnconfigure(1, weight=1)
         jog_panel.grid_columnconfigure(2, weight=1)
@@ -258,8 +264,8 @@ class App():
         mot4_frame = tk.Frame(jog_panel)
         mot4_frame.grid(row = 0, column = 3, sticky = 'NWSE', padx=(2.5,5))
 
-        self.fsize2 = 18
-        self.fsize3 = 18
+        self.fsize2 = 16 # Szöveg elsö sorban
+        self.fsize3 = 16 # +,-,N karakterek
 
         mot1label = tk.Label(mot1_frame, text="Motor 1", font=(self.fs, self.fsize2))
         mot1label.grid(row=0, column=0)
@@ -324,38 +330,90 @@ class App():
         # Fourth grid
         limit_panel.grid()
 
-        mot1lab = tk.Label(limit_panel, text="Motor 1", font=(self.fs, self.fsize))
-        mot1lab.grid(row=0, column=0, padx=(5,5), pady=(0,5))
-        self.mot1ent1 = tk.Entry(limit_panel, width=7,
-        justify="right", font=(self.fs, self.fsize))
-        self.mot1ent1.grid(row=1, column=0, sticky="WE", padx=(5,5), pady=(0,5))
-        self.mot1ent2 = tk.Entry(limit_panel, width=7,
-        justify="right", font=(self.fs, self.fsize))
-        self.mot1ent2.grid(row=2, column=0, sticky="WE", padx=(5,5), pady=(0,5))
+        limit_panel.grid_columnconfigure(0, weight=1)
+        limit_panel.grid_columnconfigure(1, weight=1)
+        limit_panel.grid_columnconfigure(2, weight=1)
+        # limit_panel.grid_columnconfigure(3, weight=1)
+        limit_panel.grid_rowconfigure(0, weight=1)
+        # limit_panel.grid_rowconfigure(1, weight=1)
 
-        mot2lab = tk.Label(limit_panel, text="Motor 2", font=(self.fs, self.fsize))
-        mot2lab.grid(row=0, column=1, padx=5, pady=(0,5))
-        self.mot2ent1 = tk.Entry(limit_panel, width=7,
-        justify="right", font=(self.fs, self.fsize))
-        self.mot2ent1.grid(row=1, column=1, sticky="WE", padx=(0,5), pady=(0,5))
-        self.mot2ent2 = tk.Entry(limit_panel, width=7,
-        justify="right", font=(self.fs, self.fsize))
-        self.mot2ent2.grid(row=2, column=1, sticky="WE", padx=(0,5), pady=(0,5))
+        lim_mot1_frame = tk.Frame(limit_panel)
+        lim_mot1_frame.grid(row = 0, column = 0, sticky = 'NWSE', padx=(5,2.5))
+        lim_mot2_frame = tk.Frame(limit_panel)
+        lim_mot2_frame.grid(row = 0, column = 1, sticky = 'NWSE', padx=2.5)
+        lim_mot3_frame = tk.Frame(limit_panel)
+        lim_mot3_frame.grid(row = 0, column = 2, sticky = 'NWSE', padx=(2.5,5))
+        # lim_mot4_frame = tk.Frame(limit_panel)
+        # lim_mot4_frame.grid(row = 0, column = 3, sticky = 'NWSE', padx=(2.5,5))
 
-        mot3lab = tk.Label(limit_panel, text="Motor 3", font=(self.fs, self.fsize))
-        mot3lab.grid(row=0, column=2, padx=5, pady=(0,5))
-        self.mot3ent1 = tk.Entry(limit_panel, width=7,
+        self.fsize2 = 16 # Szöveg elsö sorban
+        self.fsize3 = 16 # +,-,N karakterek
+
+        mot1lab = tk.Label(lim_mot1_frame, text="Motor 1", font=(self.fs, self.fsize))
+        mot1lab.grid(row=0, column=0)
+        self.mot1ent1 = tk.Entry(lim_mot1_frame, width=7,
         justify="right", font=(self.fs, self.fsize))
-        self.mot3ent1.grid(row=1, column=2, sticky="WE", padx=(0,5), pady=(0,5))
-        self.mot3ent2 = tk.Entry(limit_panel, width=7,
+        self.mot1ent1.grid(row=1, column=0, sticky="WE")
+        self.mot1ent2 = tk.Entry(lim_mot1_frame, width=7,
         justify="right", font=(self.fs, self.fsize))
-        self.mot3ent2.grid(row=2, column=2, sticky="WE", padx=(0,5), pady=(0,5))
+        self.mot1ent2.grid(row=2, column=0, sticky="WE")
+
+        mot2lab = tk.Label(lim_mot2_frame, text="Motor 2", font=(self.fs, self.fsize))
+        mot2lab.grid(row=0, column=1)
+        self.mot2ent1 = tk.Entry(lim_mot2_frame, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot2ent1.grid(row=1, column=1, sticky="WE")
+        self.mot2ent2 = tk.Entry(lim_mot2_frame, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot2ent2.grid(row=2, column=1, sticky="WE")
+
+        mot3lab = tk.Label(lim_mot3_frame, text="Motor 3", font=(self.fs, self.fsize))
+        mot3lab.grid(row=0, column=2)
+        self.mot3ent1 = tk.Entry(lim_mot3_frame, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot3ent1.grid(row=1, column=2, sticky="WE")
+        self.mot3ent2 = tk.Entry(lim_mot3_frame, width=7,
+        justify="right", font=(self.fs, self.fsize))
+        self.mot3ent2.grid(row=2, column=2, sticky="WE")
 
         self.get_axis_limits()
 
-        self.set_limits = tk.Button(limit_panel, text="Beállítás",
+
+        # Fifth panel
+        menu_panel.grid()
+        menu_button_frame = tk.Frame(menu_panel)
+        menu_button_frame.grid(row = 0, column = 0, sticky = 'NWSE')
+
+        self.send_to_position = tk.Button(menu_button_frame, text="STRT",
+        font=(self.fs, self.fsize), command=self.send_to_position)
+        self.send_to_position.grid(row=0, column=0, sticky = "NWSE",
+        pady=(5,0), padx=2.5)
+
+        self.follow_route = tk.Button(menu_button_frame, text="PROG",
+        font=(self.fs, self.fsize), command=self.follow_route)
+        self.follow_route.grid(row=1, column=0, sticky = "NWSE",
+        pady=2.5, padx=2.5)
+
+        self.enable_all_mot = tk.Button(menu_button_frame, text="ENBL",
+        font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
+        self.enable_all_mot.grid(row=2, column=0, sticky = "NWSE",
+        pady=2.5, padx=2.5)
+
+        self.disable_all_mot = tk.Button(menu_button_frame, text="DSBL",
+        font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
+        self.disable_all_mot.grid(row=3, column=0, sticky = "NWSE",
+        pady=2.5, padx=2.5)
+
+        self.set_limits = tk.Button(menu_button_frame, text="SET",
         font=(self.fs, self.fsize), command=self.set_axis_limits)
-        self.set_limits.grid(row=3, column=0, columnspan=3, padx=(5,5), pady=(0,5))
+        self.set_limits.grid(row=4, column=0, sticky="NWSE",
+        pady=2.5, padx=2.5)
+
+        self.close_win = tk.Button(menu_button_frame, text="EXIT",
+        font=(self.fs, self.fsize), command=self.close_window)
+        self.close_win.grid(row=5, column=0, sticky = "NWSE",
+        pady=2.5, padx=2.5)
+
 
 
     def update_abs_pos_jog(self, mot):
