@@ -44,6 +44,7 @@ from tkinter import StringVar
 from tkinter import filedialog
 import threading
 import robot_control as RC
+import SPI_comm
 
 # Globális változók
 if getattr(sys, 'frozen', False):
@@ -71,6 +72,7 @@ class App():
 
         # Initialize robot
         RC.init()
+        SPI_comm.init()
 
         # Zeroing the robot
         RC.zeroing()
@@ -349,7 +351,8 @@ class App():
         self.fsize2 = 16 # Szöveg elsö sorban
         self.fsize3 = 16 # +,-,N karakterek
 
-        mot1lab = tk.Label(lim_mot1_frame, text="Motor 1", font=(self.fs, self.fsize))
+        mot1lab = tk.Label(lim_mot1_frame, text="Motor 1",
+        font=(self.fs, self.fsize))
         mot1lab.grid(row=0, column=0)
         self.mot1ent1 = tk.Entry(lim_mot1_frame, width=7,
         justify="right", font=(self.fs, self.fsize))
@@ -358,7 +361,8 @@ class App():
         justify="right", font=(self.fs, self.fsize))
         self.mot1ent2.grid(row=2, column=0, sticky="WE")
 
-        mot2lab = tk.Label(lim_mot2_frame, text="Motor 2", font=(self.fs, self.fsize))
+        mot2lab = tk.Label(lim_mot2_frame, text="Motor 2",
+        font=(self.fs, self.fsize))
         mot2lab.grid(row=0, column=1)
         self.mot2ent1 = tk.Entry(lim_mot2_frame, width=7,
         justify="right", font=(self.fs, self.fsize))
@@ -367,7 +371,8 @@ class App():
         justify="right", font=(self.fs, self.fsize))
         self.mot2ent2.grid(row=2, column=1, sticky="WE")
 
-        mot3lab = tk.Label(lim_mot3_frame, text="Motor 3", font=(self.fs, self.fsize))
+        mot3lab = tk.Label(lim_mot3_frame, text="Motor 3",
+        font=(self.fs, self.fsize))
         mot3lab.grid(row=0, column=2)
         self.mot3ent1 = tk.Entry(lim_mot3_frame, width=7,
         justify="right", font=(self.fs, self.fsize))
@@ -598,14 +603,14 @@ class App():
 
     def enable_all_mot(self):
         log.info("Enable all motors!")
-        RC.motor_enable_set(1)
+        RC.motor_enable_set(0)
         self.enable_all_mot["state"] = "disabled"
         self.disable_all_mot["state"] = "normal"
 
 
     def disable_all_mot(self):
         log.info("Disable all motors!")
-        RC.motor_enable_set(0)
+        RC.motor_enable_set(1)
         self.enable_all_mot["state"] = "normal"
         self.disable_all_mot["state"] = "disabled"
 
