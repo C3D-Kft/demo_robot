@@ -17,13 +17,13 @@ log = logging.getLogger("Main")
 
 import time
 import RPi.GPIO as gpio
-import spidev
+
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
-motor_gpio = [26, 24, 22]
-motor_dir = [40, 38, 36]
-motor_enable = [37, 35, 33]
+motor_gpio = [33, 15, 40]
+motor_dir = [35, 13, 38]
+motor_enable = [37, 11, 36]
 motor_grab = [0, 0, 0, 0]
 
 
@@ -44,50 +44,6 @@ def init():
     for k in range(0,len(gpio_array)):
         if gpio_array[k] != 0:
             gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
-
-    # SPI Chip select beállítása
-    gpio.setup(29, gpio.OUT, initial=gpio.HIGH)
-
-    ### SPI ###
-    # We only have SPI bus 0 available to us on the Pi
-    bus = 0
-
-    # Device is the chip select pin. Set to 0 or 1, depending on the connections
-    device = 1
-
-    # Enable SPI
-    spi = spidev.SpiDev()
-
-    # Open a connection to a specific bus and device (chip select pin)
-    spi.open(bus, device)
-
-    # Set SPI speed and mode
-    spi.max_speed_hz = 5000
-    spi.mode = 0b11 # CPOL=1, CPHA=1
-    spi.lsbfirst = False
-
-    msg = ""
-    data = [[0x94557], [0xD001F], [0xE0010], [0x00008], [0xA8202]]
-
-    # Set Chip select to High
-    gpio.output(29, gpio.HIGH)
-
-    for d in data:
-        log.info("Data sent: {0}".format(d))
-        # Data sending starts when chip select falls to LOW
-        gpio.output(29, gpio.LOW)
-        time.sleep(0.1)
-        spi.xfer(d)
-        time.sleep(0.1)
-        # Data sending ends when chip select rises to HIGH
-        gpio.output(29, gpio.HIGH)
-
-        msg = spi.readbytes(3)
-        log.info("Data received: {0}".format(msg))
-        time.sleep(1)
-
-    spi.close()
-    time.sleep(2)
 
 
 def dir_set(mot, dir):
