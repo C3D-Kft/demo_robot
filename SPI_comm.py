@@ -12,36 +12,37 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
+import logging
+log = logging.getLogger("Main")
+
 import time
 import spidev
 
 
+
 def init():
-    """ ... """
-
-    ### SPI ###
-    # We only have SPI bus 0 available to us on the Pi
-    bus = 0
-
-    # Device is the chip select pin. Set to 0 or 1, depending on the connections
-    device = 1
+    """ Initializes motor drivers by sending the setup
+    bytes to them via SPI communication.
+    """
 
     # Enable SPI
     spi = spidev.SpiDev()
 
     # Open a connection to a specific bus and device (chip select pin)
+    # We only have SPI bus 0 available to us on the Pi
+    # Device is the chip select pin. Set to 0 or 1, depending on the connections
+    bus = 0
+    device = 1
     spi.open(bus, device)
 
-    # Set SPI speed and mode
+    # Set SPI configs
     spi.loop = False # This is read-only on RasPi
     spi.bits_per_word = 8 # This is read-only on RasPi
-    # spi.cshigh = False
-    # spi.no_cs = True
     spi.max_speed_hz = 4800
     spi.mode = 3 # 0b11 # CPOL=1, CPHA=1
     spi.lsbfirst = False
 
-    # Random data
+    # Driver setup data
     msg = ""
     data_dec = [[607575], [851999], [917520], [8], [688642]]
     data_hex = [0x94557, 0xD001F, 0xE0010, 0x00008, 0xA8202]
@@ -52,25 +53,30 @@ def init():
     [0x00, 0x00, 0x08],
     [0x0A, 0x82, 0x02]]
 
-
-    def BytesToHex(Bytes):
-        return ''.join(["0x%02X " % x for x in Bytes]).strip()
-
-
     for d in data:
-        time.sleep(0.1)
-        print("TX:", d)
+        log.info("TX: {0}".format(d))
         recvd = spi.xfer(d)
-        print("RX:", recvd)
+        log.info("RX: {0}".format(recvd))
 
-        # a = BytesToHex(recvd)
-        # print(a)
+        # log.info(bytes_to_hex(recvd))
 
         time.sleep(0.5)
         # msg = spi.readbytes(3)
         # print(msg)
 
     spi.close()
+
+
+def hex_to_bytes(hex):
+    pass
+
+
+def bytes_to_hex(bytes):
+
+    if bytes == None:
+        return
+    else:
+        return ''.join(["0x%02X " % x for x in bytes]).strip()
 
 
 # Főprogram
