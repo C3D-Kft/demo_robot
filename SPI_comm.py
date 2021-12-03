@@ -16,6 +16,7 @@ import logging
 log = logging.getLogger("Main")
 
 import time
+import struct
 import spidev
 
 
@@ -44,40 +45,42 @@ def init():
 
     # Driver setup data
     msg = ""
-    data_dec = [[607575], [851999], [917520], [4], [688642]]
+    # data_dec = [[607575], [851999], [917520], [4], [688642]]
     data_hex = [0x94557, 0xD001F, 0xE0010, 0x00004, 0xA8200]
 
-    data = [[0x09, 0x45, 0x57],
-    [0x0D, 0x00, 0x1F],
-    [0x0E, 0x00, 0x10],
-    [0x00, 0x00, 0x04],
-    [0x0A, 0x82, 0x00]]
+    data = hex_to_bytes(data_hex)
 
     for d in data:
-        log.info("TX: {0}".format(d))
-        recvd = spi.xfer(d)
-        log.info("RX: {0}".format(recvd))
-
-        # log.info(bytes_to_hex(recvd))
+        tx = bytes_to_hex(d)
+        log.info("TX: {0}".format(tx))
+        recvd = spi.xfer(d) # Send transfer and listen for answer
+        rx = bytes_to_hex(recvd)
+        log.info("RX: {0}".format(rx))
 
         time.sleep(0.5)
-        # msg = spi.readbytes(3)
-        # print(msg)
 
     spi.close()
 
 
-def hex_to_bytes(hex):
+def hex_to_bytes(hex_list):
+    """ Convert a list of hexadecimal numbers to a list '3-byte array'. """
 
-    # for h in hex:
-    #
-    # pass
+    data = []
+
+    for h in hex_list:
+        # Convert hexa number to byte list / big-endian, 4-byte number
+        b = list(struct.pack('>i',h))
+        # Drop the first byte to make 3-byte list and add to data list
+        data.append(b[1:])
+
+    return data
 
 
 def bytes_to_hex(bytes):
+    """ Create a string of hexadecimal numbers from a byte array.  """
 
     if bytes == None:
-        return
+        return None
     else:
         return ''.join(["0x%02X " % x for x in bytes]).strip()
 
