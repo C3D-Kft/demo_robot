@@ -28,24 +28,21 @@ között lehet váltani.
 """
 
 ## Hardver parameters
-
 step_per_rev_wo_gb = 200
 gear_ratio = 5.18
 step_per_rev_gb = 1036.36
 
-# 4145.45
-# 16581.81
+# 4145.45 /x4
+# 16581.81 /x16
+# 132 654.54 /x128
 
-# 132 654.54
-
-
-motor_step = [16582, 16582, 4145]
+motor_step = [16582, 132654, 4145]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 1250 # Hz # 2500
+base_frequency = 2500 # Hz # 2500
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
@@ -237,7 +234,7 @@ def jog(mot, direction):
 
     global jogging, dir, time_unit
 
-    jog_time_unit = 10 * time_unit
+    jog_time_unit = 5 * time_unit
 
     # Precheck if motor is at limits or not
     if check_limits(mot, actual_abs_position[mot], direction) == False:
