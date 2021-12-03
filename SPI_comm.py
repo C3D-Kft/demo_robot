@@ -6,6 +6,7 @@
 * https://www.sigmdel.ca/michel/ha/rpi/spi_on_pi_en.html
 * https://stackoverflow.com/questions/15036551/best-way-to-split-a-hexadecimal
 * https://docs.python.org/3.5/library/struct.html
+* https://stackoverflow.com/questions/32675679/convert-binary-string-to-bytearray-in-python-3
 
 ---- Info ----
 C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
@@ -20,7 +21,6 @@ log = logging.getLogger("Main")
 import time
 import struct
 import spidev
-
 
 
 def init():
@@ -41,28 +41,37 @@ def init():
     # Set SPI configs
     spi.loop = False # This is read-only on RasPi
     spi.bits_per_word = 8 # This is read-only on RasPi
-    spi.max_speed_hz = 4800
+    spi.max_speed_hz = 20000
     spi.mode = 3 # 0b11 # CPOL=1, CPHA=1
     spi.lsbfirst = False
 
     # Driver setup data
     msg = ""
-    # data_dec = [[607575], [851999], [917520], [4], [688642]]
-    data_hex = [0x94557, 0xD001F, 0xE0010, 0x00002, 0xA8202]
 
-    # data = hex_to_bytes(data_hex)
+    # data_hex = [0x94557, 0xD001F, 0xE0020, 0x00001, 0xA8202]
 
-    data = [[0x09, 0x45, 0x57],
-    [0x0D, 0x00, 0x1F],
-    [0x0E, 0x00, 0x10],
-    [0x00, 0x00, 0x08],
-    [0x0A, 0x82, 0x02]]
+    DRVCTRL = "0000 0000 0000 0000 0001" # 00001
+    CHOPCONF = "1001 0100 0101 0101 0111" # 94557
+    SMARTEN = "1010 1000 0010 0000 0010" # A8202
+    SGCSCONF = "1101 0000 0000 0001 1111" # D001F
+    DRVCONF = "1110 0000 0000 0010 0000" # E0020
+
+    # Convert bitstrings to integer
+    bs_list = [CHOPCONF, SGCSCONF, DRVCONF, DRVCTRL, SMARTEN]
+
+    data_hex = []
+
+    for bs in bs_list:
+        bs = ''.join(bs.split())
+        data_hex.append( int(bs,2) )
+
+    # Convert integer list to bytearray
+    data = hex_to_bytes(data_hex)
 
     for d in data:
         tx = bytes_to_hex(d)
         log.info("TX: {0}".format(tx))
         recvd = spi.xfer(d) # Send transfer and listen for answer
-        time.sleep(0.1)
         rx = bytes_to_hex(recvd)
         log.info("RX: {0}".format(rx))
 
@@ -77,10 +86,13 @@ def hex_to_bytes(hex_list):
     data = []
 
     for h in hex_list:
-        # Convert hexa number to byte list / big-endian, 4-byte number
+        d = []
+
+        # Convert hexa number to byte list / big-endian, 4-byte int
         b = list(struct.pack('>i',h))
         # Drop the first byte to make 3-byte list and add to data list
-        data.append(b[1:])
+        for bi in b[1:]: d.append( int(bi) )
+        data.append(d)
 
     return data
 
