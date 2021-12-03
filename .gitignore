@@ -5,3 +5,5 @@ screenshot_gui.jpg
 /log/
 /DOC/
 /EXAMPLES/
+run_test.bat
+test.py
