@@ -48,14 +48,21 @@ def init():
     # Driver setup data
     msg = ""
     # data_dec = [[607575], [851999], [917520], [4], [688642]]
-    data_hex = [0x94557, 0xD001F, 0xE0010, 0x00004, 0xA8200]
+    data_hex = [0x94557, 0xD001F, 0xE0010, 0x00002, 0xA8202]
 
-    data = hex_to_bytes(data_hex)
+    # data = hex_to_bytes(data_hex)
+
+    data = [[0x09, 0x45, 0x57],
+    [0x0D, 0x00, 0x1F],
+    [0x0E, 0x00, 0x10],
+    [0x00, 0x00, 0x08],
+    [0x0A, 0x82, 0x02]]
 
     for d in data:
         tx = bytes_to_hex(d)
         log.info("TX: {0}".format(tx))
         recvd = spi.xfer(d) # Send transfer and listen for answer
+        time.sleep(0.1)
         rx = bytes_to_hex(recvd)
         log.info("RX: {0}".format(rx))
 
