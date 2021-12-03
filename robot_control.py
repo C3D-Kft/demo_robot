@@ -28,13 +28,24 @@ között lehet váltani.
 """
 
 ## Hardver parameters
-motor_step = [16576, 16576, 4144]
+
+step_per_rev_wo_gb = 200
+gear_ratio = 5.18
+step_per_rev_gb = 1036.36
+
+# 4145.45
+# 16581.81
+
+# 132 654.54
+
+
+motor_step = [16582, 16582, 4145]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 2500 # Hz
+base_frequency = 1250 # Hz # 2500
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
@@ -281,14 +292,14 @@ def motor_dir_set(mot_step):
 def motor_enable_set(enable):
     """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
 
-    # Motor 1-3 engedélyezése
+    # Motor 1-3 letiltás
     if enable == 1:
         for s in range(0,3):
             msg = smc.enable_set(s, 1)
             log.info(msg)
 
-    # Motor 1-3 letiltás
-    else:
+    # Motor 1-3 engedélyezése
+    if enable == 0:
         for s in range(0,3):
             msg = smc.enable_set(s, 0)
             log.info(msg)
