@@ -2,6 +2,7 @@
 Type=Application
 Name=Demo robot
 Comment=Run Demo robot
+Icon=/home/pi/demo_robot/demo_robot_icon.png
 Exec=lxterminal -e 'python3 /home/pi/demo_robot/robot_control_gui.py'
 StartUpNotify=true
 Terminal=false
