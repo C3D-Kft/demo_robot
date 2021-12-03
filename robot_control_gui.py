@@ -72,9 +72,7 @@ class App():
 
         # Initialize robot
         RC.init()
-        RC.motor_enable_set(1)
         SPI_comm.init()
-        RC.motor_enable_set(0)
 
         # Zeroing the robot
         RC.zeroing()
