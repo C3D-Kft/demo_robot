@@ -68,17 +68,18 @@ def dir_set(mot, dir):
 
 
 def enable_set(mot, enable):
-    """ Adott motor (0, 1, ...) engedélyezése (1) vagy letiltása (0). """
+    """ Adott motor (0, 1, ...) engedélyezése (0) vagy letiltása (1). """
 
     msg = ""
 
+    # Enable function has inverz logic - LOW: ENABLED, HIGH: DISABLED
     try:
         if enable == 0:
             gpio.output(motor_enable[mot], gpio.LOW)
-            msg = "Motor{0} letiltva!".format(mot+1)
+            msg = "Motor{0} engedélyezve!".format(mot+1)
         elif enable == 1:
             gpio.output(motor_enable[mot], gpio.HIGH)
-            msg = "Motor{0} engedélyezve!".format(mot+1)
+            msg = "Motor{0} letiltva!".format(mot+1)
 
     except:
         msg = ("Hibás engedélyezés: "
