@@ -52,9 +52,15 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     initdir = os.path.dirname(__file__)
 
+# Init SPI
+s = SPI_comm.SPI()
+
 
 class App():
     def __init__(self, master):
+
+        global s
+
         self.master = master
         self.frame = tk.Frame(self.master)
         self.master.geometry("800x460+0-19") #Ablak mérete +xpos(v)+ypos(f)
@@ -72,7 +78,8 @@ class App():
 
         # Initialize robot
         RC.init()
-        SPI_comm.init()
+        s.init()
+        s.start()
 
         # Zeroing the robot
         RC.zeroing()
@@ -392,7 +399,10 @@ class App():
     def update_abs_pos_jog(self, mot):
         """ Update abs. position when jogging! """
 
+        global s
+
         while self.jog_thread.is_alive():
+            s.readback()
             root.after(10, self.update_abs_pos(mot))
             root.after(10, root.update_idletasks())
 
@@ -653,6 +663,8 @@ class App():
 # Főprogram
 if __name__ == '__main__':
 
+    # global s
+
     # Login window init
     root = tk.Tk()
     main_prog = App(root)
@@ -660,6 +672,7 @@ if __name__ == '__main__':
     root.wm_protocol('WM_DELETE_WINDOW', main_prog.close_window)
     root.mainloop()
 
+    s.close()
     RC.cleanup()
     log.info("Program exit!")
     sys.exit()
