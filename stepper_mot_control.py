@@ -25,6 +25,7 @@ motor_gpio = [33, 15, 40]
 motor_dir = [35, 13, 38]
 motor_enable = [37, 11, 36]
 motor_grab = [0, 0, 0, 0]
+driver_pin = [7]
 
 
 def init():
@@ -38,12 +39,15 @@ def init():
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab
+    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab + driver_pin
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in range(0,len(gpio_array)):
         if gpio_array[k] != 0:
             gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
+
+    # Give power to motor driver
+    gpio.output(7, gpio.HIGH)
 
 
 def dir_set(mot, dir):
