@@ -4,6 +4,8 @@
 
 ---- Help ----
 * https://www.sigmdel.ca/michel/ha/rpi/spi_on_pi_en.html
+* https://stackoverflow.com/questions/15036551/best-way-to-split-a-hexadecimal
+* https://docs.python.org/3.5/library/struct.html
 
 ---- Info ----
 C3D Kft. - Minden jog fenntartva a birtoklásra, felhasználásra,
