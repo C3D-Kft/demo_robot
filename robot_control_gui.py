@@ -72,7 +72,9 @@ class App():
 
         # Initialize robot
         RC.init()
+        RC.motor_enable_set(1)
         SPI_comm.init()
+        RC.motor_enable_set(0)
 
         # Zeroing the robot
         RC.zeroing()
@@ -165,23 +167,6 @@ class App():
         axis_3_unit_label.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,0))
 
-        # Enable, disable gombok
-        # act_pos_button_frame = tk.Frame(actual_pos_panel)
-        # act_pos_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
-        # act_pos_button_frame.grid_columnconfigure(0, weight=1)
-        # act_pos_button_frame.grid_columnconfigure(1, weight=1)
-        #
-        # self.enable_all_mot = tk.Button(act_pos_button_frame, text="ENBL",
-        # font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
-        # self.enable_all_mot.grid(row=0, column=0, sticky = "NWSE",
-        # pady=(5,0), padx=(2.5,2.5))
-        #
-        # self.disable_all_mot = tk.Button(act_pos_button_frame, text="DSBL",
-        # font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
-        # self.disable_all_mot.grid(row=0, column=1, sticky = "NWSE",
-        # pady=(5,0), padx=(2.5,2.5))
-
-
         # Second grid
         send_to_pos_panel.grid()
 
@@ -230,21 +215,6 @@ class App():
         anchor="w", font=(self.fs, self.fsize))
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
-
-        # stp_button_frame = tk.Frame(send_to_pos_panel)
-        # stp_button_frame.grid(row = 1, column = 0, sticky = 'NWSE')
-        # stp_button_frame.grid_columnconfigure(0, weight=1)
-        # stp_button_frame.grid_columnconfigure(1, weight=1)
-
-        # self.send_to_position = tk.Button(stp_button_frame, text="Start",
-        # font=(self.fs, self.fsize), command=self.send_to_position)
-        # self.send_to_position.grid(row=0, column=0, sticky = "NWSE",
-        # pady=(5,0), padx=(2.5,2.5))
-        #
-        # self.follow_route = tk.Button(stp_button_frame, text="Program",
-        # font=(self.fs, self.fsize), command=self.follow_route)
-        # self.follow_route.grid(row=0, column=1, sticky = "NWSE",
-        # pady=(5,0), padx=(2.5,2.5))
 
 
         # Third grid
