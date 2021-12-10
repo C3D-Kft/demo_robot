@@ -54,8 +54,6 @@ class SPI():
         # Driver setup data
         msg = ""
 
-        # data_hex = [0x94557, 0xD001F, 0xE0020, 0x00001, 0xA8202]
-
         DRVCTRL = "0000 0000 0000 0000 0001" # 00001
         CHOPCONF = "1001 0100 0101 0101 0111" # 94557
         SMARTEN = "1010 1000 0010 0000 0010" # A8202
