@@ -75,10 +75,10 @@ class SPI():
         data = int_to_bytes(data_int)
 
         for d in data:
-            tx = bytes_to_hex(d)
+            tx = bytearray_to_bitstring(d)
             log.info("TX: {0}".format(tx))
             recvd = self.spi.xfer(d) # Send transfer and listen for answer
-            rx = bytes_to_hex(recvd)
+            rx = bytearray_to_bitstring(recvd)
             log.info("RX: {0}".format(rx))
             time.sleep(0.5)
 
@@ -89,17 +89,52 @@ class SPI():
 
         rbck = ''.join(READBACK.split())
         rbck = int(rbck,2)
-
         data = int_to_bytes([rbck])
 
-        for d in data:
-            rb = self.spi.xfer(d) # Send transfer and listen for answer
-            print(rb)
-
+        rb = self.spi.xfer(data[0]) # Send transfer and listen for answer
+        rb = bytearray_to_bitstring(rb)
+        log.info("RBCK: {0}".format(rb))
+        log_readback(rb)
 
 
     def close(self):
         self.spi.close()
+
+
+def bytearray_to_bitstring(bytearray):
+
+    if bytearray == None:
+        return None
+
+    s = ""
+    for b in bytearray:
+        s += "{:08b}-".format(b)
+
+    return s[4:-1]
+
+
+def log_readback(bitstring):
+
+    bitstring = bitstring.replace("-","")
+    bitstring = bitstring.strip()
+
+    if bitstring[19] == "1": # SG
+        log.warning("StallGuard2 threshold has been reached!")
+
+    if bitstring[18] == "1": # OT
+        log.critical("Overtemperature shutdown!")
+
+    if bitstring[17] == "1": # OTPW
+        log.warning("Overtemperature warning!")
+
+    if (bitstring[16] == "1") or (bitstring[15] == "1"): # S2GA / S2GB
+        log.critical("Short to GND condition on high-side transistors!")
+
+    if (bitstring[14] == "1") or (bitstring[13] == "1"): # OLA / OLB
+        log.info("Open load condition!")
+
+    if bitstring[12] == "1": # STST
+        log.warning("Standstill condition!")
 
 
 def int_to_bytes(int_list):
@@ -118,13 +153,13 @@ def int_to_bytes(int_list):
     return data
 
 
-def bytes_to_hex(bytes):
-    """ Create a string of hexadecimal numbers from a byte array. """
-
-    if bytes == None:
-        return None
-    else:
-        return ''.join(["0x%02X " % x for x in bytes]).strip()
+# def bytes_to_hex(bytes):
+#     """ Create a string of hexadecimal numbers from a byte array. """
+#
+#     if bytes == None:
+#         return None
+#     else:
+#         return ''.join(["0x%02X " % x for x in bytes]).strip()
 
 
 # Főprogram
