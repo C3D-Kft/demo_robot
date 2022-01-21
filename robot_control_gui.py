@@ -53,13 +53,13 @@ elif __file__:
     initdir = os.path.dirname(__file__)
 
 # Init SPI
-s = SPI_comm.SPI()
+spi = SPI_comm.SPI()
 
 
 class App():
     def __init__(self, master):
 
-        global s
+        global spi
 
         self.master = master
         self.frame = tk.Frame(self.master)
@@ -78,8 +78,8 @@ class App():
 
         # Initialize robot
         RC.init()
-        s.init()
-        s.start()
+        spi.init()
+        # spi.start()
 
         # Zeroing the robot
         RC.zeroing()
@@ -399,10 +399,10 @@ class App():
     def update_abs_pos_jog(self, mot):
         """ Update abs. position when jogging! """
 
-        global s
+        global spi
 
         while self.jog_thread.is_alive():
-            s.readback()
+            spi.readback()
             root.after(10, self.update_abs_pos(mot))
             root.after(10, root.update_idletasks())
 
@@ -663,8 +663,6 @@ class App():
 # Főprogram
 if __name__ == '__main__':
 
-    # global s
-
     # Login window init
     root = tk.Tk()
     main_prog = App(root)
@@ -672,7 +670,7 @@ if __name__ == '__main__':
     root.wm_protocol('WM_DELETE_WINDOW', main_prog.close_window)
     root.mainloop()
 
-    s.close()
+    spi.close()
     RC.cleanup()
     log.info("Program exit!")
     sys.exit()
