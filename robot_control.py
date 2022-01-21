@@ -27,7 +27,10 @@ sixteenth step (16576) beállítások
 között lehet váltani.
 """
 
-## Hardver parameters
+## Gripper paramters
+grip_step_per_rev = 64
+
+## Motor parameters
 step_per_rev_wo_gb = 200
 gear_ratio = 5.18
 step_per_rev_gb = 1036.36
@@ -331,6 +334,24 @@ def set_limits(limits_min, limits_max):
     axis_limits_min = limits_min
     axis_limits_max = limits_max
     log.info("Limits has been set!")
+
+
+def grip_release():
+    """ Turn gripper motor half revolution to force open the gripper
+    arms against the spring.
+    """
+
+    for m in range(32):
+         step_gripper(1)
+
+
+def grip_hold():
+    """ Turn gripper motor half revolution to let the springs close the gripper
+    arms.
+    """
+
+    for m in range(32):
+         step_gripper(0)
 
 
 def init(): # Always the first function to call!

@@ -571,11 +571,15 @@ class App():
 
 
     def grip_release(self):
-        log.info("Release grip!")
+        # 180 fokos fordulat egyik irányba
+        RC.grip_release()
+        log.info("Grip released!")
 
 
     def grip_hold(self):
-        log.info("Hold grip!")
+        # 180 fokos fordulat másik irányba
+        RC.grip_hold()
+        log.info("Grip hold!")
 
 
     def enable_all_mot(self):

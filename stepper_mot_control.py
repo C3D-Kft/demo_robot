@@ -121,29 +121,29 @@ def step_gripper(dir):
     (CW (1) vagy CCW (0)).
     """
 
-    # G_1 = Coil_1
-    # G_2 = Coil_2
-    # G_3 = Coil_3
-    # G_4 = Coil_4
-
     step_table = [
-    [gpio.LOW,gpio.LOW,gpio.LOW,1], #4
-    [gpio.LOW,gpio.LOW,1,1], #4-3
-    [gpio.LOW,gpio.LOW,1,gpio.LOW], #3
-    [gpio.LOW,1,1,gpio.LOW], #3-2
-    [gpio.LOW,1,gpio.LOW,gpio.LOW], #2
-    [1,1,gpio.LOW,gpio.LOW], #1-2
-    [1,gpio.LOW,gpio.LOW,gpio.LOW], #1
-    [1,gpio.LOW,gpio.LOW,1] #1-4
+    [gpio.LOW, gpio.LOW, gpio.LOW, gpio.HIGH], #4
+    [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.HIGH], #4-3
+    [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.LOW], #3
+    [gpio.LOW, gpio.HIGH, gpio.HIGH, gpio.LOW], #3-2
+    [gpio.LOW, gpio.HIGH, gpio.LOW, gpio.LOW], #2
+    [gpio.HIGH, gpio.HIGH, gpio.LOW, gpio.LOW], #1-2
+    [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.LOW], #1
+    [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.HIGH] #1-4
     ]
 
     if dir == 1:
         GRIPPER_STATUS += 1
+        if GRIPPER_STATUS == 8: # If out-of-range upwards
+            GRIPPER_STATUS = 0
 
     elif dir == 0:
         GRIPPER_STATUS -= 1
+        if GRIPPER_STATUS == -1: # If out-of-range downwards
+            GRIPPER_STATUS = 7
 
-    for k in [0,1,2,3]:
+    # Set the coil pin output according to the actual step table
+    for k in range(4):
         gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
 
 
