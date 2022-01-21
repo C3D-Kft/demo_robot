@@ -21,6 +21,8 @@ log = logging.getLogger("Main")
 import time
 import struct
 import spidev
+import stepper_mot_control as smc
+
 
 
 class SPI():
@@ -31,12 +33,16 @@ class SPI():
         bytes to them via SPI communication.
         """
 
+        self.MOTOR = 0 # Choosen motor number (1-3, default zero)
+
         # Enable SPI
         self.spi = spidev.SpiDev()
 
         # Open a connection to a specific bus and device (chip select pin)
-        # We only have SPI bus 0 available to us on the Pi
-        # Device is the chip select pin. Set to 0 or 1, depending on the connections
+        # We only have SPI bus 0 available on the RPi
+        # Device is the chip select pin. Set to 0 or 1, depending on the RPi connections
+        # The chip select pin is also connected to a multiplexer on the PCB,
+        # so selector pins are needed to choose which motor driver to use
         bus = 0
         device = 1
         self.spi.open(bus, device)
@@ -48,10 +54,16 @@ class SPI():
         self.spi.mode = 3 # 0b11 # CPOL=1, CPHA=1
         self.spi.lsbfirst = False
 
+        for i in [1,2,3]:
+            self.spi_select(i)
+            self.start(i)
+
 
     def start(self):
+        """ Send motor driver configuration data
+        to the selected motor driver.
+        """
 
-        # Driver setup data
         msg = ""
 
         DRVCTRL = "0000 0000 0000 0000 0001" # 00001
@@ -60,95 +72,112 @@ class SPI():
         SGCSCONF = "1101 0000 0000 0001 1111" # D001F
         DRVCONF = "1110 0000 0000 0010 0000" # E0020
 
-        # Convert bitstrings to integer
         bs_list = [CHOPCONF, SGCSCONF, DRVCONF, DRVCTRL, SMARTEN]
 
         data_int = []
 
+        # Convert bitstrings to integer
         for bs in bs_list:
-            bs = ''.join(bs.split())
-            data_int.append(int(bs,2))
+            bs = ''.join(bs.split()) # Split bitstring to list
+            data_int.append(int(bs,2)) # Convert binary value string to integer (decimal)
 
         # Convert integer list to bytearray
-        data = int_to_bytes(data_int)
+        data = self.int_to_bytes(data_int)
 
         for d in data:
-            tx = bytearray_to_bitstring(d)
+            tx = self.bytearray_to_bitstring(d)
             log.info("TX: {0}".format(tx))
             recvd = self.spi.xfer(d) # Send transfer and listen for answer
-            rx = bytearray_to_bitstring(recvd)
+            rx = self.bytearray_to_bitstring(recvd)
             log.info("RX: {0}".format(rx))
             time.sleep(0.5)
 
 
     def readback(self):
 
-        READBACK = "0100 0000 0000 0000 0000" # 00001
+        READBACK = "0100 0000 0000 0000 0000" # xxxxx
 
         rbck = ''.join(READBACK.split())
         rbck = int(rbck,2)
-        data = int_to_bytes([rbck])
+        data = self.int_to_bytes([rbck])
 
         rb = self.spi.xfer(data[0]) # Send transfer and listen for answer
-        rb = bytearray_to_bitstring(rb)
+        rb = self.bytearray_to_bitstring(rb)
         log.info("RBCK: {0}".format(rb))
-        log_readback(rb)
+        self.log_readback(rb)
+
+
+    def spi_select(self, mot):
+        """ Sets SPI selector pins and flag according to the selected motor. """
+
+        if mot not in [1,2,3]:
+            log.warning("Invalid motor selected! ({0})".format(mot))
+            return
+
+        smc.spi_select(mot)
+        self.MOTOR = mot
+
+
+    def bytearray_to_bitstring(self, bytearray):
+
+        if bytearray == None:
+            return None
+
+        s = ""
+        for b in bytearray:
+            s += "{:08b}-".format(b)
+
+        return s[4:-1]
+
+
+    def log_readback(self, bitstring):
+        """ Decodes the 20-bit long readback string from motor driver,
+        and logs errors or warnings if any.
+        """
+
+        bitstring = bitstring.replace("-","")
+        bitstring = bitstring.strip()
+
+        motor = "Motor {0}: ".format(self.MOTOR)
+
+        if bitstring[19] == "1": # SG
+            log.warning(motor + "StallGuard2 threshold has been reached!")
+
+        if bitstring[18] == "1": # OT
+            log.critical(motor + "Overtemperature shutdown!")
+
+        if bitstring[17] == "1": # OTPW
+            log.warning(motor + "Overtemperature warning!")
+
+        if (bitstring[16] == "1") or (bitstring[15] == "1"): # S2GA / S2GB
+            log.critical(motor + "Short to GND condition" +
+            " on high-side transistors!")
+
+        if (bitstring[14] == "1") or (bitstring[13] == "1"): # OLA / OLB
+            log.info(motor + "Open load condition!")
+
+        if bitstring[12] == "1": # STST
+            log.warning(motor + "Standstill condition!")
+
+
+    def int_to_bytes(self, int_list):
+        """ Convert a list of integers to a list '3-byte array'. """
+
+        data = []
+
+        for k in int_list:
+            d = []
+            # Convert hexa number to byte list / big-endian, 4-byte int
+            b = list(struct.pack('>i',k))
+            # Drop the first byte to make 3-byte list and add to data list
+            for bi in b[1:]: d.append(int(bi))
+            data.append(d)
+
+        return data
 
 
     def close(self):
         self.spi.close()
-
-
-def bytearray_to_bitstring(bytearray):
-
-    if bytearray == None:
-        return None
-
-    s = ""
-    for b in bytearray:
-        s += "{:08b}-".format(b)
-
-    return s[4:-1]
-
-
-def log_readback(bitstring):
-
-    bitstring = bitstring.replace("-","")
-    bitstring = bitstring.strip()
-
-    if bitstring[19] == "1": # SG
-        log.warning("StallGuard2 threshold has been reached!")
-
-    if bitstring[18] == "1": # OT
-        log.critical("Overtemperature shutdown!")
-
-    if bitstring[17] == "1": # OTPW
-        log.warning("Overtemperature warning!")
-
-    if (bitstring[16] == "1") or (bitstring[15] == "1"): # S2GA / S2GB
-        log.critical("Short to GND condition on high-side transistors!")
-
-    if (bitstring[14] == "1") or (bitstring[13] == "1"): # OLA / OLB
-        log.info("Open load condition!")
-
-    if bitstring[12] == "1": # STST
-        log.warning("Standstill condition!")
-
-
-def int_to_bytes(int_list):
-    """ Convert a list of integers to a list '3-byte array'. """
-
-    data = []
-
-    for h in int_list:
-        d = []
-        # Convert hexa number to byte list / big-endian, 4-byte int
-        b = list(struct.pack('>i',h))
-        # Drop the first byte to make 3-byte list and add to data list
-        for bi in b[1:]: d.append(int(bi))
-        data.append(d)
-
-    return data
 
 
 # def bytes_to_hex(bytes):
@@ -171,7 +200,6 @@ if __name__ == "__main__":
         log = logging.getLogger("Main")
         log.info("Program started!")
 
-        # init()
 
     finally:
         print("Finished!")
