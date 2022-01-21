@@ -107,13 +107,13 @@ def enable_set(mot, enable):
         return msg
 
 
-def step_mot(mot, level):
-    """ Adott motor (0, 1, ...) lépésjelének kiadása (fel vagy le). """
-
-    if level == 1:
-        gpio.output(motor_gpio[mot], gpio.HIGH)
-    elif level == 0:
-        gpio.output(motor_gpio[mot], gpio.LOW)
+# def step_mot(mot, level):
+#     """ Adott motor (0, 1, ...) lépésjelének kiadása (fel vagy le). """
+#
+#     if level == 1:
+#         gpio.output(motor_gpio[mot], gpio.HIGH)
+#     elif level == 0:
+#         gpio.output(motor_gpio[mot], gpio.LOW)
 
 
 def onestep_mot(mot, time_unit=0.1):
