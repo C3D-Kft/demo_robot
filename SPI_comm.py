@@ -96,8 +96,11 @@ class SPI():
 
 
     def readback(self):
+        """ Sends readback string to motor driver, and checks the answer
+        for errors and warnings.
+        """
 
-        READBACK = "0100 0000 0000 0000 0000" # xxxxx
+        READBACK = "0100 0000 0000 0000 0000" # 40000
 
         rbck = ''.join(READBACK.split())
         rbck = int(rbck,2)
