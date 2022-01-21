@@ -79,7 +79,6 @@ class App():
         # Initialize robot
         RC.init()
         spi.init()
-        # spi.start()
 
         # Zeroing the robot
         RC.zeroing()
