@@ -21,7 +21,7 @@ import RPi.GPIO as gpio
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
-motor_gpio = [38, 10, 15] # 38, 10, 15
+motor_step = [38, 10, 15] # 38, 10, 15
 motor_dir = [40, 12, 13] # 35, 13, 38
 motor_enable = [36, 8, 11] # 37, 11, 36
 motor_grip = [37, 35, 33, 31] # 37, 35, 33, 31
@@ -40,7 +40,7 @@ def init():
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grip + spi_select
+    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in gpio_array:
@@ -111,12 +111,15 @@ def enable_set(mot, enable):
 #     """ Adott motor (0, 1, ...) lépésjelének kiadása (fel vagy le). """
 #
 #     if level == 1:
-#         gpio.output(motor_gpio[mot], gpio.HIGH)
+#         gpio.output(motor_step[mot], gpio.HIGH)
 #     elif level == 0:
-#         gpio.output(motor_gpio[mot], gpio.LOW)
+#         gpio.output(motor_step[mot], gpio.LOW)
+
 
 def step_gripper(dir):
-    """ Gripper motor iránybeállítása (CW (1) vagy CCW (0)). """
+    """ Gripper motor léptetése az iránybeállításnak megfelelően
+    (CW (1) vagy CCW (0)).
+    """
 
     # G_1 = Coil_1
     # G_2 = Coil_2
@@ -124,44 +127,32 @@ def step_gripper(dir):
     # G_4 = Coil_4
 
     step_table = [
-    [0,0,0,1], #4
-    [0,0,1,1], #4-3
-    [0,0,1,0], #3
-    [0,1,1,0], #3-2
-    [0,1,0,0], #2
-    [1,1,0,0], #1-2
-    [1,0,0,0], #1
-    [1,0,0,1] #1-4
+    [gpio.LOW,gpio.LOW,gpio.LOW,1], #4
+    [gpio.LOW,gpio.LOW,1,1], #4-3
+    [gpio.LOW,gpio.LOW,1,gpio.LOW], #3
+    [gpio.LOW,1,1,gpio.LOW], #3-2
+    [gpio.LOW,1,gpio.LOW,gpio.LOW], #2
+    [1,1,gpio.LOW,gpio.LOW], #1-2
+    [1,gpio.LOW,gpio.LOW,gpio.LOW], #1
+    [1,gpio.LOW,gpio.LOW,1] #1-4
     ]
-
-
-    # for k in range(0,len(gpio_array)):
-    #     if gpio_array[k] != 0:
-    #         gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
-
 
     if dir == 1:
         GRIPPER_STATUS += 1
 
-        for k in motor_grip:
-
-
-
-        pass
-
     elif dir == 0:
         GRIPPER_STATUS -= 1
 
-
-        pass
+    for k in [0,1,2,3]:
+        gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
 
 
 def onestep_mot(mot, time_unit=0.1):
     """ Négszögjel generálása egy adott motor tengely számára. """
 
-    gpio.output(motor_gpio[mot], gpio.HIGH)
+    gpio.output(motor_step[mot], gpio.HIGH)
     time.sleep(time_unit)
-    gpio.output(motor_gpio[mot], gpio.LOW)
+    gpio.output(motor_step[mot], gpio.LOW)
     time.sleep(time_unit)
 
 
