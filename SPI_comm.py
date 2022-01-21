@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-#
 
-""" SPI communication for motor driver setup.
+""" SPI communication for TMC2660 motor driver setup. The module can configure
+multiple motor drivers via an external function.
 
 ---- Help ----
 * https://www.sigmdel.ca/michel/ha/rpi/spi_on_pi_en.html
@@ -65,24 +66,25 @@ class SPI():
         """
 
         msg = ""
+        data_int = [] # List of bitstrings in decimal integer format
 
+        # Configuration bits according to TMC2660 documentation:
         DRVCTRL = "0000 0000 0000 0000 0001" # 00001
         CHOPCONF = "1001 0100 0101 0101 0111" # 94557
         SMARTEN = "1010 1000 0010 0000 0010" # A8202
         SGCSCONF = "1101 0000 0000 0001 1111" # D001F
         DRVCONF = "1110 0000 0000 0010 0000" # E0020
 
+        # Joins bitstrings to list
         bs_list = [CHOPCONF, SGCSCONF, DRVCONF, DRVCTRL, SMARTEN]
 
-        data_int = []
-
-        # Convert bitstrings to integer
+        # Convert bitstrings to integer (decimal)
         for bs in bs_list:
-            bs = ''.join(bs.split()) # Split bitstring to list
-            data_int.append(int(bs,2)) # Convert binary value string to integer (decimal)
+            bs = ''.join(bs.split()) # Remove spaces from bitstring
+            data_int.append(int(bs,2)) # Convert bitstring to integer (decimal)
 
-        # Convert integer list to bytearray
-        data = self.int_to_bytes(data_int)
+        # Convert integer list to 3-byte array (list)
+        data = self.int_to_bytearray(data_int)
 
         for d in data:
             tx = self.bytearray_to_bitstring(d)
@@ -99,12 +101,16 @@ class SPI():
 
         rbck = ''.join(READBACK.split())
         rbck = int(rbck,2)
-        data = self.int_to_bytes([rbck])
+        data = self.int_to_bytearray([rbck])
 
-        rb = self.spi.xfer(data[0]) # Send transfer and listen for answer
-        rb = self.bytearray_to_bitstring(rb)
-        log.info("RBCK: {0}".format(rb))
-        self.log_readback(rb)
+        # Sends readback to each motor
+        for i in [1,2,3]:
+            self.spi_select(i)
+
+            rb = self.spi.xfer(data[0]) # Send transfer and listen for answer
+            rb = self.bytearray_to_bitstring(rb)
+            log.info("RBCK: {0}".format(rb))
+            self.log_readback(rb)
 
 
     def spi_select(self, mot):
@@ -119,20 +125,24 @@ class SPI():
 
 
     def bytearray_to_bitstring(self, bytearray):
+        """ Converts the given 3-byte array to a 20-bit bitstring.
+
+        The function converts each byte to an 8-bit long bitstring, then joins
+        them. The first 4 digit can be skipped, because according to the TMC2660
+        documentation, its always zero.
+        """
 
         if bytearray == None:
             return None
-
         s = ""
         for b in bytearray:
             s += "{:08b}-".format(b)
-
         return s[4:-1]
 
 
     def log_readback(self, bitstring):
         """ Decodes the 20-bit long readback string from motor driver,
-        and logs errors or warnings if any.
+        and logs errors or warnings if any. More info in TMC2660 docs.
         """
 
         bitstring = bitstring.replace("-","")
@@ -160,14 +170,26 @@ class SPI():
             log.warning(motor + "Standstill condition!")
 
 
-    def int_to_bytes(self, int_list):
-        """ Convert a list of integers to a list '3-byte array'. """
+    def int_to_bytearray(self, int_list):
+        """ Convert a list of integers (decimal) to a 3-byte list, which can be
+        sent with the SpiDev module to motor drivers.
+
+        The struct function first converts the integer to a list of 4-bytes
+        (default behavior). From the raw bitstrings, we know that, the first
+        byte is always zero, so the first element can be dropped.
+
+        Also, if more than 20 bits are sent to the TMC2660, only the last 20
+        bits received before the rising edge of CSN are recognized as the
+        command. Most significant digit must be sent first. Therefore, the
+        further manipulation of the 3-byte (24 bit) to 2,5-byte (20 bit) is
+        not needed.
+        """
 
         data = []
 
         for k in int_list:
             d = []
-            # Convert hexa number to byte list / big-endian, 4-byte int
+            # Convert an integer (decimal) value to a 4-byte list (big-endian),
             b = list(struct.pack('>i',k))
             # Drop the first byte to make 3-byte list and add to data list
             for bi in b[1:]: d.append(int(bi))
@@ -177,16 +199,8 @@ class SPI():
 
 
     def close(self):
+        """ Close SPI communication. """
         self.spi.close()
-
-
-# def bytes_to_hex(bytes):
-#     """ Create a string of hexadecimal numbers from a byte array. """
-#
-#     if bytes == None:
-#         return None
-#     else:
-#         return ''.join(["0x%02X " % x for x in bytes]).strip()
 
 
 # Főprogram
