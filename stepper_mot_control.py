@@ -21,11 +21,11 @@ import RPi.GPIO as gpio
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
-motor_gpio = [33, 15, 40]
-motor_dir = [35, 13, 38]
-motor_enable = [37, 11, 36]
-motor_grab = [0, 0, 0, 0]
-driver_pin = [7]
+motor_gpio = [38, 10, 15] # 38, 10, 15
+motor_dir = [40, 12, 13] # 35, 13, 38
+motor_enable = [36, 8, 11] # 37, 11, 36
+motor_grab = [37, 35, 33, 31] # 37, 35, 33, 31
+spi_select = [18, 16]
 
 
 def init():
@@ -39,15 +39,29 @@ def init():
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab + driver_pin
+    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab + spi_select
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in range(0,len(gpio_array)):
         if gpio_array[k] != 0:
             gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
 
-    # Give power to motor driver
-    gpio.output(7, gpio.HIGH)
+
+def spi_select(mot):
+    """ Adott motorhoz tartozó SPI választó kombinációk. """
+
+    # spi_select = [18, 16]
+    if mot == 1:
+        gpio.output(spi_select[0], gpio.HIGH)
+        gpio.output(spi_select[1], gpio.LOW)
+
+    if mot == 2:
+        gpio.output(spi_select[0], gpio.LOW)
+        gpio.output(spi_select[1], gpio.HIGH)
+
+    if mot == 3:
+        gpio.output(spi_select[0], gpio.HIGH)
+        gpio.output(spi_select[1], gpio.HIGH)
 
 
 def dir_set(mot, dir):
