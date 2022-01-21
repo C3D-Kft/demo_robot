@@ -47,7 +47,7 @@ def init():
             gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
 
 
-def spi_select(mot):
+def select_spi(mot):
     """ Adott motorhoz tartozó SPI választó kombinációk. """
 
     # spi_select = [18, 16]
@@ -114,6 +114,10 @@ def enable_set(mot, enable):
 #         gpio.output(motor_gpio[mot], gpio.HIGH)
 #     elif level == 0:
 #         gpio.output(motor_gpio[mot], gpio.LOW)
+
+def step_grabber():
+
+    pass
 
 
 def onestep_mot(mot, time_unit=0.1):

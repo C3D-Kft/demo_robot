@@ -56,8 +56,8 @@ class SPI():
         self.spi.lsbfirst = False
 
         for i in [1,2,3]:
-            self.spi_select(i)
-            self.start(i)
+            self.select_spi(i)
+            self.start()
 
 
     def start(self):
@@ -108,7 +108,7 @@ class SPI():
 
         # Sends readback to each motor
         for i in [1,2,3]:
-            self.spi_select(i)
+            self.select_spi(i)
 
             rb = self.spi.xfer(data[0]) # Send transfer and listen for answer
             rb = self.bytearray_to_bitstring(rb)
@@ -116,14 +116,14 @@ class SPI():
             self.log_readback(rb)
 
 
-    def spi_select(self, mot):
+    def select_spi(self, mot):
         """ Sets SPI selector pins and flag according to the selected motor. """
 
         if mot not in [1,2,3]:
             log.warning("Invalid motor selected! ({0})".format(mot))
             return
 
-        smc.spi_select(mot)
+        smc.select_spi(mot)
         self.MOTOR = mot
 
 
