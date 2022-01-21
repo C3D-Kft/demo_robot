@@ -24,8 +24,10 @@ import RPi.GPIO as gpio
 motor_gpio = [38, 10, 15] # 38, 10, 15
 motor_dir = [40, 12, 13] # 35, 13, 38
 motor_enable = [36, 8, 11] # 37, 11, 36
-motor_grab = [37, 35, 33, 31] # 37, 35, 33, 31
+motor_grip = [37, 35, 33, 31] # 37, 35, 33, 31
 spi_select = [18, 16]
+
+GRIPPER_STATUS = 0
 
 
 def init():
@@ -33,24 +35,22 @@ def init():
     a fenti paraméterek alapján.
     """
 
-
     gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
     # A gpio.BCM - Broadcom pin számozás hardverspecifikus ezért változhat!
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grab + spi_select
+    gpio_array = motor_gpio + motor_dir + motor_enable + motor_grip + spi_select
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
-    for k in range(0,len(gpio_array)):
-        if gpio_array[k] != 0:
-            gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
+    for k in gpio_array:
+        if k != 0:
+            gpio.setup(k, gpio.OUT, initial=gpio.LOW)
 
 
 def select_spi(mot):
     """ Adott motorhoz tartozó SPI választó kombinációk. """
 
-    # spi_select = [18, 16]
     if mot == 1:
         gpio.output(spi_select[0], gpio.HIGH)
         gpio.output(spi_select[1], gpio.LOW)
@@ -115,9 +115,45 @@ def enable_set(mot, enable):
 #     elif level == 0:
 #         gpio.output(motor_gpio[mot], gpio.LOW)
 
-def step_grabber():
+def step_gripper(dir):
+    """ Gripper motor iránybeállítása (CW (1) vagy CCW (0)). """
 
-    pass
+    # G_1 = Coil_1
+    # G_2 = Coil_2
+    # G_3 = Coil_3
+    # G_4 = Coil_4
+
+    step_table = [
+    [0,0,0,1], #4
+    [0,0,1,1], #4-3
+    [0,0,1,0], #3
+    [0,1,1,0], #3-2
+    [0,1,0,0], #2
+    [1,1,0,0], #1-2
+    [1,0,0,0], #1
+    [1,0,0,1] #1-4
+    ]
+
+
+    # for k in range(0,len(gpio_array)):
+    #     if gpio_array[k] != 0:
+    #         gpio.setup(gpio_array[k], gpio.OUT, initial=gpio.LOW)
+
+
+    if dir == 1:
+        GRIPPER_STATUS += 1
+
+        for k in motor_grip:
+
+
+
+        pass
+
+    elif dir == 0:
+        GRIPPER_STATUS -= 1
+
+
+        pass
 
 
 def onestep_mot(mot, time_unit=0.1):
