@@ -45,7 +45,7 @@ class SPI():
         # The chip select pin is also connected to a multiplexer on the PCB,
         # so selector pins are needed to choose which motor driver to use
         bus = 0
-        device = 1
+        device = 0
         self.spi.open(bus, device)
 
         # Set SPI configs
@@ -55,9 +55,15 @@ class SPI():
         self.spi.mode = 3 # 0b11 # CPOL=1, CPHA=1
         self.spi.lsbfirst = False
 
+        log.info("Initializing motor drivers ...")
+
         for i in [1,2,3]:
             self.select_spi(i)
+            log.info("Initialize motor driver {0} ...".format(i))
+            time.sleep(1)
             self.start()
+
+        log.info("Initializing complete!")
 
 
     def start(self):
