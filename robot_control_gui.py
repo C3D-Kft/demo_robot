@@ -88,9 +88,9 @@ class App():
         ready = input("")
 
 
-        for i in range(WAIT_FOR_POWER):
-            log.info("Waiting for Power On ... {0}".format(WAIT_FOR_POWER-i))
-            time.sleep(WAIT_FOR_POWER-i)
+        # for i in range(WAIT_FOR_POWER):
+        #     log.info("Waiting for Power On ... {0}".format(WAIT_FOR_POWER-i))
+        #     time.sleep(WAIT_FOR_POWER-i)
 
         # Initialize SPIP
         spi.init()
@@ -416,7 +416,8 @@ class App():
         global spi
 
         while self.jog_thread.is_alive():
-            spi.readback()
+            # TODO: Readbacket átdolgozni, hogy ritkább legyen
+            # spi.readback()
             root.after(10, self.update_abs_pos(mot))
             root.after(10, root.update_idletasks())
 

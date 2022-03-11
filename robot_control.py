@@ -237,7 +237,8 @@ def jog(mot, direction):
 
     global jogging, dir, time_unit
 
-    jog_time_unit = 5 * time_unit
+    # TODO: visszakorrigálni, ha kész a tesztelés
+    jog_time_unit = 1 * time_unit
 
     # Precheck if motor is at limits or not
     if check_limits(mot, actual_abs_position[mot], direction) == False:
