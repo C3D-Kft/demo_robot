@@ -39,7 +39,7 @@ step_per_rev_gb = 1036.36
 # 16581.81 /x16
 # 132 654.54 /x128
 
-motor_step = [16582, 132654, 4145]
+motor_step = [16582, 16582, 16582]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
@@ -341,8 +341,9 @@ def grip_release():
     arms against the spring.
     """
 
-    for m in range(32):
-         step_gripper(1)
+    # for m in range(0,32):
+    smc.step_gripper(1)
+    # print("Step: {0}".format(m))
 
 
 def grip_hold():
@@ -350,16 +351,16 @@ def grip_hold():
     arms.
     """
 
-    for m in range(32):
-         step_gripper(0)
+    #for m in range(0,32):
+    smc.step_gripper(0)
+    # print("Step: {0}".format(m))
 
 
 def init(): # Always the first function to call!
     """ First function to call. This func. initializes the GPIO outputs. """
 
-    log.info("Robot initialized!")
     smc.init()
-    pass
+    log.info("Robot initialized!")
 
 
 def zeroing():
@@ -372,7 +373,6 @@ def cleanup():
 
     log.info("Robot GPIOs cleaned up!")
     smc.cleanup()
-    pass
 
 
 
