@@ -39,6 +39,7 @@ log.info("Program started!")
 # Modulok betöltése a logolás indítása után!
 import os
 import sys
+import time
 import tkinter as tk
 from tkinter import StringVar
 from tkinter import filedialog
@@ -51,6 +52,8 @@ if getattr(sys, 'frozen', False):
     initdir = os.path.dirname(sys.executable)
 elif __file__:
     initdir = os.path.dirname(__file__)
+
+WAIT_FOR_POWER = 5
 
 # Init SPI
 spi = SPI_comm.SPI()
@@ -77,7 +80,19 @@ class App():
         self.pos3 = StringVar()
 
         # Initialize robot
+        # Initialize GPIOs
         RC.init()
+
+        log.info("GPIO initialization complete!")
+        log.info("Waiting for Power On! Press any key to continue!")
+        ready = input("")
+
+
+        for i in range(WAIT_FOR_POWER):
+            log.info("Waiting for Power On ... {0}".format(WAIT_FOR_POWER-i))
+            time.sleep(WAIT_FOR_POWER-i)
+
+        # Initialize SPIP
         spi.init()
 
         # Zeroing the robot
