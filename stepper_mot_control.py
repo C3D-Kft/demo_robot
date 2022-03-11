@@ -121,6 +121,8 @@ def step_gripper(dir):
     (CW (1) vagy CCW (0)).
     """
 
+    global GRIPPER_STATUS
+
     step_table = [
     [gpio.LOW, gpio.LOW, gpio.LOW, gpio.HIGH], #4
     [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.HIGH], #4-3
@@ -132,19 +134,34 @@ def step_gripper(dir):
     [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.HIGH] #1-4
     ]
 
-    if dir == 1:
-        GRIPPER_STATUS += 1
-        if GRIPPER_STATUS == 8: # If out-of-range upwards
-            GRIPPER_STATUS = 0
+    print("Move starts!")
+    # for k in range(4):
+    #     gpio.output(motor_grip[k], [gpio.LOW, gpio.LOW, gpio.LOW, gpio.LOW])
 
-    elif dir == 0:
-        GRIPPER_STATUS -= 1
-        if GRIPPER_STATUS == -1: # If out-of-range downwards
-            GRIPPER_STATUS = 7
+    for m in range(0,128):
 
-    # Set the coil pin output according to the actual step table
+        if dir == 1:
+            GRIPPER_STATUS += 1
+            if GRIPPER_STATUS == 8: # If out-of-range upwards
+                GRIPPER_STATUS = 0
+
+        elif dir == 0:
+            GRIPPER_STATUS -= 1
+            if GRIPPER_STATUS == -1: # If out-of-range downwards
+                GRIPPER_STATUS = 7
+
+        # Set the coil pin output according to the actual step table
+        print("Gripper status: {}".format(GRIPPER_STATUS))
+        for k in range(4):
+            gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
+
+        time.sleep(0.02)
+
+    print("Move ready!")
     for k in range(4):
-        gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
+        gpio.output(motor_grip[k], gpio.LOW)
+
+
 
 
 def onestep_mot(mot, time_unit=0.1):
