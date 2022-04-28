@@ -81,16 +81,10 @@ class App():
 
         # Initialize robot
         # Initialize GPIOs
+        # Switch on power
         RC.init()
-
+        RC.poweron()
         log.info("GPIO initialization complete!")
-        log.info("Waiting for Power On! Press any key to continue!")
-        ready = input("")
-
-
-        # for i in range(WAIT_FOR_POWER):
-        #     log.info("Waiting for Power On ... {0}".format(WAIT_FOR_POWER-i))
-        #     time.sleep(WAIT_FOR_POWER-i)
 
         # Initialize SPIP
         spi.init()
@@ -388,24 +382,29 @@ class App():
         self.follow_route.grid(row=1, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
+        self.mode = tk.Button(menu_button_frame, text="MODE",
+        font=(self.fs, self.fsize), command=self.switch_mode)
+        self.mode.grid(row=2, column=0, sticky = "NWSE",
+        pady=2.5, padx=2.5)
+
         self.enable_all_mot = tk.Button(menu_button_frame, text="ENBL",
         font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
-        self.enable_all_mot.grid(row=2, column=0, sticky = "NWSE",
+        self.enable_all_mot.grid(row=3, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
         self.disable_all_mot = tk.Button(menu_button_frame, text="DSBL",
         font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
-        self.disable_all_mot.grid(row=3, column=0, sticky = "NWSE",
+        self.disable_all_mot.grid(row=4, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
         self.set_limits = tk.Button(menu_button_frame, text="SET",
         font=(self.fs, self.fsize), command=self.set_axis_limits)
-        self.set_limits.grid(row=4, column=0, sticky="NWSE",
+        self.set_limits.grid(row=5, column=0, sticky="NWSE",
         pady=2.5, padx=2.5)
 
         self.close_win = tk.Button(menu_button_frame, text="EXIT",
         font=(self.fs, self.fsize), command=self.close_window)
-        self.close_win.grid(row=5, column=0, sticky = "NWSE",
+        self.close_win.grid(row=6, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
 
@@ -596,6 +595,11 @@ class App():
         # 180 fokos fordulat másik irányba
         RC.grip_hold()
         log.info("Grip hold!")
+
+
+    def switch_mode(self):
+        RC.switch_mode()
+        log.info("Switch mode!")
 
 
     def enable_all_mot(self):
