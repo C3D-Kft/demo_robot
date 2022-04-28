@@ -364,6 +364,16 @@ def init(): # Always the first function to call!
     log.info("Robot initialized!")
 
 
+def poweron():
+    log.info("Power switched on!")
+    smc.poweron()
+
+
+def poweroff():
+    log.info("Power switched off!")
+    smc.poweroff()
+
+
 def zeroing():
     """ ... """
     reset_pos()
