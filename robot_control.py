@@ -27,7 +27,7 @@ sixteenth step (16576) beállítások
 között lehet váltani.
 """
 
-## Gripper paramters
+## Gripper parameters
 grip_step_per_rev = 64
 
 ## Motor parameters
@@ -59,6 +59,9 @@ jogging = False # jogging flag
 ## Axis limits default values
 axis_limits_min = [-90.0, -130.0, 0.0]
 axis_limits_max = [90.0, 0.0, 200.0]
+
+## Interpolation mode
+MOD = "MOD1"
 
 
 def deg_to_step(deg):
@@ -153,6 +156,8 @@ def move_relative(deg_to_move):
     generálja, hogy a mozgás az összes tengelyen egyszerre fejeződik be.
     """
 
+    global MOD
+
     steps = deg_to_step(deg_to_move)
 
     log.info("Steps to move: {0}".format(steps))
@@ -164,11 +169,28 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
-    generate_steps(sort_steps, mot_idx) # Lépések generálása
+    if MOD == "MOD1":
+        generate_steps(sort_steps, mot_idx) # Lépések generálása
+
+    else:
+        generate_steps2(sort_steps, mot_idx) # Lépések generálása
+
 
     # Update absolute position by the relative movement
     log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
     actual_abs_position[0], actual_abs_position[1], actual_abs_position[2]))
+
+
+def generate_steps2(sorted_steps, mot_index):
+
+    global time_unit
+
+    for m in range(0, len(mot_index)): # 0, 1, 2
+
+        for s in range(0, sorted_steps[m]):
+            smc.onestep_mot(mot_index[m], time_unit)
+            abs_pos_one_step(mot_index[m])
+
 
 
 def generate_steps(sorted_steps, mot_index):
@@ -372,6 +394,11 @@ def poweron():
 def poweroff():
     log.info("Power switched off!")
     smc.poweroff()
+
+
+def switch_mode(mode):
+    global MOD
+    MOD = mode
 
 
 def zeroing():
