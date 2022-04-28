@@ -27,6 +27,9 @@ motor_enable = [36, 8, 11] # 37, 11, 36
 motor_grip = [37, 35, 33, 31] # 37, 35, 33, 31
 spi_select = [18, 16]
 
+# TODO: fill number
+power = [0]
+
 GRIPPER_STATUS = 0
 
 
@@ -40,7 +43,7 @@ def init():
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select
+    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select + power
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in gpio_array:
@@ -162,8 +165,6 @@ def step_gripper(dir):
         gpio.output(motor_grip[k], gpio.LOW)
 
 
-
-
 def onestep_mot(mot, time_unit=0.1):
     """ Négszögjel generálása egy adott motor tengely számára. """
 
@@ -171,6 +172,16 @@ def onestep_mot(mot, time_unit=0.1):
     time.sleep(time_unit)
     gpio.output(motor_step[mot], gpio.LOW)
     time.sleep(time_unit)
+
+
+def poweron():
+    """ 24V tápfeszültség bekapcsolása. """
+    gpio.output(power[0], gpio.HIGH)
+
+
+def poweroff():
+    """ 24V tápfeszültség kikapcsolása. """
+    gpio.output(power[0], gpio.LOW)
 
 
 def cleanup(): # GPIO pinout tisztítása
