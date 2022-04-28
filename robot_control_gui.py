@@ -78,6 +78,7 @@ class App():
         self.pos1 = StringVar()
         self.pos2 = StringVar()
         self.pos3 = StringVar()
+        self.mode = "MOD1"
 
         # Initialize robot
         # Initialize GPIOs
@@ -382,9 +383,9 @@ class App():
         self.follow_route.grid(row=1, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
-        self.mode = tk.Button(menu_button_frame, text="MODE",
+        self.mode_button = tk.Button(menu_button_frame, text=self.mode,
         font=(self.fs, self.fsize), command=self.switch_mode)
-        self.mode.grid(row=2, column=0, sticky = "NWSE",
+        self.mode_button.grid(row=2, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
         self.enable_all_mot = tk.Button(menu_button_frame, text="ENBL",
@@ -598,8 +599,15 @@ class App():
 
 
     def switch_mode(self):
-        RC.switch_mode()
-        log.info("Switch mode!")
+
+        if self.mode == "MOD1":
+            self.mode = "MOD2"
+        else:
+            self.mode = "MOD1"
+
+        self.mode_button['text'] = "{0}".format(self.mode)
+        RC.switch_mode("{0}".format(self.mode))
+        log.info("Switch mode to: {0}!".format(self.mode))
 
 
     def enable_all_mot(self):
@@ -694,6 +702,7 @@ if __name__ == '__main__':
     root.mainloop()
 
     spi.close()
+    RC.poweroff()
     RC.cleanup()
     log.info("Program exit!")
     sys.exit()
