@@ -84,10 +84,10 @@ class App():
         # Initialize GPIOs
         # Switch on power
         RC.init()
-        RC.poweron()
+        # RC.poweron()
         log.info("GPIO initialization complete!")
 
-        # Initialize SPIP
+        # Initialize SPI
         spi.init()
 
         # Zeroing the robot

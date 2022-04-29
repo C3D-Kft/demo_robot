@@ -21,14 +21,21 @@ import RPi.GPIO as gpio
 
 # Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
-motor_step = [38, 10, 15] # 38, 10, 15
-motor_dir = [40, 12, 13] # 35, 13, 38
-motor_enable = [36, 8, 11] # 37, 11, 36
-motor_grip = [37, 35, 33, 31] # 37, 35, 33, 31
+## BOARD
+motor_step = [38, 29, 11]
+motor_dir = [36, 7, 13]
+motor_enable = [40, 32, 15]
+motor_grip = [37, 35, 33, 31]
 spi_select = [18, 16]
+power = [3]
 
-# TODO: fill number
-power = [0]
+##BCM
+# motor_step = [20, 5, 17]
+# motor_dir = [16, 0, 27]
+# motor_enable = [21, 12, 22]
+# motor_grip = [26, 19, 13, 6]
+# spi_select = [24, 23]
+# power = [2]
 
 GRIPPER_STATUS = 0
 
@@ -39,7 +46,7 @@ def init():
     """
 
     gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
-    # A gpio.BCM - Broadcom pin számozás hardverspecifikus ezért változhat!
+    # gpio.setmode(gpio.BCM) # Broadcom pin számozás hardverspecifikus ezért változhat!
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
@@ -141,7 +148,7 @@ def step_gripper(dir):
     # for k in range(4):
     #     gpio.output(motor_grip[k], [gpio.LOW, gpio.LOW, gpio.LOW, gpio.LOW])
 
-    for m in range(0,128):
+    for m in range(0,512):
 
         if dir == 1:
             GRIPPER_STATUS += 1
@@ -158,7 +165,7 @@ def step_gripper(dir):
         for k in range(4):
             gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
 
-        time.sleep(0.02)
+        time.sleep(0.001)
 
     print("Move ready!")
     for k in range(4):
@@ -176,11 +183,17 @@ def onestep_mot(mot, time_unit=0.1):
 
 def poweron():
     """ 24V tápfeszültség bekapcsolása. """
+
+    global power
+
     gpio.output(power[0], gpio.HIGH)
 
 
 def poweroff():
     """ 24V tápfeszültség kikapcsolása. """
+
+    global power
+
     gpio.output(power[0], gpio.LOW)
 
 
