@@ -45,7 +45,7 @@ step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 2500 # Hz
+base_frequency = 750 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
