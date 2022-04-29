@@ -384,6 +384,7 @@ def init(): # Always the first function to call!
 
     smc.init()
     log.info("Robot initialized!")
+    poweron()
 
 
 def poweron():
