@@ -75,7 +75,7 @@ class SPI():
         data_int = [] # List of bitstrings in decimal integer format
 
         # Configuration bits according to TMC2660 documentation:
-        DRVCTRL = "0000 0000 0000 0000 0100" # 00001 #16-microstep
+        DRVCTRL = "0000 0000 0000 0000 0010" # 00001 #64-microstep
         CHOPCONF = "1001 0100 0101 0101 0111" # 94557
         SMARTEN = "1010 1000 0010 0000 0010" # A8202
         SGCSCONF = "1101 0000 0000 0001 1111" # D001F
