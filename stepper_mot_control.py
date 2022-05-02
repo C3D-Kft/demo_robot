@@ -19,7 +19,7 @@ import time
 import RPi.GPIO as gpio
 
 
-# Stepper motorok (0, 1, ...) gpio pinoutjai - tömb formátumban tárolva
+# Stepper motorok (0, 1, 2) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
 ## BOARD
 motor_step = [38, 29, 11]
@@ -117,15 +117,6 @@ def enable_set(mot, enable):
         return msg
 
 
-# def step_mot(mot, level):
-#     """ Adott motor (0, 1, ...) lépésjelének kiadása (fel vagy le). """
-#
-#     if level == 1:
-#         gpio.output(motor_step[mot], gpio.HIGH)
-#     elif level == 0:
-#         gpio.output(motor_step[mot], gpio.LOW)
-
-
 def step_gripper(dir):
     """ Gripper motor léptetése az iránybeállításnak megfelelően
     (CW (1) vagy CCW (0)).
@@ -161,7 +152,7 @@ def step_gripper(dir):
                 GRIPPER_STATUS = 7
 
         # Set the coil pin output according to the actual step table
-        print("Gripper status: {}".format(GRIPPER_STATUS))
+        # print("Gripper status: {}".format(GRIPPER_STATUS))
         for k in range(4):
             gpio.output(motor_grip[k], step_table[GRIPPER_STATUS][k])
 
@@ -185,7 +176,6 @@ def poweron():
     """ 24V tápfeszültség bekapcsolása. """
 
     global power
-
     gpio.output(power[0], gpio.HIGH)
 
 
@@ -193,7 +183,6 @@ def poweroff():
     """ 24V tápfeszültség kikapcsolása. """
 
     global power
-
     gpio.output(power[0], gpio.LOW)
 
 
