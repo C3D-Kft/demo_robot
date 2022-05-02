@@ -498,7 +498,7 @@ class App():
 
         global initdir
 
-        data = []
+        data = [ [], [], [] ]
 
         # TODO: Change to final destination when ready!
         initdir = os.path.join(initdir, "EXAMPLES")
@@ -523,18 +523,22 @@ class App():
             # Processing
             log.info("Processing {} graph!".format(lines[0][1:-2]))
 
+            c = 0
+
             for l in lines[4:]:
                 row = []
 
-                # Last element is '/n' (newline character)
-                for k in l.split("\t")[:-1]:
-                    row.append(float(k))
+                # Ha a sor tartalma: 'plot'
+                if l[0:4] == "plot":
+                    c += 1
+                    continue
 
-                data.append(row)
+                # Last element is '/n' (newline character)
+                k = l.split("\t")[:-1]
+                data[c].append(float(k[1]))
 
             # When success
             log.info("File has been successfully opened!")
-
 
         except FileNotFoundError as fnfe:
             log.error("{0} not found!".format(filename).capitalize())
@@ -574,14 +578,14 @@ class App():
     def move_absolute_loop(self, data):
         """ Iterates over an absolute move list. """
 
-        k = len(data)
+        k = len(data[0])
         n = 1
 
-        for d in data:
+        for d in range(0, len(data[0])):
             log.info("Step {0}/{1}".format(n, k))
-            a = d[1] if len(d) >= 2 else 0
-            b = d[2] if len(d) >= 3 else 0
-            c = d[3] if len(d) >= 4 else 0
+            a = data[0][d]
+            b = data[1][d]
+            c = data[2][d]
             RC.move_absolute([a,b,c])
             n += 1
 
