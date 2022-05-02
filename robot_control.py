@@ -36,17 +36,18 @@ gear_ratio = 5.18
 step_per_rev_gb = 1036.36
 
 # 4145.45 /x4
+# 8290.88
 # 16581.81 /x16
 # 66 327.04 /x64
 # 132 654.54 /x128
 
-motor_step = [66327, 66327, 66327]
+motor_step = [8291, 8291, 8291]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
 
 ## Running parameters
-base_frequency = 2000 # Hz
+base_frequency = 750 # Hz
 correction = 0 # ms
 time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
 log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,

@@ -48,12 +48,12 @@ import robot_control as RC
 import SPI_comm
 
 # Globális változók
-if getattr(sys, 'frozen', False):
-    initdir = os.path.dirname(sys.executable)
-elif __file__:
-    initdir = os.path.dirname(__file__)
+# if getattr(sys, 'frozen', False):
+#     initdir = os.path.dirname(sys.executable)
+# elif __file__:
+#     initdir = os.path.dirname(__file__)
 
-WAIT_FOR_POWER = 5
+initdir = os.path.abspath("/media/pi/")
 
 # Init SPI
 spi = SPI_comm.SPI()
@@ -501,7 +501,6 @@ class App():
         data = [ [], [], [] ]
 
         # TODO: Change to final destination when ready!
-        initdir = os.path.join(initdir, "EXAMPLES")
         filename = filedialog.askopenfilenames(initialdir=initdir,
         title='Kiválasztás', filetypes=[
                     ("GRT file format", ".grt"),
@@ -516,6 +515,9 @@ class App():
         try:
             filename = filename[0]
             log.info("Opening file: {0}".format(os.path.relpath(filename)))
+
+            initdir = os.path.dirname(filename)
+
             # Kiolvasom a fájl tartalmát
             with open(filename, "r", encoding="cp437", errors='ignore') as input:
                 lines = input.readlines()
