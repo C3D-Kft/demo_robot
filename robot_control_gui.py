@@ -28,41 +28,31 @@ www.C3D.hu
 """
 
 
-# Logolás inicializálása
 import logging
-import logger
-
-logger.init_logger()
-log = logging.getLogger("Main")
-log.info("Program started!")
-
-# Modulok betöltése a logolás indítása után!
 import os
 import sys
-import time
 import tkinter as tk
 from tkinter import StringVar
 from tkinter import filedialog
 import threading
 import robot_control as RC
 import SPI_comm
+import logger
 
-# Globális változók
-# if getattr(sys, 'frozen', False):
-#     initdir = os.path.dirname(sys.executable)
-# elif __file__:
-#     initdir = os.path.dirname(__file__)
+# Logolás inicializálása
+logger.init_logger()
+log = logging.getLogger("Main")
+log.info("Program started!")
 
-initdir = os.path.abspath("/media/pi/")
+#Globális változók
+INITDIR = os.path.abspath("/media/pi/")
 
 # Init SPI
-spi = SPI_comm.SPI()
+SPI = SPI_comm.SPI()
 
 
 class App():
     def __init__(self, master):
-
-        global spi
 
         self.master = master
         self.frame = tk.Frame(self.master)
@@ -72,7 +62,7 @@ class App():
         # self.master.attributes('-fullscreen', True)
         self.master.title("Demo robot vezérlő") # Ablak cím beállítása
 
-        self.fs="Arial"
+        self.fty="Arial"
         self.fsize=20
 
         self.pos1 = StringVar()
@@ -88,7 +78,7 @@ class App():
         log.info("GPIO initialization complete!")
 
         # Initialize SPI
-        spi.init()
+        SPI.init()
 
         # Zeroing the robot
         RC.zeroing()
@@ -141,43 +131,43 @@ class App():
         act_pos_label_frame.grid(row = 0, column = 0, sticky = 'NWSE')
 
         axis_1_label = tk.Label(act_pos_label_frame, text="Motor 1",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_1_label.grid(row = 0, column = 0, sticky = 'WE',
         padx=(0,10), pady=(0,5))
         axis_2_label = tk.Label(act_pos_label_frame, text="Motor 2",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_2_label.grid(row = 1, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
         axis_3_label = tk.Label(act_pos_label_frame, text="Motor 3",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_3_label.grid(row = 2, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,0))
 
         self.axis_1_entry = tk.Entry(act_pos_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize), textvariable=self.pos1)
+        justify="right", font=(self.fty, self.fsize), textvariable=self.pos1)
         self.axis_1_entry.config(state= 'disabled')
         self.axis_1_entry.grid(row = 0, column = 1, pady=(0,5))
 
         self.axis_2_entry = tk.Entry(act_pos_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize), textvariable=self.pos2)
+        justify="right", font=(self.fty, self.fsize), textvariable=self.pos2)
         self.axis_2_entry.config(state= 'disabled')
         self.axis_2_entry.grid(row = 1, column = 1, sticky = 'WE', pady=(5,5))
 
         self.axis_3_entry = tk.Entry(act_pos_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize), textvariable=self.pos3)
+        justify="right", font=(self.fty, self.fsize), textvariable=self.pos3)
         self.axis_3_entry.config(state= 'disabled')
         self.axis_3_entry.grid(row = 2, column = 1, sticky = 'WE', pady=(5,0))
 
         axis_1_unit_label = tk.Label(act_pos_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_1_unit_label.grid(row = 0, column = 2, sticky = 'WE',
         padx=(5,0), pady=(0,5))
         axis_2_unit_label = tk.Label(act_pos_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_2_unit_label.grid(row = 1, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
         axis_3_unit_label = tk.Label(act_pos_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_3_unit_label.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,0))
 
@@ -188,45 +178,45 @@ class App():
         stp_label_frame.grid(row = 0, column = 0, sticky = 'NWSE')
 
         axis_1_label_stp = tk.Label(stp_label_frame, text="Motor 1",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_1_label_stp.grid(row = 0, column = 0, sticky = 'WE',
         padx=(0,10), pady=(0,5))
         axis_2_label_stp = tk.Label(stp_label_frame, text="Motor 2",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_2_label_stp.grid(row = 1, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,5))
         axis_3_label_stp = tk.Label(stp_label_frame, text="Motor 3",
-        font=(self.fs, self.fsize), anchor="w")
+        font=(self.fty, self.fsize), anchor="w")
         axis_3_label_stp.grid(row = 2, column = 0, sticky = 'WE',
         padx=(0,10), pady=(5,0))
 
         self.axis_1_entry_stp = tk.Entry(stp_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.axis_1_entry_stp.insert("0", "0") # default érték
         self.axis_1_entry_stp.grid(row = 0, column = 1, pady=(0,5))
 
         self.axis_2_entry_stp = tk.Entry(stp_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.axis_2_entry_stp.insert("0", "0")
         self.axis_2_entry_stp.grid(row = 1, column = 1, sticky = 'WE',
         pady=(5,5))
 
         self.axis_3_entry_stp = tk.Entry(stp_label_frame, width=8,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.axis_3_entry_stp.insert("0", "0")
         self.axis_3_entry_stp.grid(row = 2, column = 1, sticky = 'WE',
         pady=(5,5))
 
         axis_1_unit_label_stp = tk.Label(stp_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_1_unit_label_stp.grid(row = 0, column = 2, sticky = 'WE',
         padx=(5,0), pady=(0,5))
         axis_2_unit_label_stp = tk.Label(stp_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_2_unit_label_stp.grid(row = 1, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
         axis_3_unit_label_stp = tk.Label(stp_label_frame, text="fok",
-        anchor="w", font=(self.fs, self.fsize))
+        anchor="w", font=(self.fty, self.fsize))
         axis_3_unit_label_stp.grid(row = 2, column = 2, sticky = 'WE',
         padx=(5,0), pady=(5,5))
 
@@ -253,43 +243,43 @@ class App():
         self.fsize2 = 16 # Szöveg elsö sorban
         self.fsize3 = 16 # +,-,N karakterek
 
-        mot1label = tk.Label(mot1_frame, text="Motor 1", font=(self.fs, self.fsize2))
+        mot1label = tk.Label(mot1_frame, text="Motor 1", font=(self.fty, self.fsize2))
         mot1label.grid(row=0, column=0)
-        self.mot1but1 = tk.Button(mot1_frame, text="+", font=(self.fs, self.fsize3))
+        self.mot1but1 = tk.Button(mot1_frame, text="+", font=(self.fty, self.fsize3))
         self.mot1but1.grid(row=1, column=0, sticky="WE")
-        self.mot1but2 = tk.Button(mot1_frame, text="-", font=(self.fs, self.fsize3))
+        self.mot1but2 = tk.Button(mot1_frame, text="-", font=(self.fty, self.fsize3))
         self.mot1but2.grid(row=2, column=0, sticky="WE")
         self.mot1but3 = tk.Button(mot1_frame, text="N",
-        command=lambda:self.reset_motor(0), font=(self.fs, self.fsize3))
+        command=lambda:self.reset_motor(0), font=(self.fty, self.fsize3))
         self.mot1but3.grid(row=3, column=0, sticky="WE")
 
-        mot2label = tk.Label(mot2_frame, text="Motor 2", font=(self.fs, self.fsize2))
+        mot2label = tk.Label(mot2_frame, text="Motor 2", font=(self.fty, self.fsize2))
         mot2label.grid(row=0, column=0)
-        self.mot2but1 = tk.Button(mot2_frame, text="+", font=(self.fs, self.fsize3))
+        self.mot2but1 = tk.Button(mot2_frame, text="+", font=(self.fty, self.fsize3))
         self.mot2but1.grid(row=1, column=0, sticky="WE")
-        self.mot2but2 = tk.Button(mot2_frame, text="-", font=(self.fs, self.fsize3))
+        self.mot2but2 = tk.Button(mot2_frame, text="-", font=(self.fty, self.fsize3))
         self.mot2but2.grid(row=2, column=0, sticky="WE")
         self.mot2but3 = tk.Button(mot2_frame, text="N",
-        command=lambda:self.reset_motor(1), font=(self.fs, self.fsize3))
+        command=lambda:self.reset_motor(1), font=(self.fty, self.fsize3))
         self.mot2but3.grid(row=3, column=0, sticky="WE")
 
-        mot3label = tk.Label(mot3_frame, text="Motor 3", font=(self.fs, self.fsize2))
+        mot3label = tk.Label(mot3_frame, text="Motor 3", font=(self.fty, self.fsize2))
         mot3label.grid(row=0, column=0)
-        self.mot3but1 = tk.Button(mot3_frame, text="+", font=(self.fs, self.fsize3))
+        self.mot3but1 = tk.Button(mot3_frame, text="+", font=(self.fty, self.fsize3))
         self.mot3but1.grid(row=1, column=0, sticky="WE")
-        self.mot3but2 = tk.Button(mot3_frame, text="-", font=(self.fs, self.fsize3))
+        self.mot3but2 = tk.Button(mot3_frame, text="-", font=(self.fty, self.fsize3))
         self.mot3but2.grid(row=2, column=0, sticky="WE")
         self.mot3but3 = tk.Button(mot3_frame, text="N",
-        command=lambda:self.reset_motor(2), font=(self.fs, self.fsize3))
+        command=lambda:self.reset_motor(2), font=(self.fty, self.fsize3))
         self.mot3but3.grid(row=3, column=0, sticky="WE")
 
-        mot4label = tk.Label(mot4_frame, text="Gripper", font=(self.fs, self.fsize2))
+        mot4label = tk.Label(mot4_frame, text="Gripper", font=(self.fty, self.fsize2))
         mot4label.grid(row=0, column=0)
         self.mot4but1 = tk.Button(mot4_frame, text="+", command=self.grip_hold,
-        font=(self.fs, self.fsize3))
+        font=(self.fty, self.fsize3))
         self.mot4but1.grid(row=1, column=0, sticky="WE")
         self.mot4but2 = tk.Button(mot4_frame, text="-", command=self.grip_release,
-        font=(self.fs, self.fsize3))
+        font=(self.fty, self.fsize3))
         self.mot4but2.grid(row=2, column=0, sticky="WE")
 
         self.mot1but1.bind('<ButtonPress-1>', lambda event: self.jog_motor(0,1))
@@ -308,7 +298,7 @@ class App():
         self.mot3but2.bind('<ButtonRelease-1>', self.stop_motor)
 
         self.zero_but = tk.Button(jog_panel, text="ZERO",
-        font=(self.fs, self.fsize3), command=self.zero)
+        font=(self.fty, self.fsize3), command=self.zero)
         self.zero_but.grid(row=1, column=0, columnspan=4, sticky="WE",
         padx=(5,5), pady=(2.5, 5))
 
@@ -336,33 +326,33 @@ class App():
         self.fsize3 = 16 # +,-,N karakterek
 
         mot1lab = tk.Label(lim_mot1_frame, text="Motor 1",
-        font=(self.fs, self.fsize))
+        font=(self.fty, self.fsize))
         mot1lab.grid(row=0, column=0)
         self.mot1ent1 = tk.Entry(lim_mot1_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot1ent1.grid(row=1, column=0, sticky="WE")
         self.mot1ent2 = tk.Entry(lim_mot1_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot1ent2.grid(row=2, column=0, sticky="WE")
 
         mot2lab = tk.Label(lim_mot2_frame, text="Motor 2",
-        font=(self.fs, self.fsize))
+        font=(self.fty, self.fsize))
         mot2lab.grid(row=0, column=1)
         self.mot2ent1 = tk.Entry(lim_mot2_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot2ent1.grid(row=1, column=1, sticky="WE")
         self.mot2ent2 = tk.Entry(lim_mot2_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot2ent2.grid(row=2, column=1, sticky="WE")
 
         mot3lab = tk.Label(lim_mot3_frame, text="Motor 3",
-        font=(self.fs, self.fsize))
+        font=(self.fty, self.fsize))
         mot3lab.grid(row=0, column=2)
         self.mot3ent1 = tk.Entry(lim_mot3_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot3ent1.grid(row=1, column=2, sticky="WE")
         self.mot3ent2 = tk.Entry(lim_mot3_frame, width=7,
-        justify="right", font=(self.fs, self.fsize))
+        justify="right", font=(self.fty, self.fsize))
         self.mot3ent2.grid(row=2, column=2, sticky="WE")
 
         self.get_axis_limits()
@@ -373,76 +363,71 @@ class App():
         menu_button_frame = tk.Frame(menu_panel)
         menu_button_frame.grid(row = 0, column = 0, sticky = 'NWSE')
 
-        self.send_to_position = tk.Button(menu_button_frame, text="STRT",
-        font=(self.fs, self.fsize), command=self.send_to_position)
-        self.send_to_position.grid(row=0, column=0, sticky = "NWSE",
+        self.send_to_position_but = tk.Button(menu_button_frame, text="STRT",
+        font=(self.fty, self.fsize), command=self.send_to_position)
+        self.send_to_position_but.grid(row=0, column=0, sticky = "NWSE",
         pady=(5,0), padx=2.5)
 
-        self.follow_route = tk.Button(menu_button_frame, text="PROG",
-        font=(self.fs, self.fsize), command=self.follow_route)
-        self.follow_route.grid(row=1, column=0, sticky = "NWSE",
+        self.follow_route_but = tk.Button(menu_button_frame, text="PROG",
+        font=(self.fty, self.fsize), command=self.follow_route)
+        self.follow_route_but.grid(row=1, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
         self.mode_button = tk.Button(menu_button_frame, text=self.mode,
-        font=(self.fs, self.fsize), command=self.switch_mode)
+        font=(self.fty, self.fsize), command=self.switch_mode)
         self.mode_button.grid(row=2, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
-        self.enable_all_mot = tk.Button(menu_button_frame, text="ENBL",
-        font=(self.fs, self.fsize), command=self.enable_all_mot, state="disabled")
-        self.enable_all_mot.grid(row=3, column=0, sticky = "NWSE",
+        self.enable_all_mot_but = tk.Button(menu_button_frame, text="ENBL",
+        font=(self.fty, self.fsize), command=self.enable_all_mot, state="disabled")
+        self.enable_all_mot_but.grid(row=3, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
-        self.disable_all_mot = tk.Button(menu_button_frame, text="DSBL",
-        font=(self.fs, self.fsize), command=self.disable_all_mot, state="normal")
-        self.disable_all_mot.grid(row=4, column=0, sticky = "NWSE",
+        self.disable_all_mot_but = tk.Button(menu_button_frame, text="DSBL",
+        font=(self.fty, self.fsize), command=self.disable_all_mot, state="normal")
+        self.disable_all_mot_but.grid(row=4, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
         self.set_limits = tk.Button(menu_button_frame, text="SET",
-        font=(self.fs, self.fsize), command=self.set_axis_limits)
+        font=(self.fty, self.fsize), command=self.set_axis_limits)
         self.set_limits.grid(row=5, column=0, sticky="NWSE",
         pady=2.5, padx=2.5)
 
         self.close_win = tk.Button(menu_button_frame, text="EXIT",
-        font=(self.fs, self.fsize), command=self.close_window)
+        font=(self.fty, self.fsize), command=self.close_window)
         self.close_win.grid(row=6, column=0, sticky = "NWSE",
         pady=2.5, padx=2.5)
 
 
 
-    def update_abs_pos_jog(self, mot):
+    def update_abs_pos_jog(self):
         """ Update abs. position when jogging! """
 
-        global spi
-
         while self.jog_thread.is_alive():
-            # TODO: Readbacket átdolgozni, hogy ritkább legyen
-            # spi.readback()
-            root.after(10, self.update_abs_pos(mot))
+            root.after(10, self.update_abs_pos())
             root.after(10, root.update_idletasks())
 
 
-    def jog_motor(self, mot, dir):
+    def jog_motor(self, mot, direction):
 
-        RC.jogging = True
+        RC.JOGGING = True
 
         self.jog_thread = threading.Thread(target=RC.jog,
-        args=(mot, dir )) # <-- check for syntax !!
+        args=(mot, direction )) # <-- check for syntax !!
         self.jog_thread.start()
 
-        self.update_thread = threading.Thread(target=self.update_abs_pos_jog,
-        args=(mot, ))
-        self.update_thread.start()
+        update_thread = threading.Thread(target=self.update_abs_pos_jog)
+        update_thread.start()
 
 
     def stop_motor(self, event=None):
-        RC.jogging = False
+        RC.JOGGING = False
         self.update_abs_pos()
 
 
     def reset_motor(self, mot):
-        log.info("Motor{0} reset!".format(mot+1))
-        RC.actual_abs_position[mot] = 0
+        log.info("Motor%s reset!", mot+1)
+        RC.ACTUAL_ABS_POSITION[mot] = 0
         self.update_abs_pos()
 
 
@@ -451,7 +436,7 @@ class App():
             self.reset_motor(k)
 
 
-    def update_abs_pos(self, mot=None):
+    def update_abs_pos(self):
         """ Update actual motor positions, and then refresh entries. """
 
         self.abs_pos = RC.get_actual_abs_position()
@@ -463,22 +448,22 @@ class App():
     def send_to_position(self):
         """ Convert user input to absolute deg. values to go. """
 
-        self.send_to_position.config(state='disabled')
-        self.follow_route.config(state='disabled')
+        self.send_to_position_but.config(state='disabled')
+        self.follow_route_but.config(state='disabled')
 
         try:
             # Get values from Entry fields
-            g1 = float(self.axis_1_entry_stp.get())
-            g2 = float(self.axis_2_entry_stp.get())
-            g3 = float(self.axis_3_entry_stp.get())
+            ga1 = float(self.axis_1_entry_stp.get())
+            ga2 = float(self.axis_2_entry_stp.get())
+            ga3 = float(self.axis_3_entry_stp.get())
 
             # Start secondary thread with move function
-            self.secondary_thread = threading.Thread(target=RC.move_absolute,
-            args=([g1, g2, g3], )) # <-- check for syntax !!
-            self.secondary_thread.start()
+            secondary_thread = threading.Thread(target=RC.move_absolute,
+            args=([ga1, ga2, ga3], )) # <-- check for syntax !!
+            secondary_thread.start()
 
             # While sec. thread is running, pos is being updated 1 ms interval
-            while self.secondary_thread.is_alive():
+            while secondary_thread.is_alive():
                 root.after(10, self.update_abs_pos())
                 root.after(10, root.update_idletasks())
 
@@ -489,19 +474,19 @@ class App():
             log.info("User input error!")
 
         finally:
-            self.send_to_position.config(state='normal')
-            self.follow_route.config(state='normal')
+            self.send_to_position_but.config(state='normal')
+            self.follow_route_but.config(state='normal')
 
 
     def follow_route(self):
         """ Opens a given .grt (CREO Graph Report) file. """
 
-        global initdir
+        global INITDIR
 
         data = [ [], [], [] ]
 
         # TODO: Change to final destination when ready!
-        filename = filedialog.askopenfilenames(initialdir=initdir,
+        filename = filedialog.askopenfilenames(initialdir=INITDIR,
         title='Kiválasztás', filetypes=[
                     ("GRT file format", ".grt"),
                 ])
@@ -514,55 +499,50 @@ class App():
         # Attempt to read data
         try:
             filename = filename[0]
-            log.info("Opening file: {0}".format(os.path.relpath(filename)))
+            log.info("Opening file: %s", os.path.relpath(filename))
 
-            initdir = os.path.dirname(filename)
+            INITDIR = os.path.dirname(filename)
 
             # Kiolvasom a fájl tartalmát
-            with open(filename, "r", encoding="cp437", errors='ignore') as input:
-                lines = input.readlines()
+            with open(filename, "r", encoding="cp437", errors='ignore') as inpt:
+                lines = inpt.readlines()
 
             # Processing
-            log.info("Processing {} graph!".format(lines[0][1:-2]))
+            log.info("Processing %s graph!", lines[0][1:-2])
 
-            c = 0
-
-            for l in lines[4:]:
-                row = []
-
+            count = 0
+            for line in lines[4:]:
                 # Ha a sor tartalma: 'plot'
-                if l[0:4] == "plot":
-                    c += 1
+                if line[0:4] == "plot":
+                    count += 1
                     continue
 
                 # Last element is '/n' (newline character)
-                k = l.split("\t")[:-1]
-                data[c].append(float(k[1]))
+                k = line.split("\t")[:-1]
+                data[count].append(float(k[1]))
 
             # When success
             log.info("File has been successfully opened!")
 
-        except FileNotFoundError as fnfe:
-            log.error("{0} not found!".format(filename).capitalize())
-            pass
+        except FileNotFoundError:
+            log.error("%s not found!", filename.capitalize())
 
         except:
-            log.critical("Unexpected error: {0}".format(sys.exc_info()[0]))
+            log.critical("Unexpected error: %s", sys.exc_info()[0])
             raise
 
-
         # Attempt to move to given positions
-        self.send_to_position.config(state='disabled')
-        self.follow_route.config(state='disabled')
+        self.send_to_position_but.config(state='disabled')
+        self.follow_route_but.config(state='disabled')
 
         try:
             # Start secondary thread with move function
-            self.secondary_thread = threading.Thread(target=self.move_absolute_loop,
+            secondary_thread = threading.Thread(target=self.move_absolute_loop,
             args=([data])) # <-- check for syntax !!
-            self.secondary_thread.start()
+            secondary_thread.start()
 
             # While sec. thread is running, pos is being updated 1 ms interval
-            while self.secondary_thread.is_alive():
+            while secondary_thread.is_alive():
                 root.after(10, self.update_abs_pos())
                 root.after(10, root.update_idletasks())
 
@@ -573,23 +553,17 @@ class App():
             log.critical("Unexpected error occured!")
 
         finally:
-            self.send_to_position.config(state='normal')
-            self.follow_route.config(state='normal')
+            self.send_to_position_but.config(state='normal')
+            self.follow_route_but.config(state='normal')
 
 
     def move_absolute_loop(self, data):
         """ Iterates over an absolute move list. """
 
-        k = len(data[0])
-        n = 1
-
-        for d in range(0, len(data[0])):
-            log.info("Step {0}/{1}".format(n, k))
-            a = data[0][d]
-            b = data[1][d]
-            c = data[2][d]
-            RC.move_absolute([a,b,c])
-            n += 1
+        elements = len(data[0])
+        for i in range(0, len(data[0])):
+            log.info("Step %s/%s", i+1, elements)
+            RC.move_absolute([data[0][i], data[1][i], data[2][i]])
 
 
     def grip_release(self):
@@ -613,27 +587,27 @@ class App():
 
         self.mode_button['text'] = "{0}".format(self.mode)
         RC.switch_mode("{0}".format(self.mode))
-        log.info("Switch mode to: {0}!".format(self.mode))
+        log.info("Switch mode to: %s!", self.mode)
 
 
     def enable_all_mot(self):
         log.info("Enable all motors!")
         RC.motor_enable_set(0)
-        self.enable_all_mot["state"] = "disabled"
-        self.disable_all_mot["state"] = "normal"
+        self.enable_all_mot_but["state"] = "disabled"
+        self.disable_all_mot_but["state"] = "normal"
 
 
     def disable_all_mot(self):
         log.info("Disable all motors!")
         RC.motor_enable_set(1)
-        self.enable_all_mot["state"] = "normal"
-        self.disable_all_mot["state"] = "disabled"
+        self.enable_all_mot_but["state"] = "normal"
+        self.disable_all_mot_but["state"] = "disabled"
 
 
     def set_axis_limits(self):
         """ Tengely limitek beállítása a programban. """
 
-        min, max = RC.get_limits()
+        min_lim, max_lim = RC.get_limits()
 
         a1_max = float(self.mot1ent1.get())
         a1_min = float(self.mot1ent2.get())
@@ -643,24 +617,24 @@ class App():
         a3_min = float(self.mot3ent2.get())
 
         if a1_max >= a1_min:
-            min[0] = a1_min
-            max[0] = a1_max
+            min_lim[0] = a1_min
+            max_lim[0] = a1_max
         else:
             log.info("Axis 1 limits doesn't changed!")
 
         if a2_max >= a2_min:
-            min[1] = a2_min
-            max[1] = a2_max
+            min_lim[1] = a2_min
+            max_lim[1] = a2_max
         else:
             log.info("Axis 2 limits doesn't changed!")
 
         if a3_max >= a3_min:
-            min[2] = a3_min
-            max[2] = a3_max
+            min_lim[2] = a3_min
+            max_lim[2] = a3_max
         else:
             log.info("Axis 3 limits doesn't changed!")
 
-        RC.set_limits(min, max)
+        RC.set_limits(min_lim, max_lim)
 
         self.get_axis_limits()
 
@@ -668,7 +642,7 @@ class App():
     def get_axis_limits(self):
         """ Tengely limitek beállítása a képernyőn. """
 
-        min, max = RC.get_limits()
+        min_lim, max_lim = RC.get_limits()
 
         self.mot1ent1.delete(0, 'end')
         self.mot1ent2.delete(0, 'end')
@@ -677,18 +651,12 @@ class App():
         self.mot3ent1.delete(0, 'end')
         self.mot3ent2.delete(0, 'end')
 
-        self.mot1ent1.insert("0", max[0])
-        self.mot1ent2.insert("0", min[0])
-        self.mot2ent1.insert("0", max[1])
-        self.mot2ent2.insert("0", min[1])
-        self.mot3ent1.insert("0", max[2])
-        self.mot3ent2.insert("0", min[2])
-
-
-    def help(self):
-        """ Segítség ablak megnyitása. """
-        help_Window = tk.Toplevel(self.master)
-        self.help_window = Help_window(help_Window)
+        self.mot1ent1.insert("0", max_lim[0])
+        self.mot1ent2.insert("0", min_lim[0])
+        self.mot2ent1.insert("0", max_lim[1])
+        self.mot2ent2.insert("0", min_lim[1])
+        self.mot3ent1.insert("0", max_lim[2])
+        self.mot3ent2.insert("0", min_lim[2])
 
 
     def close_window(self):
@@ -707,7 +675,7 @@ if __name__ == '__main__':
     root.wm_protocol('WM_DELETE_WINDOW', main_prog.close_window)
     root.mainloop()
 
-    spi.close()
+    SPI.close()
     RC.poweroff()
     RC.cleanup()
     log.info("Program exit!")
