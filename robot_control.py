@@ -34,13 +34,14 @@ STEP_PER_REV_WO_GEARBOX = 200
 GEAR_RATIO = 5.18
 STEP_PER_REV_GEARBOX = 1036.36
 
+# 1036
 # 4145.45 /x4
-# 8290.88
+# 8290.88 /x8
 # 16581.81 /x16
 # 66 327.04 /x64
 # 132 654.54 /x128
 
-motor_step = [8291, 8291, 8291]
+motor_step = [4145.45, 4145.45, 4145.45]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
 log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
@@ -71,8 +72,8 @@ def deg_to_step(deg):
     """
 
     step = []
-    for k in range(0,len(deg)):
-        step.append(m.floor(resolution[k] * deg[k]))
+    for idx, val in enumerate(deg):
+        step.append(m.floor(resolution[idx] * val))
     return step
 
 
@@ -94,6 +95,8 @@ def check_limits(mot, direction):
         log.info("Motor%s max. limit reached at %s°", mot+1,
         AXIS_LIMITS_MAX[mot])
         return False
+
+    return False
 
 
 def move_absolute(deg_to_move):
@@ -133,8 +136,8 @@ def sorting_steps(step):
     mot = []
 
     # step értékek abszolútértékének betöltése, és a motor index hozzárendelése
-    for mot in range(0,len(step)):
-        abs_steps.append( (abs(step[mot]), mot) )
+    for i, mot_step in enumerate(step):
+        abs_steps.append( (abs(mot_step), i) )
 
     abs_steps.sort(reverse = True)
 
@@ -169,7 +172,6 @@ def move_relative(deg_to_move):
 
     else:
         generate_steps2(sort_steps, mot_idx) # Lépések generálása
-
 
     # Update absolute position by the relative movement
     log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
@@ -247,7 +249,7 @@ def jog(mot, direction):
     jog until the jogging flag - which is set from a parallel thread - is
     True. """
 
-    # global JOGGING, DIRECTION, TIME_UNIT
+    global JOGGING #, DIRECTION, TIME_UNIT
 
     # TODO: visszakorrigálni, ha kész a tesztelés
     jog_time_unit = 1 * TIME_UNIT
@@ -289,15 +291,15 @@ def motor_dir_set(mot_step):
     """ Háromelemű tömbnek megfelelően beállítja
     a motorok forgásirányát. """
 
-    for i in range(0, len(mot_step)):
-        if mot_step[i] < 0:
-            msg = smc.dir_set(i, 0)
+    for idx, step in enumerate(mot_step):
+        if step < 0:
+            msg = smc.dir_set(idx, 0)
             log.info(msg)
-            DIRECTION[i] = 0
+            DIRECTION[idx] = 0
         else:
-            msg = smc.dir_set(i, 1)
+            msg = smc.dir_set(idx, 1)
             log.info(msg)
-            DIRECTION[i] = 1
+            DIRECTION[idx] = 1
 
 
 def motor_enable_set(enable):

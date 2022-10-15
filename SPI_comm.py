@@ -16,14 +16,14 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
-import logging
-log = logging.getLogger("Main")
 
 import time
 import struct
+import logging
 import spidev
 import stepper_mot_control as smc
 
+log = logging.getLogger("Main")
 
 
 class SPI():
@@ -75,7 +75,7 @@ class SPI():
         data_int = [] # List of bitstrings in decimal integer format
 
         # Configuration bits according to TMC2660 documentation:
-        DRVCTRL = "0000 0000 0000 0000 0101" # 00001 #8-microstep
+        DRVCTRL = "0000 0000 0000 0000 0110" # 00001 #4-microstep
         CHOPCONF = "1001 0100 0101 0101 0111" # 94557
         SMARTEN = "1010 1000 0010 0000 0010" # A8202
         SGCSCONF = "1101 0000 0000 0001 1111" # D001F
@@ -133,7 +133,7 @@ class SPI():
         self.MOTOR = mot
 
 
-    def bytearray_to_bitstring(self, bytearray):
+    def bytearray_to_bitstring(self, byte_array):
         """ Converts the given 3-byte array to a 20-bit bitstring.
 
         The function converts each byte to an 8-bit long bitstring, then joins
@@ -141,10 +141,10 @@ class SPI():
         documentation, its always zero.
         """
 
-        if bytearray == None:
+        if byte_array == None:
             return None
         s = ""
-        for b in bytearray:
+        for b in byte_array:
             s += "{:08b}-".format(b)
         return s[4:-1]
 
@@ -201,7 +201,8 @@ class SPI():
             # Convert an integer (decimal) value to a 4-byte list (big-endian),
             b = list(struct.pack('>i',k))
             # Drop the first byte to make 3-byte list and add to data list
-            for bi in b[1:]: d.append(int(bi))
+            for bi in b[1:]:
+                d.append(int(bi))
             data.append(d)
 
         return data
@@ -216,12 +217,13 @@ class SPI():
 if __name__ == "__main__":
 
     try:
-        import logging
-        import logger
-
-        logger.init_logger()
-        log = logging.getLogger("Main")
-        log.info("Program started!")
+        pass
+        # import logging
+        # import logger
+        #
+        # logger.init_logger()
+        # log = logging.getLogger("Main")
+        # log.info("Program started!")
 
 
     finally:
