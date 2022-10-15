@@ -10,10 +10,6 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
-import logging
-import logger
-
-log = logging.getLogger("Main")
 
 import time
 import RPi.GPIO as gpio
@@ -27,7 +23,7 @@ motor_dir = [36, 7, 13]
 motor_enable = [40, 32, 15]
 motor_grip = [37, 35, 33, 31]
 spi_select = [18, 16]
-power = [3]
+POWER = [3]
 
 ##BCM
 # motor_step = [20, 5, 17]
@@ -50,7 +46,7 @@ def init():
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select + power
+    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select + POWER
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in gpio_array:
@@ -74,22 +70,21 @@ def select_spi(mot):
         gpio.output(spi_select[1], gpio.HIGH)
 
 
-def dir_set(mot, dir):
+def dir_set(mot, direction):
     """ Adott motor (0, 1, ...) iránybeállítása (CW (1) vagy CCW (0)). """
 
     msg = ""
 
     try:
-        if dir == 1:
+        if direction == 1:
             gpio.output(motor_dir[mot], gpio.HIGH)
-            msg = "Motor{0} forgásirány CW!".format(mot+1)
-        elif dir == 0:
+            msg = f"Motor{mot+1} forgásirány CW!"
+        elif direction == 0:
             gpio.output(motor_dir[mot], gpio.LOW)
-            msg = "Motor{0} forgásirány CCW!".format(mot+1)
+            msg = f"Motor{mot+1} forgásirány CCW!"
 
     except:
-        msg = ("Hibás iránybeállítás: "
-        + "Motor{0} - DIR:{1}!".format((mot+1), dir))
+        msg = f"Hibás iránybeállítás: Motor{mot+1} - DIR:{direction}!"
 
     finally:
         return msg
@@ -104,20 +99,19 @@ def enable_set(mot, enable):
     try:
         if enable == 0:
             gpio.output(motor_enable[mot], gpio.LOW)
-            msg = "Motor{0} engedélyezve!".format(mot+1)
+            msg = f"Motor{mot+1} engedélyezve!"
         elif enable == 1:
             gpio.output(motor_enable[mot], gpio.HIGH)
-            msg = "Motor{0} letiltva!".format(mot+1)
+            msg = f"Motor{mot+1} letiltva!"
 
     except:
-        msg = ("Hibás engedélyezés: "
-        + "Motor{0} - ENABLE:{1}!".format((mot+1), enable))
+        msg = f"Hibás engedélyezés: Motor{mot+1} - ENABLE:{enable}!"
 
     finally:
         return msg
 
 
-def step_gripper(dir):
+def step_gripper(direction):
     """ Gripper motor léptetése az iránybeállításnak megfelelően
     (CW (1) vagy CCW (0)).
     """
@@ -136,17 +130,15 @@ def step_gripper(dir):
     ]
 
     print("Move starts!")
-    # for k in range(4):
-    #     gpio.output(motor_grip[k], [gpio.LOW, gpio.LOW, gpio.LOW, gpio.LOW])
 
-    for m in range(0,512):
+    for i in range(0,512):
 
-        if dir == 1:
+        if direction == 1:
             GRIPPER_STATUS += 1
             if GRIPPER_STATUS == 8: # If out-of-range upwards
                 GRIPPER_STATUS = 0
 
-        elif dir == 0:
+        elif direction == 0:
             GRIPPER_STATUS -= 1
             if GRIPPER_STATUS == -1: # If out-of-range downwards
                 GRIPPER_STATUS = 7
@@ -175,16 +167,14 @@ def onestep_mot(mot, time_unit=0.1):
 def poweron():
     """ 24V tápfeszültség bekapcsolása. """
 
-    global power
-    gpio.output(power[0], gpio.HIGH)
+    gpio.output(POWER[0], gpio.HIGH)
 
 
 def poweroff():
     """ 24V tápfeszültség kikapcsolása. """
 
-    global power
-    gpio.output(power[0], gpio.LOW)
+    gpio.output(POWER[0], gpio.LOW)
 
 
 def cleanup(): # GPIO pinout tisztítása
-     gpio.cleanup()
+    gpio.cleanup()
