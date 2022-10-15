@@ -563,7 +563,7 @@ class App():
         elements = len(data[0])
         for i in range(0, len(data[0])):
             log.info("Step %s/%s", i+1, elements)
-            RC.move_absolute([data[0][i], data[1][i], data[2][i]])
+            RC.move_absolute_loop([data[0][i], data[1][i], data[2][i]])
 
 
     def grip_release(self):

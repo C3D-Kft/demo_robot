@@ -127,6 +127,19 @@ def move_absolute(deg_to_move):
     move_relative(deg_to_move)
 
 
+def move_absolute_loop(deg_to_move):
+    """ Abszolút koordináta tömbhöz tartozó mozgás. """
+
+    # # Check if intended pos is outside or inside limits
+    # Move this check to parent function, to check all datapoints before running
+
+    # Calculate relative movement from absolute coords.
+    for idx, val in enumerate(deg_to_move):
+        deg_to_move[idx] = val - ACTUAL_ABS_POSITION[idx]
+
+    move_relative(deg_to_move)
+
+
 def sorting_steps(step):
     """ Motoronkénti lépésszám abszolútértékeinek csökkenő sorrendbe rendezése
     és a hozzá tartozó motortengely index kiszámítása. """
