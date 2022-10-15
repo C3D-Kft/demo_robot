@@ -13,8 +13,8 @@ www.C3D.hu
 import logging
 log = logging.getLogger("Main")
 
-import stepper_mot_control as smc
 import math as m
+import stepper_mot_control as smc
 
 
 """ Alap konfig. adatok a motorokra vonatkozóan:
@@ -49,18 +49,18 @@ log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0
 ## Running parameters
 base_frequency = 750 # Hz
 correction = 0 # ms
-time_unit = float(float(1/float(base_frequency)/2) - correction) # ms
+TIME_UNIT = float(float(1/float(base_frequency)/2) - correction) # ms
 log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(base_frequency,
-time_unit))
+TIME_UNIT))
 
 ## Actual position
-actual_abs_position = [None, None, None] # abszolút szög-értékek megadva
-dir = [0,0,0] # motor dir setting
-jogging = False # jogging flag
+ACTUAL_ABS_POSITION = [None, None, None] # abszolút szög-értékek megadva
+DIRECTION = [0,0,0] # motor dir setting
+JOGGING = False # jogging flag
 
 ## Axis limits default values
-axis_limits_min = [-90.0, -130.0, 0.0]
-axis_limits_max = [90.0, 0.0, 200.0]
+AXIS_LIMITS_MIN = [-90.0, -130.0, 0.0]
+AXIS_LIMITS_MAX = [90.0, 0.0, 200.0]
 
 ## Interpolation mode
 MOD = "MOD1"
@@ -77,54 +77,54 @@ def deg_to_step(deg):
     return step
 
 
-def check_limits(mot, pos, dir):
+def check_limits(mot, pos, direction):
     """Checks if actual position is within axis limits. """
 
-    global axis_limits_min, axis_limits_max
+    # lobal AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
 
-    if dir == 0:
-        if actual_abs_position[mot] >= axis_limits_min[mot]:
+    if direction == 0:
+        if ACTUAL_ABS_POSITION[mot] >= AXIS_LIMITS_MIN[mot]:
             return True
-        else:
-            log.info("Motor{0} min. limit reached at {1}°".format(mot+1,
-            axis_limits_min[mot]))
-            return False
 
-    if dir == 1:
-        if actual_abs_position[mot] <= axis_limits_max[mot]:
+        log.info("Motor%s min. limit reached at %s°", mot+1,
+        AXIS_LIMITS_MIN[mot])
+        return False
+
+    if direction == 1:
+        if ACTUAL_ABS_POSITION[mot] <= AXIS_LIMITS_MAX[mot]:
             return True
-        else:
-            log.info("Motor{0} max. limit reached at {1}°".format(mot+1,
-            axis_limits_max[mot]))
-            return False
+
+        log.info("Motor%s max. limit reached at %s°", mot+1,
+        AXIS_LIMITS_MAX[mot])
+        return False
 
 
 def move_absolute(deg_to_move):
     """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
-    global actual_abs_position
+    global ACTUAL_ABS_POSITION
 
     # Check if intended pos is outside or inside limits
     for m in range(0, len(deg_to_move)):
-        if deg_to_move[m] >= axis_limits_min[m]:
-            if deg_to_move[m] <= axis_limits_max[m]:
+        if deg_to_move[m] >= AXIS_LIMITS_MIN[m]:
+            if deg_to_move[m] <= AXIS_LIMITS_MAX[m]:
                 pass
 
             else:
                 log.info("Motor{0} max. limit reached at {1}°".format(m+1,
-                axis_limits_max[m]))
+                AXIS_LIMITS_MAX[m]))
                 return
 
         else:
             log.info("Motor{0} min. limit reached at {1}°".format(m+1,
-            axis_limits_min[m]))
+            AXIS_LIMITS_MIN[m]))
             return
 
     log.info("Moving to: {0}".format(deg_to_move))
 
     # Calculate relative movement from absolute coords.
     for k in range(0, len(deg_to_move)):
-        deg_to_move[k] = deg_to_move[k] - actual_abs_position[k]
+        deg_to_move[k] = deg_to_move[k] - ACTUAL_ABS_POSITION[k]
 
     move_relative(deg_to_move)
 
@@ -180,17 +180,17 @@ def move_relative(deg_to_move):
 
     # Update absolute position by the relative movement
     log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
-    actual_abs_position[0], actual_abs_position[1], actual_abs_position[2]))
+    ACTUAL_ABS_POSITION[0], ACTUAL_ABS_POSITION[1], ACTUAL_ABS_POSITION[2]))
 
 
 def generate_steps2(sorted_steps, mot_index):
 
-    global time_unit
+    global TIME_UNIT
 
     for m in range(0, len(mot_index)): # 0, 1, 2
 
         for s in range(0, sorted_steps[m]):
-            smc.onestep_mot(mot_index[m], time_unit)
+            smc.onestep_mot(mot_index[m], TIME_UNIT)
             abs_pos_one_step(mot_index[m])
 
 
@@ -201,7 +201,7 @@ def generate_steps(sorted_steps, mot_index):
     szekvenciát generál, amelyben az összes tengelyen egyszerre fejeződik be.
     """
 
-    global time_unit
+    global TIME_UNIT
 
     size = len(sorted_steps) # Number of axes
     actual_relative_steps = []
@@ -220,7 +220,7 @@ def generate_steps(sorted_steps, mot_index):
 
         if (fi[d] < 0):
             actual_relative_steps[d+1] += 1
-            smc.onestep_mot(mot_index[d+1], time_unit)
+            smc.onestep_mot(mot_index[d+1], TIME_UNIT)
             abs_pos_one_step(mot_index[d+1])
             # print("Step with axis: {0} ({1})".format(mot_index[d+1],
             # actual_relative_steps[d+1]))
@@ -239,7 +239,7 @@ def generate_steps(sorted_steps, mot_index):
     while (actual_relative_steps[0] < sorted_steps[0]):
         # Initial step
         actual_relative_steps[0] += 1
-        smc.onestep_mot(mot_index[0], time_unit)
+        smc.onestep_mot(mot_index[0], TIME_UNIT)
         abs_pos_one_step(mot_index[0])
         # print("Step with axis: {0} ({1})".format(mot_index[0],
         # actual_relative_steps[0]))
@@ -259,28 +259,27 @@ def jog(mot, direction):
     jog until the jogging flag - which is set from a parallel thread - is
     True. """
 
-    global jogging, dir, time_unit
+    global JOGGING, DIRECTION, TIME_UNIT
 
     # TODO: visszakorrigálni, ha kész a tesztelés
-    jog_time_unit = 1 * time_unit
+    jog_time_unit = 1 * TIME_UNIT
 
     # Precheck if motor is at limits or not
-    if check_limits(mot, actual_abs_position[mot], direction) == False:
+    if not check_limits(mot, ACTUAL_ABS_POSITION[mot], direction):
         return
 
     msg = smc.dir_set(mot, direction)
     log.info(msg)
-    dir[mot] = direction
+    DIRECTION[mot] = direction
 
     log.info("Jogging...")
 
-    while jogging == True:
+    while JOGGING: # Amíg True
         # Check if limit is reached
-        if check_limits(mot, actual_abs_position[mot], direction) == False:
+        if not check_limits(mot, ACTUAL_ABS_POSITION[mot], direction):
             break
-        else:
-            smc.onestep_mot(mot, jog_time_unit) # Step one
 
+        smc.onestep_mot(mot, jog_time_unit) # Step one
         abs_pos_one_step(mot) # Update pos.
 
     log.info("Jogging stopped!")
@@ -291,27 +290,27 @@ def abs_pos_one_step(mot):
     a megfelelő irányba. """
 
 
-    global actual_abs_position, dir
+    global ACTUAL_ABS_POSITION
 
-    if dir[mot] == 0:
-        actual_abs_position[mot] -= step_unit[mot]
+    if DIRECTION[mot] == 0:
+        ACTUAL_ABS_POSITION[mot] -= step_unit[mot]
     else:
-        actual_abs_position[mot] += step_unit[mot]
+        ACTUAL_ABS_POSITION[mot] += step_unit[mot]
 
 
 def motor_dir_set(mot_step):
     """ Háromelemű tömbnek megfelelően beállítja
     a motorok forgásirányát. """
 
-    for d in range(0, len(mot_step)):
-        if mot_step[d] < 0:
-            msg = smc.dir_set(d, 0)
+    for i in range(0, len(mot_step)):
+        if mot_step[i] < 0:
+            msg = smc.dir_set(i, 0)
             log.info(msg)
-            dir[d] = 0
+            DIRECTION[i] = 0
         else:
-            msg = smc.dir_set(d, 1)
+            msg = smc.dir_set(i, 1)
             log.info(msg)
-            dir[d] = 1
+            DIRECTION[i] = 1
 
 
 def motor_enable_set(enable):
@@ -319,45 +318,43 @@ def motor_enable_set(enable):
 
     # Motor 1-3 letiltás
     if enable == 1:
-        for s in range(0,3):
-            msg = smc.enable_set(s, 1)
+        for i in range(0,3):
+            msg = smc.enable_set(i, 1)
             log.info(msg)
 
     # Motor 1-3 engedélyezése
     if enable == 0:
-        for s in range(0,3):
-            msg = smc.enable_set(s, 0)
+        for i in range(0,3):
+            msg = smc.enable_set(i, 0)
             log.info(msg)
 
 
 def reset_pos():
     """ Abszolút szög-értékben kifejezett pozíciók nullázása. """
 
-    global actual_abs_position
-    actual_abs_position = [0,0,0]
+    global ACTUAL_ABS_POSITION
+    ACTUAL_ABS_POSITION = [0,0,0]
 
 
 def get_actual_abs_position():
     """ Get actual absolute position. """
 
-    return actual_abs_position
+    return ACTUAL_ABS_POSITION
 
 
 def get_limits():
     """ Get axis limits lists. """
 
-    global axis_limits_min, axis_limits_max
-
-    return axis_limits_min, axis_limits_max
+    return AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
 
 
 def set_limits(limits_min, limits_max):
     """ Set axis limits lists. """
 
-    global axis_limits_min, axis_limits_max
+    global AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
 
-    axis_limits_min = limits_min
-    axis_limits_max = limits_max
+    AXIS_LIMITS_MIN = limits_min
+    AXIS_LIMITS_MAX = limits_max
     log.info("Limits has been set!")
 
 
@@ -431,12 +428,12 @@ if __name__ == "__main__":
         # Test relative movement
         move_relative(goal)
         print(goal)
-        print(actual_abs_position)
+        print(ACTUAL_ABS_POSITION)
 
         # Test absolute movement
         move_absolute(goal2)
         print(goal2)
-        print(actual_abs_position)
+        print(ACTUAL_ABS_POSITION)
 
     finally:
         cleanup()
