@@ -133,11 +133,66 @@ def move_absolute_loop(deg_to_move):
     # # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
 
-    # Calculate relative movement from absolute coords.
-    for idx, val in enumerate(deg_to_move):
-        deg_to_move[idx] = val - ACTUAL_ABS_POSITION[idx]
+    # Absolute steps
+    as0 = 0
+    as1 = 0
+    as2 = 0
 
-    move_relative(deg_to_move)
+    # Relative steps
+    rs0 = 0
+    rs1 = 0
+    rs2 = 0
+    step_list = [] # Relative stepek
+
+    # Calculate relative step array for the movement loop
+    for deg in deg_to_move:
+        # Calculate absolute steps from absolute degrees (target-start deg.)
+        step0, step1, step2 = deg_to_step([
+        deg[0] - ACTUAL_ABS_POSITION[0]
+        deg[1] - ACTUAL_ABS_POSITION[1]
+        deg[2] - ACTUAL_ABS_POSITION[2]
+        ])
+        # Relative steps new
+        ds0 = step0 - as0
+        ds1 = step1 - as1
+        ds2 = step2 - as2
+
+        # If all relative steps are zero, skip this calculation
+        if ds0 = 0 and ds1 = 0 and ds2 = 0:
+            continue
+
+        # Check if steps changing direction
+        if (rs0*ds0) >= 0 and (rs1*ds1) >= 0 and (rs2*ds2) >= 0:
+            direction = 0
+        else:
+            direction = 1
+
+        # Save relative steps, and change direction flag
+        step_list.append(abs(ds0), abs(ds1), abs(ds2), direction)
+
+        # Save values for next iteration
+        a0 = step0
+        a1 = step1
+        a2 = step2
+        rs0 = ds0
+        rs1 = ds1
+        rs2 = ds2
+
+    # Set motor direction before start
+    motor_dir_set(steps[0][:-1])
+
+    # Generating movement
+    # For the full relative step list
+    for steps in step_list:
+        # If direction flag 1 (changed), set motor directions
+        if steps[3] == 1:
+            motor_dir_set(steps[:-1])
+
+        # Move each axis one-by-one
+        for mot in [0,1,2]:
+            for i in range(0, steps[mot]):
+                smc.onestep_mot(mot, TIME_UNIT)
+                abs_pos_one_step(mot)
 
 
 def sorting_steps(step):
@@ -181,18 +236,22 @@ def move_relative(deg_to_move):
     sort_steps, mot_idx = sorting_steps(steps)
 
     if MOD == "MOD1":
-        generate_steps(sort_steps, mot_idx) # Lépések generálása
+        generate_steps_by_interpolation(sort_steps, mot_idx) # Lépések generálása
 
-    else:
-        generate_steps2(sort_steps, mot_idx) # Lépések generálása
+    elif MOD == "MOD2":
+        generate_steps_by_axis(sort_steps, mot_idx) # Lépések generálása
 
     # Update absolute position by the relative movement
     log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
     ACTUAL_ABS_POSITION[0], ACTUAL_ABS_POSITION[1], ACTUAL_ABS_POSITION[2]))
 
 
-def generate_steps2(sorted_steps, mot_index):
-    """  """
+def generate_steps_by_axis(sorted_steps, mot_index):
+    """ Tengelyenkénti lépés. Ez a függvény egy tetszőleges hosszúságú,
+    step listából és a hozzá rendelt motortengely-index listából olyan
+    szekvenciát generál, amelyben a tengelyenként mozgások egymás után
+    következnek (nincs interpoláció).
+    """
 
     for mot in range(0, len(mot_index)): # 0, 1, 2
         for i in range(0, sorted_steps[mot]):
@@ -201,10 +260,11 @@ def generate_steps2(sorted_steps, mot_index):
 
 
 
-def generate_steps(sorted_steps, mot_index):
+def generate_steps_by_interpolation(sorted_steps, mot_index):
     """ N-tengelyes interpoláció. Ez a függvény egy tetszőleges hosszúságú,
     csökkenő step listából és a hozzá rendelt motortengely-index listából olyan
-    szekvenciát generál, amelyben az összes tengelyen egyszerre fejeződik be.
+    szekvenciát generál, amelyben az összes tengelyen egyszerre fejeződik be a
+    mozgás.
     """
 
     size = len(sorted_steps) # Number of axes
@@ -226,8 +286,6 @@ def generate_steps(sorted_steps, mot_index):
             actual_relative_steps[dif+1] += 1
             smc.onestep_mot(mot_index[dif+1], TIME_UNIT)
             abs_pos_one_step(mot_index[dif+1])
-            # print("Step with axis: {0} ({1})".format(mot_index[d+1],
-            # actual_relative_steps[d+1]))
 
             fii[dif] += sorted_steps[dif]
             fii[dif+1] -= sorted_steps[dif+2]
@@ -245,8 +303,6 @@ def generate_steps(sorted_steps, mot_index):
         actual_relative_steps[0] += 1
         smc.onestep_mot(mot_index[0], TIME_UNIT)
         abs_pos_one_step(mot_index[0])
-        # print("Step with axis: {0} ({1})".format(mot_index[0],
-        # actual_relative_steps[0]))
         fii[0] -= sorted_steps[1]
         check_diff(0)
 
