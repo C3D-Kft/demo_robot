@@ -485,7 +485,7 @@ class App():
 
         data = [ [], [], [] ]
 
-        # TODO: Change to final destination when ready!
+        # TODO: Implement multiple file selection (?)
         filename = filedialog.askopenfilenames(initialdir=INITDIR,
         title='Kiválasztás', filetypes=[
                     ("GRT file format", ".grt"),
@@ -510,16 +510,16 @@ class App():
             # Processing
             log.info("Processing %s graph!", lines[0][1:-2])
 
-            count = 0
+            motor_axis = 0
             for line in lines[4:]:
-                # Ha a sor tartalma: 'plot'
+                # Ha a sor tartalma: 'plot', ugrok a következő motor tengelyre
                 if line[0:4] == "plot":
-                    count += 1
+                    motor_axis += 1
                     continue
 
                 # Last element is '/n' (newline character)
                 k = line.split("\t")[:-1]
-                data[count].append(float(k[1]))
+                data[motor_axis].append(float(k[1]))
 
             # When success
             log.info("File has been successfully opened!")
@@ -557,13 +557,18 @@ class App():
             self.follow_route_but.config(state='normal')
 
 
+    # TODO: Egyszer hívjuk meg a RC.move_absolute_loop func-t
     def move_absolute_loop(self, data):
         """ Iterates over an absolute move list. """
+
+        position_list = []
 
         elements = len(data[0])
         for i in range(0, len(data[0])):
             log.info("Step %s/%s", i+1, elements)
-            RC.move_absolute_loop([data[0][i], data[1][i], data[2][i]])
+            position_list.append( [data[0][i], data[1][i], data[2][i]] )
+
+        RC.move_absolute_loop(position_list)
 
 
     def grip_release(self):
