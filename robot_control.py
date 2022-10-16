@@ -78,7 +78,8 @@ def deg_to_step(deg):
 
 
 def check_limits(mot, direction):
-    """Checks if actual position is within axis limits. """
+    """Checks if actual position is within axis limits (for jogging).
+    """
 
     if direction == 0:
         if ACTUAL_ABS_POSITION[mot] >= AXIS_LIMITS_MIN[mot]:
@@ -130,7 +131,7 @@ def move_absolute(deg_to_move):
 def move_absolute_loop(deg_to_move):
     """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
-    # # Check if intended pos is outside or inside limits
+    # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
 
     # Absolute steps
@@ -161,7 +162,7 @@ def move_absolute_loop(deg_to_move):
         if ds0 = 0 and ds1 = 0 and ds2 = 0:
             continue
 
-        # Check if steps changing direction
+        # Check if steps changing direction, and set flag
         if (rs0*ds0) >= 0 and (rs1*ds1) >= 0 and (rs2*ds2) >= 0:
             direction = 0
         else:
@@ -181,8 +182,7 @@ def move_absolute_loop(deg_to_move):
     # Set motor direction before start
     motor_dir_set(steps[0][:-1])
 
-    # Generating movement
-    # For the full relative step list
+    # Generating movement, iterating over the full relative step list
     for steps in step_list:
         # If direction flag 1 (changed), set motor directions
         if steps[3] == 1:
@@ -197,7 +197,8 @@ def move_absolute_loop(deg_to_move):
 
 def sorting_steps(step):
     """ Motoronkénti lépésszám abszolútértékeinek csökkenő sorrendbe rendezése
-    és a hozzá tartozó motortengely index kiszámítása. """
+    és a hozzá tartozó motortengely index kiszámítása.
+    """
 
     abs_steps = [] # Tuple list
     sorted_steps = []
@@ -235,11 +236,12 @@ def move_relative(deg_to_move):
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
 
+    # Lépések generálása
     if MOD == "MOD1":
-        generate_steps_by_interpolation(sort_steps, mot_idx) # Lépések generálása
+        generate_steps_by_interpolation(sort_steps, mot_idx)
 
     elif MOD == "MOD2":
-        generate_steps_by_axis(sort_steps, mot_idx) # Lépések generálása
+        generate_steps_by_axis(sort_steps, mot_idx)
 
     # Update absolute position by the relative movement
     log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
@@ -259,7 +261,6 @@ def generate_steps_by_axis(sorted_steps, mot_index):
             abs_pos_one_step(mot_index[mot])
 
 
-
 def generate_steps_by_interpolation(sorted_steps, mot_index):
     """ N-tengelyes interpoláció. Ez a függvény egy tetszőleges hosszúságú,
     csökkenő step listából és a hozzá rendelt motortengely-index listából olyan
@@ -275,8 +276,9 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
         actual_relative_steps.append(0)
         fii.append(0)
 
-
-    ### Nested function definition BEGIN ###
+    ###
+    ### Nested function definition BEGIN
+    ###
     def check_diff(dif):
 
         if dif >= (size-1):
@@ -293,7 +295,9 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
             # Recursion with nested function
             check_diff(dif+1)
 
-    ### Nested function definition END ###
+    ###
+    ### Nested function definition END
+    ###
 
     # Overflow miatt hozzáadok egy nulla értékű elemet
     sorted_steps.append(0)
@@ -316,9 +320,9 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
 def jog(mot, direction):
     """ This function enables to jog motors/axes individually. The motor
     jog until the jogging flag - which is set from a parallel thread - is
-    True. """
-
-    global JOGGING #, DIRECTION, TIME_UNIT
+    True.
+    """
+    global JOGGING
 
     # TODO: visszakorrigálni, ha kész a tesztelés
     jog_time_unit = 1 * TIME_UNIT
@@ -333,7 +337,7 @@ def jog(mot, direction):
 
     log.info("Jogging...")
 
-    while JOGGING: # Amíg True
+    while JOGGING: # While True
         # Check if limit is reached
         if not check_limits(mot, direction):
             break
@@ -374,7 +378,7 @@ def motor_dir_set(mot_step):
 def motor_enable_set(enable):
     """ Engedélyezi (1) vagy letiltja (0) a motorokat. """
 
-    # Motor 1-3 letiltás
+    # Motor 1-3 letiltása
     if enable == 1:
         for i in range(0,3):
             msg = smc.enable_set(i, 1)
@@ -388,29 +392,28 @@ def motor_enable_set(enable):
 
 
 def reset_pos():
-    """ Abszolút szög-értékben kifejezett pozíciók nullázása. """
-
+    """ Abszolút szög-értékben kifejezett pozíciók nullázása.
+    """
     global ACTUAL_ABS_POSITION
     ACTUAL_ABS_POSITION = [0,0,0]
 
 
 def get_actual_abs_position():
-    """ Get actual absolute position. """
-
+    """ Get actual absolute position.
+    """
     return ACTUAL_ABS_POSITION
 
 
 def get_limits():
-    """ Get axis limits lists. """
-
+    """ Get axis limits lists.
+    """
     return AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
 
 
 def set_limits(limits_min, limits_max):
-    """ Set axis limits lists. """
-
+    """ Set axis limits lists.
+    """
     global AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
-
     AXIS_LIMITS_MIN = limits_min
     AXIS_LIMITS_MAX = limits_max
     log.info("Limits has been set!")
@@ -420,25 +423,19 @@ def grip_release():
     """ Turn gripper motor half revolution to force open the gripper
     arms against the spring.
     """
-
-    # for m in range(0,32):
     smc.step_gripper(1)
-    # print("Step: {0}".format(m))
 
 
 def grip_hold():
     """ Turn gripper motor half revolution to let the springs close the gripper
     arms.
     """
-
-    #for m in range(0,32):
     smc.step_gripper(0)
-    # print("Step: {0}".format(m))
 
 
 def init(): # Always the first function to call!
-    """ First function to call. This func. initializes the GPIO outputs. """
-
+    """ First function to call. This func. initializes the GPIO outputs.
+    """
     smc.init()
     log.info("Robot initialized!")
     poweron()
