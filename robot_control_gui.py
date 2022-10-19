@@ -557,7 +557,6 @@ class App():
             self.follow_route_but.config(state='normal')
 
 
-    # TODO: Egyszer hívjuk meg a RC.move_absolute_loop func-t
     def move_absolute_loop(self, data):
         """ Iterates over an absolute move list. """
 
@@ -565,7 +564,7 @@ class App():
 
         elements = len(data[0])
         for i in range(0, len(data[0])):
-            log.info("Step %s/%s", i+1, elements)
+            # log.info("Step %s/%s", i+1, elements)
             position_list.append( [data[0][i], data[1][i], data[2][i]] )
 
         RC.move_absolute_loop(position_list)
