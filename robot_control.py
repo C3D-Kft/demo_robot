@@ -132,10 +132,12 @@ def move_absolute_loop(deg_to_move):
     """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
     def sign(x):
-        if x >= 0:
+        if x > 0:
             return 1
-        else:
+        elif x < 0:
             return -1
+        else:
+            return 0
 
     # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
@@ -166,7 +168,8 @@ def move_absolute_loop(deg_to_move):
             continue
 
         # Check if steps changing direction, and set flag
-        if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[2]) == dir[2]:
+        if (sign(dsp[0]) == dir[0] or dsp[0] == 0) and (sign(dsp[1]) == dir[1] or
+            dsp[1] == 0) and (sign(dsp[2]) == dir[2] or dsp[2] == 0):
             step_list.append([dsp[0], dsp[1], dsp[2], None]) # No change
 
         else:
@@ -370,7 +373,7 @@ def motor_dir_set(mot_step):
             msg = smc.dir_set(idx, 0)
             log.info(msg)
             DIRECTION[idx] = 0
-        else:
+        elif step > 0: # Korábban: else volt !!
             msg = smc.dir_set(idx, 1)
             log.info(msg)
             DIRECTION[idx] = 1
