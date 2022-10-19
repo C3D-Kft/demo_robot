@@ -73,7 +73,7 @@ def deg_to_step(deg):
 
     step = []
     for idx, val in enumerate(deg):
-        step.append(m.round(resolution[idx] * val))
+        step.append(m.floor(resolution[idx] * val))
     return step
 
 
@@ -141,12 +141,10 @@ def move_absolute_loop(deg_to_move):
     # Move this check to parent function, to check all datapoints before running
 
     asp = [0,0,0] # Current position in absolute steps (from start pos.)
-    # rsp = [0,0,0] # Releative steps from previous iteration
     step_list = [] # List with relative step arrays
     dir = [] # Init direction with first deg. values
     for deg in deg_to_move[0]:
         dir.append(sign(deg))
-        # rsp.append(sign(deg))
 
     n = 0
 
