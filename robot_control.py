@@ -149,8 +149,8 @@ def move_absolute_loop(deg_to_move):
     for deg in deg_to_move:
         # Calculate absolute steps from absolute degrees (target-start deg.)
         step0, step1, step2 = deg_to_step([
-        deg[0] - ACTUAL_ABS_POSITION[0]
-        deg[1] - ACTUAL_ABS_POSITION[1]
+        deg[0] - ACTUAL_ABS_POSITION[0],
+        deg[1] - ACTUAL_ABS_POSITION[1],
         deg[2] - ACTUAL_ABS_POSITION[2]
         ])
         # Relative steps new
@@ -159,7 +159,7 @@ def move_absolute_loop(deg_to_move):
         ds2 = step2 - as2
 
         # If all relative steps are zero, skip this calculation
-        if ds0 = 0 and ds1 = 0 and ds2 = 0:
+        if ds0 == 0 and ds1 == 0 and ds2 == 0:
             continue
 
         # Check if steps changing direction, and set flag
@@ -169,7 +169,7 @@ def move_absolute_loop(deg_to_move):
             direction = 1
 
         # Save relative steps, and change direction flag
-        step_list.append(abs(ds0), abs(ds1), abs(ds2), direction)
+        step_list.append([abs(ds0), abs(ds1), abs(ds2), direction])
 
         # Save values for next iteration
         a0 = step0
@@ -180,7 +180,7 @@ def move_absolute_loop(deg_to_move):
         rs2 = ds2
 
     # Set motor direction before start
-    motor_dir_set(steps[0][:-1])
+    motor_dir_set(step_list[0][:-1])
 
     # Generating movement, iterating over the full relative step list
     for steps in step_list:
