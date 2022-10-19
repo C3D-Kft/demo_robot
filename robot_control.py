@@ -73,7 +73,7 @@ def deg_to_step(deg):
 
     step = []
     for idx, val in enumerate(deg):
-        step.append(m.floor(resolution[idx] * val))
+        step.append(m.round(resolution[idx] * val))
     return step
 
 
@@ -163,29 +163,21 @@ def move_absolute_loop(deg_to_move):
         # Difference between actual pos. and previous pos.
         dsp = [step0 - asp[0], step1 - asp[1], step2 - asp[2]]
 
-        # TODO: Consider implement to reduce points
         # If all relative steps are zero, skip this calculation
-        # if dsp[0] == 0 and dsp[1] == 0 and dsp[2] == 0:
-        #     continue
-
-        # cdf0 = sign(rsp[0])*sign(dsp[0])
-        # cdf1 = sign(rsp[1])*sign(dsp[1])
-        # cdf2 = sign(rsp[2])*sign(dsp[2])
+        if dsp[0] == 0 and dsp[1] == 0 and dsp[2] == 0:
+            continue
 
         # Check if steps changing direction, and set flag
         if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[0]) == dir[2]:
-        # if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[2]) == dir[2]:
             step_list.append([dsp[0], dsp[1], dsp[2], None]) # No change
 
         else:
-            print(f"Step {n}: Direction changed!")
-            #     # Direction changed
+            # Direction changed
             dir = [sign(dsp[0]), sign(dsp[1]), sign(dsp[2])]
             step_list.append([dsp[0], dsp[1], dsp[2], dir])
 
         # Save values for next iteration
         asp = [step0, step1, step2]
-        # rsp = [dsp[0], dsp[1], dsp[2]]
         print(step_list[-1])
 
     # Set motor direction before start
