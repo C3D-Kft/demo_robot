@@ -134,16 +134,18 @@ def move_absolute_loop(deg_to_move):
     # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
 
-    # Absolute steps
+    # Current position in absolute steps (from start pos.)
+    # as = []
     as0 = 0
     as1 = 0
     as2 = 0
 
-    # Relative steps
+    # Releative steps from previous iteration
+    # rs = []
     rs0 = 0
     rs1 = 0
     rs2 = 0
-    step_list = [] # Relative stepek
+    step_list = [] # List with relative step arrays
 
     # Calculate relative step array for the movement loop
     for deg in deg_to_move:
@@ -153,7 +155,8 @@ def move_absolute_loop(deg_to_move):
         deg[1] - ACTUAL_ABS_POSITION[1],
         deg[2] - ACTUAL_ABS_POSITION[2]
         ])
-        # Relative steps - from prev. pos.
+        # Difference between actual pos. and previous pos.
+        # ds = []
         ds0 = step0 - as0
         ds1 = step1 - as1
         ds2 = step2 - as2
@@ -164,9 +167,9 @@ def move_absolute_loop(deg_to_move):
 
         # Check if steps changing direction, and set flag
         if (rs0*ds0) >= 0 and (rs1*ds1) >= 0 and (rs2*ds2) >= 0:
-            direction = 0
+            direction = 0 # No change
         else:
-            direction = 1
+            direction = 1 # Direction changed
 
         # Save relative steps, and change direction flag
         step_list.append([ds0, ds1, ds2, direction])
