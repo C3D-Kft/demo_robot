@@ -153,7 +153,7 @@ def move_absolute_loop(deg_to_move):
         deg[1] - ACTUAL_ABS_POSITION[1],
         deg[2] - ACTUAL_ABS_POSITION[2]
         ])
-        # Relative steps new
+        # Relative steps - from prev. pos.
         ds0 = step0 - as0
         ds1 = step1 - as1
         ds2 = step2 - as2
@@ -169,12 +169,12 @@ def move_absolute_loop(deg_to_move):
             direction = 1
 
         # Save relative steps, and change direction flag
-        step_list.append([abs(ds0), abs(ds1), abs(ds2), direction])
+        step_list.append([ds0, ds1, ds2, direction])
 
         # Save values for next iteration
-        a0 = step0
-        a1 = step1
-        a2 = step2
+        as0 = step0
+        as1 = step1
+        as2 = step2
         rs0 = ds0
         rs1 = ds1
         rs2 = ds2
@@ -183,14 +183,16 @@ def move_absolute_loop(deg_to_move):
     motor_dir_set(step_list[0][:-1])
 
     # Generating movement, iterating over the full relative step list
+    n = 0
     for steps in step_list:
+        n += 1
         # If direction flag 1 (changed), set motor directions
         if steps[3] == 1:
             motor_dir_set(steps[:-1])
 
         # Move each axis one-by-one
         for mot in [0,1,2]:
-            for i in range(0, steps[mot]):
+            for i in range(0, abs(steps[mot])):
                 smc.onestep_mot(mot, TIME_UNIT)
                 abs_pos_one_step(mot)
 
