@@ -27,7 +27,7 @@ class SpiDev():
         log.info("Open a connection to a specific bus ({0}) and device ({1}).".format(a, b))
 
     def xfer(self, d):
-        log.info("Transfer massage: >> {0} <<".format(d))
+        log.info("Transfer message: >> {0} <<".format(d))
 
     def readbytes(self, a):
         log.info("Read {0} bytes from device.".format(a))

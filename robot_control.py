@@ -131,24 +131,29 @@ def move_absolute(deg_to_move):
 def move_absolute_loop(deg_to_move):
     """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
+    def sign(x):
+        if x >= 0:
+            return 1
+        else:
+            return -1
+
     # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
 
-    # Current position in absolute steps (from start pos.)
-    # as = []
-    as0 = 0
-    as1 = 0
-    as2 = 0
-
-    # Releative steps from previous iteration
-    # rs = []
-    rs0 = 0
-    rs1 = 0
-    rs2 = 0
+    asp = [0,0,0] # Current position in absolute steps (from start pos.)
+    # rsp = [0,0,0] # Releative steps from previous iteration
     step_list = [] # List with relative step arrays
+    dir = [] # Init direction with first deg. values
+    for deg in deg_to_move[0]:
+        dir.append(sign(deg))
+        # rsp.append(sign(deg))
+
+    n = 0
 
     # Calculate relative step array for the movement loop
-    for deg in deg_to_move:
+    # First element excluded as it is the start point
+    for deg in deg_to_move[:-1]:
+        n += 1
         # Calculate absolute steps from absolute degrees (target-start deg.)
         step0, step1, step2 = deg_to_step([
         deg[0] - ACTUAL_ABS_POSITION[0],
@@ -156,31 +161,32 @@ def move_absolute_loop(deg_to_move):
         deg[2] - ACTUAL_ABS_POSITION[2]
         ])
         # Difference between actual pos. and previous pos.
-        # ds = []
-        ds0 = step0 - as0
-        ds1 = step1 - as1
-        ds2 = step2 - as2
+        dsp = [step0 - asp[0], step1 - asp[1], step2 - asp[2]]
 
+        # TODO: Consider implement to reduce points
         # If all relative steps are zero, skip this calculation
-        if ds0 == 0 and ds1 == 0 and ds2 == 0:
-            continue
+        # if dsp[0] == 0 and dsp[1] == 0 and dsp[2] == 0:
+        #     continue
+
+        # cdf0 = sign(rsp[0])*sign(dsp[0])
+        # cdf1 = sign(rsp[1])*sign(dsp[1])
+        # cdf2 = sign(rsp[2])*sign(dsp[2])
 
         # Check if steps changing direction, and set flag
-        if (rs0*ds0) >= 0 and (rs1*ds1) >= 0 and (rs2*ds2) >= 0:
-            direction = 0 # No change
-        else:
-            direction = 1 # Direction changed
+        if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[0]) == dir[2]:
+        # if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[2]) == dir[2]:
+            step_list.append([dsp[0], dsp[1], dsp[2], None]) # No change
 
-        # Save relative steps, and change direction flag
-        step_list.append([ds0, ds1, ds2, direction])
+        else:
+            print(f"Step {n}: Direction changed!")
+            #     # Direction changed
+            dir = [sign(dsp[0]), sign(dsp[1]), sign(dsp[2])]
+            step_list.append([dsp[0], dsp[1], dsp[2], dir])
 
         # Save values for next iteration
-        as0 = step0
-        as1 = step1
-        as2 = step2
-        rs0 = ds0
-        rs1 = ds1
-        rs2 = ds2
+        asp = [step0, step1, step2]
+        # rsp = [dsp[0], dsp[1], dsp[2]]
+        print(step_list[-1])
 
     # Set motor direction before start
     motor_dir_set(step_list[0][:-1])
@@ -190,8 +196,8 @@ def move_absolute_loop(deg_to_move):
     for steps in step_list:
         n += 1
         # If direction flag 1 (changed), set motor directions
-        if steps[3] == 1:
-            motor_dir_set(steps[:-1])
+        if steps[3] is not None:
+            motor_dir_set(steps[3])
 
         # Move each axis one-by-one
         for mot in [0,1,2]:
