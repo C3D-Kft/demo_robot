@@ -166,7 +166,7 @@ def move_absolute_loop(deg_to_move):
             continue
 
         # Check if steps changing direction, and set flag
-        if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[0]) == dir[2]:
+        if sign(dsp[0]) == dir[0] and sign(dsp[1]) == dir[1] and sign(dsp[2]) == dir[2]:
             step_list.append([dsp[0], dsp[1], dsp[2], None]) # No change
 
         else:
