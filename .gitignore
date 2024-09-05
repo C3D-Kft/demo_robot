@@ -4,7 +4,6 @@ screenshot_gui.jpg
 
 # Ignore developer folder (output for debug files, etc.)
 /log/
-/DOC/
-/EXAMPLES/
-run_test.bat
+/DOC_/
+/EXAMPLES_/
 test.py
