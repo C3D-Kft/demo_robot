@@ -4,6 +4,6 @@ screenshot_gui.jpg
 
 # Ignore developer folder (output for debug files, etc.)
 /log/
-/DOC_/
+/dev/
 /EXAMPLES_/
 test.py
