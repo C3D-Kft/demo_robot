@@ -26,10 +26,10 @@ import stepper_mot_control as smc
 
 log = logging.getLogger("Main")
 
-## Gripper parameters
+# Gripper parameters
 GRIP_STEP_PER_REV = 64
 
-## Motor parameters
+# Motor parameters
 STEP_PER_REV_WO_GEARBOX = 200
 GEAR_RATIO = 5.18
 STEP_PER_REV_GEARBOX = 1036.36
@@ -44,25 +44,24 @@ STEP_PER_REV_GEARBOX = 1036.36
 motor_step = [4145.45, 4145.45, 4145.45]
 resolution = list(map(lambda x: float(float(x)/float(360)), motor_step))
 step_unit = list(map(lambda x: float(1/x), resolution))
-log.info("Stepper motor resulotion set to {0:.2f} step/deg.".format(resolution[0]))
+log.info("Stepper motor resolution set to {resolution[0]:.2f} step/deg.")
 
-## Running parameters
-BASE_FREQUENCY = 750 # Hz
-CORRECTION = 0 # ms
-TIME_UNIT = float(float(1/float(BASE_FREQUENCY)/2) - CORRECTION) # ms
-log.info("Base frequency set to {0:.0f} Hz / {1:.5f} ms.".format(BASE_FREQUENCY,
-TIME_UNIT))
+# Running parameters
+BASE_FREQUENCY = 750  # Hz
+CORRECTION = 0  # ms
+TIME_UNIT = float(float(1/float(BASE_FREQUENCY)/2) - CORRECTION)  # ms
+log.info(f"Base frequency set to {BASE_FREQUENCY:.0f} Hz / {TIME_UNIT:.5f} ms.")
 
-## Actual position
-ACTUAL_ABS_POSITION = [None, None, None] # abszolút szög-értékek megadva
-DIRECTION = [0,0,0] # motor dir setting
-JOGGING = False # jogging flag
+# Actual position
+ACTUAL_ABS_POSITION = [None, None, None]  # abszolút szög-értékek megadva
+DIRECTION = [0, 0, 0]  # motor dir setting
+JOGGING = False  # jogging flag
 
-## Axis limits default values
+# Axis limits default values
 AXIS_LIMITS_MIN = [-90.0, -130.0, 0.0]
 AXIS_LIMITS_MAX = [90.0, 0.0, 200.0]
 
-## Interpolation mode
+# Interpolation mode
 MOD = "MOD1"
 
 
@@ -70,7 +69,6 @@ def deg_to_step(deg):
     """ Háromelemű relatív szögelmozdulás-tömbből számol
     relatív lépésszámot!
     """
-
     step = []
     for idx, val in enumerate(deg):
         step.append(m.floor(resolution[idx] * val))
@@ -80,7 +78,6 @@ def deg_to_step(deg):
 def check_limits(mot, direction):
     """Checks if actual position is within axis limits (for jogging).
     """
-
     if direction == 0:
         if ACTUAL_ABS_POSITION[mot] >= AXIS_LIMITS_MIN[mot]:
             return True
@@ -142,9 +139,9 @@ def move_absolute_loop(deg_to_move):
     # Check if intended pos is outside or inside limits
     # Move this check to parent function, to check all datapoints before running
 
-    asp = [0,0,0] # Current position in absolute steps (from start pos.)
-    step_list = [] # List with relative step arrays
-    dir = [] # Init direction with first deg. values
+    asp = [0, 0, 0]  # Current position in absolute steps (from start pos.)
+    step_list = []  # List with relative step arrays
+    dir = []  # Init direction with first deg. values
     for deg in deg_to_move[0]:
         dir.append(sign(deg))
 
@@ -156,9 +153,9 @@ def move_absolute_loop(deg_to_move):
         n += 1
         # Calculate absolute steps from absolute degrees (target-start deg.)
         step0, step1, step2 = deg_to_step([
-        deg[0] - ACTUAL_ABS_POSITION[0],
-        deg[1] - ACTUAL_ABS_POSITION[1],
-        deg[2] - ACTUAL_ABS_POSITION[2]
+            deg[0] - ACTUAL_ABS_POSITION[0],
+            deg[1] - ACTUAL_ABS_POSITION[1],
+            deg[2] - ACTUAL_ABS_POSITION[2]
         ])
         # Difference between actual pos. and previous pos.
         dsp = [step0 - asp[0], step1 - asp[1], step2 - asp[2]]
@@ -170,7 +167,7 @@ def move_absolute_loop(deg_to_move):
         # Check if steps changing direction, and set flag
         if (sign(dsp[0]) == dir[0] or dsp[0] == 0) and (sign(dsp[1]) == dir[1] or
             dsp[1] == 0) and (sign(dsp[2]) == dir[2] or dsp[2] == 0):
-            step_list.append([dsp[0], dsp[1], dsp[2], None]) # No change
+            step_list.append([dsp[0], dsp[1], dsp[2], None])  # No change
 
         else:
             # Direction changed
@@ -193,7 +190,7 @@ def move_absolute_loop(deg_to_move):
             motor_dir_set(steps[3])
 
         # Move each axis one-by-one
-        for mot in [0,1,2]:
+        for mot in [0, 1, 2]:
             for i in range(0, abs(steps[mot])):
                 smc.onestep_mot(mot, TIME_UNIT)
                 abs_pos_one_step(mot)
@@ -203,20 +200,19 @@ def sorting_steps(step):
     """ Motoronkénti lépésszám abszolútértékeinek csökkenő sorrendbe rendezése
     és a hozzá tartozó motortengely index kiszámítása.
     """
-
-    abs_steps = [] # Tuple list
+    abs_steps = []  # Tuple list
     sorted_steps = []
     mot = []
 
     # step értékek abszolútértékének betöltése, és a motor index hozzárendelése
     for i, mot_step in enumerate(step):
-        abs_steps.append( (abs(mot_step), i) )
+        abs_steps.append((abs(mot_step), i))
 
-    abs_steps.sort(reverse = True)
+    abs_steps.sort(reverse=True)
 
     log.info("Sorted steps acc. to motor axes: %s", abs_steps)
 
-    for i in range(0,len(abs_steps)):
+    for i in range(0, len(abs_steps)):
         sorted_steps.append(abs_steps[i][0])
         mot.append(abs_steps[i][1])
 
@@ -228,14 +224,13 @@ def move_relative(deg_to_move):
     A mozgásfüggvény a különböző tengelyek menti lépéseket olyan sorrendben
     generálja, hogy a mozgás az összes tengelyen egyszerre fejeződik be.
     """
-
     steps = deg_to_step(deg_to_move)
 
     log.info("Steps to move: %s", steps)
-    motor_dir_set(steps) # Motorok iránybeállítása
+    motor_dir_set(steps)  # Motorok iránybeállítása
 
-    sort_steps = [] # A, B, ... tengelyeken lelépendő lépések
-    mot_idx = [] # Az A, B, ... tengelyek indexei (0, 1, ...)
+    sort_steps = []  # A, B, ... tengelyeken lelépendő lépések
+    mot_idx = []  # Az A, B, ... tengelyek indexei (0, 1, ...)
 
     # Step lista rendezése a hozzárendelt motor indexekkel
     sort_steps, mot_idx = sorting_steps(steps)
@@ -258,8 +253,7 @@ def generate_steps_by_axis(sorted_steps, mot_index):
     szekvenciát generál, amelyben a tengelyenként mozgások egymás után
     következnek (nincs interpoláció).
     """
-
-    for mot in range(0, len(mot_index)): # 0, 1, 2
+    for mot in range(0, len(mot_index)):  # 0, 1, 2
         for i in range(0, sorted_steps[mot]):
             smc.onestep_mot(mot_index[mot], TIME_UNIT)
             abs_pos_one_step(mot_index[mot])
@@ -271,8 +265,7 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
     szekvenciát generál, amelyben az összes tengelyen egyszerre fejeződik be a
     mozgás.
     """
-
-    size = len(sorted_steps) # Number of axes
+    size = len(sorted_steps)  # Number of axes
     actual_relative_steps = []
     fii = []
 
@@ -280,9 +273,7 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
         actual_relative_steps.append(0)
         fii.append(0)
 
-    ###
-    ### Nested function definition BEGIN
-    ###
+    # NOTE: Nested function definition BEGIN
     def check_diff(dif):
 
         if dif >= (size-1):
@@ -299,9 +290,7 @@ def generate_steps_by_interpolation(sorted_steps, mot_index):
             # Recursion with nested function
             check_diff(dif+1)
 
-    ###
-    ### Nested function definition END
-    ###
+    # NOTE: Nested function definition END
 
     # Overflow miatt hozzáadok egy nulla értékű elemet
     sorted_steps.append(0)
@@ -341,13 +330,13 @@ def jog(mot, direction):
 
     log.info("Jogging...")
 
-    while JOGGING: # While True
+    while JOGGING:  # While True
         # Check if limit is reached
         if not check_limits(mot, direction):
             break
 
-        smc.onestep_mot(mot, jog_time_unit) # Step one
-        abs_pos_one_step(mot) # Update pos.
+        smc.onestep_mot(mot, jog_time_unit)  # Step one
+        abs_pos_one_step(mot)  # Update pos.
 
     log.info("Jogging stopped!")
 
@@ -373,7 +362,7 @@ def motor_dir_set(mot_step):
             msg = smc.dir_set(idx, 0)
             log.info(msg)
             DIRECTION[idx] = 0
-        elif step > 0: # Korábban: else volt !!
+        elif step > 0:  # Korábban: else volt !!
             msg = smc.dir_set(idx, 1)
             log.info(msg)
             DIRECTION[idx] = 1
@@ -384,13 +373,13 @@ def motor_enable_set(enable):
 
     # Motor 1-3 letiltása
     if enable == 1:
-        for i in range(0,3):
+        for i in range(0, 3):
             msg = smc.enable_set(i, 1)
             log.info(msg)
 
     # Motor 1-3 engedélyezése
     if enable == 0:
-        for i in range(0,3):
+        for i in range(0, 3):
             msg = smc.enable_set(i, 0)
             log.info(msg)
 
@@ -399,7 +388,7 @@ def reset_pos():
     """ Abszolút szög-értékben kifejezett pozíciók nullázása.
     """
     global ACTUAL_ABS_POSITION
-    ACTUAL_ABS_POSITION = [0,0,0]
+    ACTUAL_ABS_POSITION = [0, 0, 0]
 
 
 def get_actual_abs_position():
@@ -437,7 +426,7 @@ def grip_hold():
     smc.step_gripper(0)
 
 
-def init(): # Always the first function to call!
+def init():  # Always the first function to call!
     """ First function to call. This func. initializes the GPIO outputs.
     """
     smc.init()
@@ -472,7 +461,6 @@ def cleanup():
     smc.cleanup()
 
 
-
 # Főprogram
 if __name__ == "__main__":
 
@@ -481,8 +469,8 @@ if __name__ == "__main__":
     try:
         init()
 
-        goal = [10,0,0]
-        goal2 = [20,0,0]
+        goal = [10, 0, 0]
+        goal2 = [20, 0, 0]
 
         # Test relative movement
         move_relative(goal)
