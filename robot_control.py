@@ -82,16 +82,20 @@ def check_limits(mot, direction):
         if ACTUAL_ABS_POSITION[mot] >= AXIS_LIMITS_MIN[mot]:
             return True
 
-        log.info("Motor%s min. limit reached at %s°", mot+1,
-        AXIS_LIMITS_MIN[mot])
+        log.info(
+            "Motor%s min. limit reached at %s°", mot+1,
+            AXIS_LIMITS_MIN[mot]
+        )
         return False
 
     if direction == 1:
         if ACTUAL_ABS_POSITION[mot] <= AXIS_LIMITS_MAX[mot]:
             return True
 
-        log.info("Motor%s max. limit reached at %s°", mot+1,
-        AXIS_LIMITS_MAX[mot])
+        log.info(
+            "Motor%s max. limit reached at %s°", mot+1,
+            AXIS_LIMITS_MAX[mot]
+        )
         return False
 
     return False
@@ -107,13 +111,17 @@ def move_absolute(deg_to_move):
                 pass
 
             else:
-                log.info("Motor%s max. limit reached at %s°", mot+1,
-                AXIS_LIMITS_MAX[mot])
+                log.info(
+                    "Motor%s max. limit reached at %s°", mot+1,
+                    AXIS_LIMITS_MAX[mot]
+                )
                 return
 
         else:
-            log.info("Motor%s min. limit reached at %s°", mot+1,
-            AXIS_LIMITS_MIN[mot])
+            log.info(
+                "Motor%s min. limit reached at %s°", mot+1,
+                AXIS_LIMITS_MIN[mot]
+            )
             return
 
     log.info("Moving to: %s", deg_to_move)
@@ -141,9 +149,9 @@ def move_absolute_loop(deg_to_move):
 
     asp = [0, 0, 0]  # Current position in absolute steps (from start pos.)
     step_list = []  # List with relative step arrays
-    dir = []  # Init direction with first deg. values
+    direction = []  # Init direction with first deg. values
     for deg in deg_to_move[0]:
-        dir.append(sign(deg))
+        direction.append(sign(deg))
 
     n = 0
 
@@ -165,14 +173,15 @@ def move_absolute_loop(deg_to_move):
             continue
 
         # Check if steps changing direction, and set flag
-        if (sign(dsp[0]) == dir[0] or dsp[0] == 0) and (sign(dsp[1]) == dir[1] or
-            dsp[1] == 0) and (sign(dsp[2]) == dir[2] or dsp[2] == 0):
+        if ((sign(dsp[0]) == direction[0] or dsp[0] == 0) and
+                (sign(dsp[1]) == direction[1] or dsp[1] == 0) and
+                (sign(dsp[2]) == direction[2] or dsp[2] == 0)):
             step_list.append([dsp[0], dsp[1], dsp[2], None])  # No change
 
         else:
             # Direction changed
-            dir = [sign(dsp[0]), sign(dsp[1]), sign(dsp[2])]
-            step_list.append([dsp[0], dsp[1], dsp[2], dir])
+            direction = [sign(dsp[0]), sign(dsp[1]), sign(dsp[2])]
+            step_list.append([dsp[0], dsp[1], dsp[2], direction])
 
         # Save values for next iteration
         asp = [step0, step1, step2]
@@ -243,8 +252,13 @@ def move_relative(deg_to_move):
         generate_steps_by_axis(sort_steps, mot_idx)
 
     # Update absolute position by the relative movement
-    log.info("Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
-    ACTUAL_ABS_POSITION[0], ACTUAL_ABS_POSITION[1], ACTUAL_ABS_POSITION[2]))
+    log.info(
+        "Actual position: [{0:.3f}, {1:.3f}, {2:.3f}]".format(
+            ACTUAL_ABS_POSITION[0],
+            ACTUAL_ABS_POSITION[1],
+            ACTUAL_ABS_POSITION[2]
+        )
+    )
 
 
 def generate_steps_by_axis(sorted_steps, mot_index):
