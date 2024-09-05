@@ -11,14 +11,13 @@ www.C3D.hu
 
 # First import should be the logging module if any!
 import logging
-import logger
 
 log = logging.getLogger("Main")
 
 # A print függvények egyszerűsége érdekében szöveggé lettek alakítva!
 
 
-class SpiDev():
+class SpiDev:
 
     def init(self):
         print("Hello")

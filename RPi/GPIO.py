@@ -11,12 +11,11 @@ www.C3D.hu
 
 # First import should be the logging module if any!
 import logging
-import logger
 
 log = logging.getLogger("Main")
 
-# A valós értékek integer számok (!)
-# A print függvények egyszerűsége érdekében szöveggé lettek alakítva!
+# NOTE: A valós értékek integer számok (!)
+#  A print függvények egyszerűsége érdekében szöveggé lettek alakítva!
 BOARD = "BOARD"
 BCM = "BCM"
 OUT = "OUT"
@@ -30,10 +29,10 @@ def setmode(a):
 def setup(a, b, initial=None):
     log.info("GPIO {0} set to: {1}, value: {2}".format(a,b, initial))
 
+# NOTE: Function turned off, because spamming the console!
 def output(a, b):
     pass
-    # Function turned off, beacuse spamming the console!
-    # log.info("GPIO {0} set to: {1}".format(a,b))
+    log.info("GPIO {0} set to: {1}".format(a,b))
 
 def cleanup():
     log.info("GPIO pins cleaned up!")
