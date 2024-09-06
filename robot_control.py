@@ -194,7 +194,7 @@ def move_absolute_loop(deg_to_move):
 
         # Move each axis one-by-one
         for mot in [0,1,2]:
-            for i in range(0, abs(steps[mot])):
+            for _ in range(0, abs(steps[mot])):
                 smc.onestep_mot(mot, TIME_UNIT)
                 abs_pos_one_step(mot)
 
