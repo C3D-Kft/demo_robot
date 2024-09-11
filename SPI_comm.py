@@ -32,8 +32,7 @@ class SPI:
         """ Initializes motor drivers by sending the setup
         bytes to them via SPI communication.
         """
-
-        self.MOTOR = 0  # Choosen motor number (1-3, default zero)
+        self.motor = 0  # Choosen motor number (1-3, default zero)
 
         # Enable SPI
         self.spi = spidev.SpiDev()
@@ -127,7 +126,7 @@ class SPI:
             return
 
         smc.select_spi(mot)
-        self.MOTOR = mot
+        self.motor = mot
 
     def bytearray_to_bitstring(self, byte_array):
         """ Converts the given 3-byte array to a 20-bit bitstring.
@@ -152,7 +151,7 @@ class SPI:
         bitstring = bitstring.replace("-", "")
         bitstring = bitstring.strip()
 
-        motor = "Motor {0}: ".format(self.MOTOR)
+        motor = "Motor {0}: ".format(self.motor)
 
         if bitstring[19] == "1":  # SG
             log.warning(motor + "StallGuard2 threshold has been reached!")
