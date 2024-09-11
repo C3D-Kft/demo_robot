@@ -53,7 +53,7 @@ TIME_UNIT = float(float(1/float(BASE_FREQUENCY)/2) - CORRECTION)  # ms
 log.info(f"Base frequency set to {BASE_FREQUENCY:.0f} Hz / {TIME_UNIT:.5f} ms.")
 
 # Actual position
-ACTUAL_ABS_POSITION = [None, None, None]  # abszolút szög-értékek megadva
+ACTUAL_ABS_POSITION = [0, 0, 0]  # abszolút szög-értékek megadva
 DIRECTION = [0, 0, 0]  # motor dir setting
 JOGGING = False  # jogging flag
 
@@ -76,8 +76,7 @@ def deg_to_step(deg):
 
 
 def check_limits(mot, direction):
-    """Checks if actual position is within axis limits (for jogging).
-    """
+    """Checks if actual position is within axis limits (for jogging). """
     if direction == 0:
         if ACTUAL_ABS_POSITION[mot] >= AXIS_LIMITS_MIN[mot]:
             return True
@@ -137,6 +136,7 @@ def move_absolute_loop(deg_to_move):
     """ Abszolút koordináta tömbhöz tartozó mozgás. """
 
     def sign(x):
+        """ Signum function, return 1, -1 or 0; depending on the sign. """
         if x > 0:
             return 1
         elif x < 0:
@@ -238,10 +238,9 @@ def move_relative(deg_to_move):
     log.info("Steps to move: %s", steps)
     motor_dir_set(steps)  # Motorok iránybeállítása
 
-    sort_steps = []  # A, B, ... tengelyeken lelépendő lépések
-    mot_idx = []  # Az A, B, ... tengelyek indexei (0, 1, ...)
-
     # Step lista rendezése a hozzárendelt motor indexekkel
+    # sort_steps: A, B, ... tengelyeken lelépendő lépések
+    # mot_idx: Az A, B, ... tengelyek indexei (0, 1, ...)
     sort_steps, mot_idx = sorting_steps(steps)
 
     # Lépések generálása
@@ -399,27 +398,23 @@ def motor_enable_set(enable):
 
 
 def reset_pos():
-    """ Abszolút szög-értékben kifejezett pozíciók nullázása.
-    """
+    """ Abszolút szög-értékben kifejezett pozíciók nullázása. """
     global ACTUAL_ABS_POSITION
     ACTUAL_ABS_POSITION = [0, 0, 0]
 
 
 def get_actual_abs_position():
-    """ Get actual absolute position.
-    """
+    """ Get actual absolute position. """
     return ACTUAL_ABS_POSITION
 
 
 def get_limits():
-    """ Get axis limits lists.
-    """
+    """ Get axis limits lists. """
     return AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
 
 
 def set_limits(limits_min, limits_max):
-    """ Set axis limits lists.
-    """
+    """ Set axis limits lists. """
     global AXIS_LIMITS_MIN, AXIS_LIMITS_MAX
     AXIS_LIMITS_MIN = limits_min
     AXIS_LIMITS_MAX = limits_max
@@ -441,24 +436,26 @@ def grip_hold():
 
 
 def init():  # Always the first function to call!
-    """ First function to call. This func. initializes the GPIO outputs.
-    """
+    """ First function to call. This func. initializes the GPIO outputs. """
     smc.init()
     log.info("Robot initialized!")
     poweron()
 
 
 def poweron():
+    """ Switch on power. """
     log.info("Power switched on!")
     smc.poweron()
 
 
 def poweroff():
+    """ Switch off power. """
     log.info("Power switched off!")
     smc.poweroff()
 
 
 def switch_mode(mode):
+    """ Switch operating mode back-and-forth. """
     global MOD
     MOD = mode
 
