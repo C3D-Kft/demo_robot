@@ -15,6 +15,9 @@ import serial
 
 log = logging.getLogger("Main")
 
+# robot_control_gui - gomb hozzáadása - kapcsolat létrehozása / rögzítés elkezdése
+# gomb hozzáadása - rögzítése megállítása, fájl létrehozása
+
 
 def main():
     ser = serial.Serial('/dev/ttyACM0', 9600)
