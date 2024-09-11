@@ -27,15 +27,14 @@ log = logging.getLogger("Main")
 
 
 class SPI:
+    """ xxx """
 
     def init(self):
         """ Initializes motor drivers by sending the setup
         bytes to them via SPI communication.
         """
         self.motor = 0  # Choosen motor number (1-3, default zero)
-
-        # Enable SPI
-        self.spi = spidev.SpiDev()
+        self.spi = spidev.SpiDev()  # Enable SPI
 
         # Open a connection to a specific bus and device (chip select pin)
         # We only have SPI bus 0 available on the RPi
@@ -65,14 +64,12 @@ class SPI:
         log.info("Initializing complete!")
 
     def start(self):
-        """ Send motor driver configuration data
-        to the selected motor driver.
+        """ Send motor driver configuration data to the selected motor driver.
         """
-
-        msg = ""
         data_int = []  # List of bitstrings in decimal integer format
 
         # Configuration bits according to TMC2660 documentation:
+        # NOTE: variables are uppercase in accordance of the documentation
         DRVCTRL = "0000 0000 0000 0000 0110"  # 00001 #4-microstep
         CHOPCONF = "1001 0100 0101 0101 0111"  # 94557
         SMARTEN = "1010 1000 0010 0000 0010"  # A8202
