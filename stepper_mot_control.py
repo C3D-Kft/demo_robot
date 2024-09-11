@@ -158,7 +158,6 @@ def step_gripper(direction):
 
 def onestep_mot(mot, time_unit=0.1):
     """ Négszögjel generálása egy adott motor tengely számára. """
-
     gpio.output(motor_step[mot], gpio.HIGH)
     time.sleep(time_unit)
     gpio.output(motor_step[mot], gpio.LOW)
@@ -167,13 +166,11 @@ def onestep_mot(mot, time_unit=0.1):
 
 def poweron():
     """ 24V tápfeszültség bekapcsolása. """
-
     gpio.output(POWER[0], gpio.HIGH)
 
 
 def poweroff():
     """ 24V tápfeszültség kikapcsolása. """
-
     gpio.output(POWER[0], gpio.LOW)
 
 
