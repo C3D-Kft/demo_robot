@@ -20,6 +20,7 @@ között lehet váltani.
 
 """
 
+from enum import StrEnum
 import logging
 import math as m
 import stepper_mot_control as smc
@@ -61,8 +62,14 @@ JOGGING = False  # jogging flag
 AXIS_LIMITS_MIN = [-90.0, -130.0, 0.0]
 AXIS_LIMITS_MAX = [90.0, 0.0, 200.0]
 
+
+class Interpolation(StrEnum):
+    MOD1 = "MOD1"  # Interpolation - all axis reach end simultaneously
+    MOD2 = "MOD2"  # No interpolation between motor axes
+
+
 # Interpolation mode
-MOD = "MOD1"
+MOD = Interpolation.MOD1
 
 
 def deg_to_step(deg):
@@ -244,10 +251,10 @@ def move_relative(deg_to_move):
     sort_steps, mot_idx = sorting_steps(steps)
 
     # Lépések generálása
-    if MOD == "MOD1":
+    if MOD == Interpolation.MOD1:
         generate_steps_by_interpolation(sort_steps, mot_idx)
 
-    elif MOD == "MOD2":
+    elif MOD == Interpolation.MOD2:
         generate_steps_by_axis(sort_steps, mot_idx)
 
     # Update absolute position by the relative movement
@@ -472,7 +479,7 @@ def cleanup():
     smc.cleanup()
 
 
-# Főprogram
+# Include guard
 if __name__ == "__main__":
 
     zeroing()

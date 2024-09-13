@@ -63,7 +63,7 @@ class App:
         self.pos1 = StringVar()
         self.pos2 = StringVar()
         self.pos3 = StringVar()
-        self.mode = "MOD1"
+        self.mode = rcl.Interpolation.MOD1
 
         # Initialize robot, GPIOs; switch on power
         rcl.init()
@@ -664,14 +664,14 @@ class App:
 
     def switch_mode(self):
 
-        if self.mode == "MOD1":
-            self.mode = "MOD2"
+        if self.mode == rcl.Interpolation.MOD1:
+            self.mode = rcl.Interpolation.MOD2
         else:
-            self.mode = "MOD1"
+            self.mode = rcl.Interpolation.MOD1
 
         self.mode_button['text'] = "{0}".format(self.mode)
         rcl.switch_mode("{0}".format(self.mode))
-        log.info("Switch mode to: %s!", self.mode)
+        log.info("Switch interpolation mode to: %s", self.mode)
 
     def enable_all_mot(self):
         log.info("Enable all motors!")
