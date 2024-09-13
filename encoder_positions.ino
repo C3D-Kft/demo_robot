@@ -19,26 +19,28 @@ volatile int             ISRencod3Pos;                      // encoder 3 positio
 int                      encodLastPos;                      // previous position encoder 1
 int                      encod2LastPos;                     // previous position encoder 2
 int                      encod3LastPos;                     // previous position encoder 3
-byte                     LastPort8 = SignalA;               // previous A/B state 
-byte                     LastPort82 = SignalC;              // previous C/D state 
-byte                     LastPort9 = SignalE;               // previous E/F state 
+byte                     LastPort8 = SignalA;               // previous A/B state
+byte                     LastPort82 = SignalC;              // previous C/D state
+byte                     LastPort9 = SignalE;               // previous E/F state
 
 
 void setup(void) {                                            
-  pinMode(INPUT_ENCOD_A, INPUT_PULLUP);                     // use internal pull-up resistor, pin 21 
-  pinMode(INPUT_ENCOD_B, INPUT_PULLUP);                     // use internal pull-up resistor, pin 20 
-  pinMode(INPUT_ENCOD_C, INPUT_PULLUP);                     // use internal pull-up resistor, pin 3 
-  pinMode(INPUT_ENCOD_D, INPUT_PULLUP);                     // use internal pull-up resistor, pin 2 
-  pinMode(INPUT_ENCOD_E, INPUT_PULLUP);                     // use internal pull-up resistor, pin 19 
-  pinMode(INPUT_ENCOD_F, INPUT_PULLUP);                     // use internal pull-up resistor, pin 18 
+  pinMode(INPUT_ENCOD_A, INPUT_PULLUP);                     // use internal pull-up resistor, pin 21
+  pinMode(INPUT_ENCOD_B, INPUT_PULLUP);                     // use internal pull-up resistor, pin 20
+  pinMode(INPUT_ENCOD_C, INPUT_PULLUP);                     // use internal pull-up resistor, pin 3
+  pinMode(INPUT_ENCOD_D, INPUT_PULLUP);                     // use internal pull-up resistor, pin 2
+  pinMode(INPUT_ENCOD_E, INPUT_PULLUP);                     // use internal pull-up resistor, pin 19
+  pinMode(INPUT_ENCOD_F, INPUT_PULLUP);                     // use internal pull-up resistor, pin 18
   attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_A), ExtInt, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_B), ExtInt, CHANGE);                       
+  attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_B), ExtInt, CHANGE);
   attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_C), ExtInt2, CHANGE);
   attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_D), ExtInt2, CHANGE);
   attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_E), ExtInt3, CHANGE);
   attachInterrupt(digitalPinToInterrupt(INPUT_ENCOD_F), ExtInt3, CHANGE);
-  Serial.begin(9600);                                                               // baud rate of serial port
-  Serial.println(F("Set Name,Argument,SENSOR/ANGLE,SENSOR2/ANGLE,SENSOR3/ANGLE"));  // this is the headline for the csv file      
+  Serial.begin(9600);                                       // baud rate of serial port
+
+  // this is the headline for the csv file
+  Serial.println(F("Set Name,Argument,SENSOR/ANGLE,SENSOR2/ANGLE,SENSOR3/ANGLE"));
 }                                                             
 
 
@@ -49,7 +51,7 @@ void ExtInt() {                                               /// OPTICAL ENCODE
   if (LastPort8 & SignalB)   ISRencodPos--;                   // Rotation <- {ISRencodPos--; Sense = 0;}
   if (    Port8 && (Port8 != SignalAB)) Port8 ^= SignalAB;    //                              (swap A-B)
       LastPort8  =  Port8;                                    //                  mieux vaut faire court
-}                                                             //
+}
 void ExtInt2() {                                              /// OPTICAL ENCODER ext interrupt pin 2, 3
      byte Port82  =  PINE & SignalCD;                         // *** PINE (PORT INPUT E)  ***for Mega***
       LastPort82 ^=  Port82;                                  //                                      
@@ -57,7 +59,7 @@ void ExtInt2() {                                              /// OPTICAL ENCODE
   if (LastPort82 & SignalD)   ISRencod2Pos--;                 // Rotation <- {ISRencod2Pos--; Sense = 0;}
   if (    Port82 && (Port82 != SignalCD)) Port82 ^= SignalCD; //                               (swap C-D)
       LastPort82  =  Port82;                                  //                   mieux vaut faire court
-}                        
+}
 void ExtInt3() {                                              /// OPTICAL ENCODER ext interrupt pin 18, 19
      byte Port9  =  PIND & SignalEF;                          // *** PIND (PORT INPUT D)  ***for Mega***
       LastPort9 ^=  Port9;                                    //                                      
@@ -65,26 +67,29 @@ void ExtInt3() {                                              /// OPTICAL ENCODE
   if (LastPort9 & SignalF)   ISRencod3Pos--;                  // Rotation <- {ISRencod3Pos--; Sense = 0;}
   if (    Port9 && (Port9 != SignalEF)) Port9 ^= SignalEF;    //                               (swap E-F)
       LastPort9  =  Port9;                                    //                   mieux vaut faire court
-}                        
+}
 
-void loop(void)                                               /// MAIN LOOP
-{                                            
+void loop(void)                                               // MAIN LOOP
+{
   noInterrupts();                                             //
-    int encodPosition = ISRencodPos;                          //
+    int encodPosition = ISRencodPos;
     int encod2Position = ISRencod2Pos;
     int encod3Position = ISRencod3Pos; 
     unsigned long timestamp = millis();                       // timestamp in millisec, may have to change sensor and motor parameters in creo to msec
-    int SetName = 1;                                          //Set Name, value can be anything 
-  interrupts();                                               
-    
+    int SetName = 1;                                          // Set Name, value can be anything
+  interrupts();
+
   if (encodLastPos != encodPosition) {                          // when the encoder 1 change,
     encodLastPos = encodPosition;   
   }       
   if (encod2LastPos != encod2Position) {                        // when the encoder 2 change,
     encod2LastPos = encod2Position;                             //
-  }             
+  }
   if (encod3LastPos != encod3Position) {                        // when the encoder 3 change,
     encod3LastPos = encod3Position;                             //
-  }    
-  Serial.print(SetName),Serial.print(F(",")),Serial.print(timestamp),Serial.print(F(",")),Serial.print(encodPosition/6.666666666), Serial.print(F(",")), Serial.print(encod2Position/6.666666666), Serial.print(F(",")),  Serial.println(encod3Position/6.666666666);            
-}     
+  }
+  Serial.print(SetName), Serial.print(F(",")), Serial.print(timestamp),
+  Serial.print(F(",")), Serial.print(encodPosition/6.666666666),
+  Serial.print(F(",")), Serial.print(encod2Position/6.666666666),
+  Serial.print(F(",")), Serial.println(encod3Position/6.666666666);
+}
