@@ -27,6 +27,7 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
+from enum import Enum
 import logging
 import os
 import sys
@@ -38,16 +39,25 @@ import robot_control as rcl
 import SPI_comm
 import logger
 
-# Logolás inicializálása
 logger.init_logger()
 log = logging.getLogger("Main")
 log.info("Program started!")
 
-# Globális változók
+# Global constants
 INIT_DIRECTORY = os.path.abspath("/media/pi/")
 
 # Init SPI
 SPI = SPI_comm.SPI()
+
+
+class MotorStatus(Enum):
+    enabled = 1
+    disabled = 0
+
+
+class RecordEncodersStatus(Enum):
+    disabled = 0
+    recording = 1
 
 
 class App:
@@ -64,6 +74,8 @@ class App:
         self.pos2 = StringVar()
         self.pos3 = StringVar()
         self.mode = rcl.Interpolation.MOD1
+        self.motor_status = MotorStatus.enabled
+        self.recording_status = RecordEncodersStatus.disabled
 
         # Initialize robot, GPIOs; switch on power
         rcl.init()
@@ -458,32 +470,33 @@ class App:
         )
         self.mode_button = tk.Button(
             menu_button_frame, text=self.mode,
-            font=(self.fty, self.fsize), command=self.switch_mode
+            font=(self.fty, self.fsize), command=self.change_interpolation_mode
         )
         self.mode_button.grid(
             row=2, column=0, sticky=tk.NSEW, pady=2.5, padx=2.5
         )
         self.enable_all_mot_but = tk.Button(
-            menu_button_frame, text="ENBL", font=(self.fty, self.fsize),
-            command=self.enable_all_mot, state=tk.DISABLED
+            menu_button_frame, text="DSBL", font=(self.fty, self.fsize),
+            command=self.change_motor_status
         )
         self.enable_all_mot_but.grid(
             row=3, column=0, sticky=tk.NSEW, pady=2.5, padx=2.5
-        )
-        self.disable_all_mot_but = tk.Button(
-            menu_button_frame, text="DSBL", font=(self.fty, self.fsize),
-            command=self.disable_all_mot, state=tk.NORMAL
-        )
-        self.disable_all_mot_but.grid(
-            row=4, column=0, sticky=tk.NSEW, pady=2.5, padx=2.5
         )
         self.set_limits = tk.Button(
             menu_button_frame, text="SET", font=(self.fty, self.fsize),
             command=self.set_axis_limits
         )
         self.set_limits.grid(
+            row=4, column=0, sticky=tk.NSEW, pady=2.5, padx=2.5
+        )
+        self.change_recording = tk.Button(
+            menu_button_frame, text="REC", font=(self.fty, self.fsize),
+            command=self.change_recording_status
+        )
+        self.change_recording.grid(
             row=5, column=0, sticky=tk.NSEW, pady=2.5, padx=2.5
         )
+
         self.close_win = tk.Button(
             menu_button_frame, text="EXIT",
             font=(self.fty, self.fsize), command=self.close_window
@@ -662,7 +675,7 @@ class App:
         rcl.grip_hold()  # 180 fokos fordulat másik irányba
         log.info("Grip hold!")
 
-    def switch_mode(self):
+    def change_interpolation_mode(self):
 
         if self.mode == rcl.Interpolation.MOD1:
             self.mode = rcl.Interpolation.MOD2
@@ -671,19 +684,32 @@ class App:
 
         self.mode_button['text'] = "{0}".format(self.mode)
         rcl.switch_mode("{0}".format(self.mode))
-        log.info("Switch interpolation mode to: %s", self.mode)
+        log.info("Change interpolation mode to: %s", self.mode)
 
-    def enable_all_mot(self):
-        log.info("Enable all motors!")
-        rcl.motor_enable_set(0)
-        self.enable_all_mot_but["state"] = tk.DISABLED
-        self.disable_all_mot_but["state"] = tk.NORMAL
+    def change_motor_status(self):
+        if self.motor_status is MotorStatus.enabled:
+            log.info("Disable all motors!")
+            self.motor_status = MotorStatus.disabled
+            rcl.motor_enable_set(1)
+            self.enable_all_mot_but["text"] = "ENBL"
 
-    def disable_all_mot(self):
-        log.info("Disable all motors!")
-        rcl.motor_enable_set(1)
-        self.enable_all_mot_but["state"] = tk.NORMAL
-        self.disable_all_mot_but["state"] = tk.DISABLED
+        else:
+            log.info("Enable all motors!")
+            self.motor_status = MotorStatus.enabled
+            rcl.motor_enable_set(0)
+            self.enable_all_mot_but["text"] = "DSBL"
+
+    def change_recording_status(self):
+        if self.recording_status is RecordEncodersStatus.disabled:
+            log.info("Start recording")
+            self.recording_status = RecordEncodersStatus.recording
+            # collect data
+            self.change_recording["text"] = "STOP"
+        else:
+            log.info("Stop recording")
+            self.recording_status = RecordEncodersStatus.disabled
+            # stop collecting data
+            self.change_recording["text"] = "REC"
 
     def set_axis_limits(self):
         """ Tengely limitek beállítása a programban. """
