@@ -88,6 +88,7 @@ void loop(void)                                               // MAIN LOOP
   if (encod3LastPos != encod3Position) {           // encoder 3 changes
     encod3LastPos = encod3Position;
   }
+  // https://www.arduino.cc/reference/en/language/functions/communication/serial/print/
   Serial.print(SetName), Serial.print(F(",")),
   Serial.print(timestamp), Serial.print(F(",")),
   Serial.print(encodPosition/6.666666666), Serial.print(F(",")),
