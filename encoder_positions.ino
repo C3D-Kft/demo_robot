@@ -70,7 +70,7 @@ void ExtInt3() {                                              // OPTICAL ENCODER
       LastPort9  =  Port9;
 }
 
-void loop(void)                                               // MAIN LOOP
+void loop(void)                                    // MAIN LOOP
 {
   noInterrupts();
     int encodPosition = ISRencodPos;
