@@ -30,8 +30,8 @@ from logging.handlers import RotatingFileHandler
 
 
 # Globális változók beállítása
-log_dirpath = "log"
-log_filename = "main.txt"
+log_dirpath = "\\log"
+log_filename = "\\main.txt"
 init_directory = os.path.dirname(__file__)
 
 # Ha a naplófájl mappa hiányzik, létrehozom
