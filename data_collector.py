@@ -19,12 +19,15 @@ log = logging.getLogger("Main")
 que = Queue()
 FLAG = False
 
+# ‘/dev/ttyACM0’
+# ‘/dev/ttyUSB0’
+serial_port = 'COM11'
+baud_rate = 9600
+
 
 def main():
     # NOTE: Arduino restarts when a new serial comm. is initiated
-    # ‘/dev/ttyACM0’
-    # ‘/dev/ttyUSB0’
-    ser = serial.Serial('COM11', 9600, timeout=5)
+    ser = serial.Serial(serial_port, baud_rate, timeout=5)
 
     while True:
         read_serial = ser.readline()
