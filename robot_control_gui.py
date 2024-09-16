@@ -716,7 +716,9 @@ class App:
             self.change_recording["text"] = "REC"
 
             filename = filedialog.asksaveasfilename(
-                initialdir=INIT_DIRECTORY, title='Kiválasztás',
+                initialdir=INIT_DIRECTORY,
+                initialfile="encoder.csv",
+                title='Kiválasztás',
                 filetypes=[
                     ("CSV file format", ".csv"),
                 ]
