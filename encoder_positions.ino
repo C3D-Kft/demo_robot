@@ -40,6 +40,7 @@ void setup(void) {
   Serial.begin(9600);                                       // baud rate of serial port
 
   // this is the headline for the csv file
+  Serial.println(F("#####")
   Serial.println(F("Set Name,Argument,SENSOR/ANGLE,SENSOR2/ANGLE,SENSOR3/ANGLE"));
 }                                                             
 
@@ -50,7 +51,7 @@ void ExtInt() {                                               // OPTICAL ENCODER
   if (LastPort8 & SignalA)   ISRencodPos++;                   // Rotation -> {ISRencodPos++; Sense = 1;}
   if (LastPort8 & SignalB)   ISRencodPos--;                   // Rotation <- {ISRencodPos--; Sense = 0;}
   if (    Port8 && (Port8 != SignalAB)) Port8 ^= SignalAB;    // (swap A-B)
-      LastPort8  =  Port8;                                    // mieux vaut faire court
+      LastPort8  =  Port8;
 }
 void ExtInt2() {                                              // OPTICAL ENCODER ext interrupt pin 2, 3
      byte Port82  =  PINE & SignalCD;                         // *** PINE (PORT INPUT E)  ***for Mega***
@@ -58,7 +59,7 @@ void ExtInt2() {                                              // OPTICAL ENCODER
   if (LastPort82 & SignalC)   ISRencod2Pos++;                 // Rotation -> {ISRencod2Pos++; Sense = 1;}
   if (LastPort82 & SignalD)   ISRencod2Pos--;                 // Rotation <- {ISRencod2Pos--; Sense = 0;}
   if (    Port82 && (Port82 != SignalCD)) Port82 ^= SignalCD; // (swap C-D)
-      LastPort82  =  Port82;                                  // mieux vaut faire court
+      LastPort82  =  Port82;
 }
 void ExtInt3() {                                              // OPTICAL ENCODER ext interrupt pin 18, 19
      byte Port9  =  PIND & SignalEF;                          // *** PIND (PORT INPUT D)  ***for Mega***
@@ -66,7 +67,7 @@ void ExtInt3() {                                              // OPTICAL ENCODER
   if (LastPort9 & SignalE)   ISRencod3Pos++;                  // Rotation -> {ISRencod3Pos++; Sense = 1;}
   if (LastPort9 & SignalF)   ISRencod3Pos--;                  // Rotation <- {ISRencod3Pos--; Sense = 0;}
   if (    Port9 && (Port9 != SignalEF)) Port9 ^= SignalEF;    // (swap E-F)
-      LastPort9  =  Port9;                                    // mieux vaut faire court
+      LastPort9  =  Port9;
 }
 
 void loop(void)                                               // MAIN LOOP
