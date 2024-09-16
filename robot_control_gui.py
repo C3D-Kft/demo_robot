@@ -702,16 +702,33 @@ class App:
             self.enable_all_mot_but["text"] = "DSBL"
 
     def change_recording_status(self):
+
         if self.recording_status is RecordEncodersStatus.disabled:
             log.info("Start recording")
             self.recording_status = RecordEncodersStatus.recording
-            # collect data
+            dcl.start_collect()
             self.change_recording["text"] = "STOP"
+
         else:
             log.info("Stop recording")
             self.recording_status = RecordEncodersStatus.disabled
-            # stop collecting data
+            dcl.stop_collect()
             self.change_recording["text"] = "REC"
+
+            filename = filedialog.asksaveasfilename(
+                initialdir=INIT_DIRECTORY, title='Kiválasztás',
+                filetypes=[
+                    ("CSV file format", ".csv"),
+                ]
+            )
+
+            # Ha Cancel-lel kilépek
+            if filename == "":
+                log.info("No file selected!")
+                return
+
+            else:
+                dcl.save_data(filename)
 
     def set_axis_limits(self):
         """ Tengely limitek beállítása a programban. """
