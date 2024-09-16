@@ -40,7 +40,7 @@ void setup(void) {
   Serial.begin(9600);                                       // baud rate of serial port
 
   // this is the headline for the csv file
-  Serial.println(F("#####")
+  Serial.println(F("-----"));
   Serial.println(F("Set Name,Argument,SENSOR/ANGLE,SENSOR2/ANGLE,SENSOR3/ANGLE"));
 }                                                             
 
