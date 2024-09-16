@@ -27,17 +27,19 @@ tulajdonjog hatálya alá eső felhasználások esetén is.
 www.C3D.hu
 """
 
-from enum import Enum
+import logger
 import logging
 import os
 import sys
 import tkinter as tk
 from tkinter import StringVar
 from tkinter import filedialog
+from enum import Enum
 import threading
 import robot_control as rcl
 import SPI_comm
-import logger
+import data_collector as dcl
+
 
 logger.init_logger()
 log = logging.getLogger("Main")
