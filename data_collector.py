@@ -21,6 +21,9 @@ FLAG = False
 
 
 def main():
+    # NOTE: Arduino restarts when a new serial comm. is initiated
+    # ‘/dev/ttyACM0’
+    # ‘/dev/ttyUSB0’
     ser = serial.Serial('COM11', 9600, timeout=5)
 
     while True:
