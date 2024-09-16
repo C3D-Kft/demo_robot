@@ -12,6 +12,7 @@ www.C3D.hu
 # First import should be the logging module if any!
 import logging
 import serial
+import queue
 
 log = logging.getLogger("Main")
 
@@ -19,7 +20,7 @@ log = logging.getLogger("Main")
 # gomb hozzáadása - rögzítése megállítása, fájl létrehozása
 
 
-def main():
+def initialize():
     ser = serial.Serial('/dev/ttyACM0', 9600)
     s = [0]
     while True:
@@ -27,3 +28,10 @@ def main():
         s[0] = str(int(ser.readline(), 16))
         print(s[0])
         print(read_serial)
+
+def start_collect():
+    pass
+
+def stop_collect():
+    pass
+
