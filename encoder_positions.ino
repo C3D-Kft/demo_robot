@@ -88,8 +88,9 @@ void loop(void)                                               // MAIN LOOP
   if (encod3LastPos != encod3Position) {           // encoder 3 changes
     encod3LastPos = encod3Position;
   }
-  Serial.print(SetName), Serial.print(F(",")), Serial.print(timestamp),
-  Serial.print(F(",")), Serial.print(encodPosition/6.666666666),
-  Serial.print(F(",")), Serial.print(encod2Position/6.666666666),
-  Serial.print(F(",")), Serial.println(encod3Position/6.666666666);
+  Serial.print(SetName), Serial.print(F(",")),
+  Serial.print(timestamp), Serial.print(F(",")),
+  Serial.print(encodPosition/6.666666666), Serial.print(F(",")),
+  Serial.print(encod2Position/6.666666666), Serial.print(F(",")),
+  Serial.println(encod3Position/6.666666666);
 }
