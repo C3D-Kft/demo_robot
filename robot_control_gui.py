@@ -75,7 +75,7 @@ class App:
         self.pos1 = StringVar()
         self.pos2 = StringVar()
         self.pos3 = StringVar()
-        self.mode = rcl.Interpolation.MOD1
+        self.mode = "MOD1"
         self.motor_status = MotorStatus.enabled
         self.recording_status = RecordEncodersStatus.disabled
 
@@ -679,13 +679,15 @@ class App:
 
     def change_interpolation_mode(self):
 
-        if self.mode == rcl.Interpolation.MOD1:
-            self.mode = rcl.Interpolation.MOD2
+        if self.mode == "MOD1":
+            self.mode = "MOD2"
+            mode = 2
         else:
-            self.mode = rcl.Interpolation.MOD1
+            self.mode = "MOD1"
+            mode = 1
 
         self.mode_button['text'] = "{0}".format(self.mode)
-        rcl.switch_mode("{0}".format(self.mode))
+        rcl.switch_mode(mode)
         log.info("Change interpolation mode to: %s", self.mode)
 
     def change_motor_status(self):

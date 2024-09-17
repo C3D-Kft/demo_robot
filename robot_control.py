@@ -20,7 +20,7 @@ között lehet váltani.
 
 """
 
-from enum import StrEnum
+from enum import Enum
 import logging
 import math as m
 import stepper_mot_control as smc
@@ -63,9 +63,9 @@ AXIS_LIMITS_MIN = [-90.0, -130.0, 0.0]
 AXIS_LIMITS_MAX = [90.0, 0.0, 200.0]
 
 
-class Interpolation(StrEnum):
-    MOD1 = "MOD1"  # Interpolation - all axis reach end simultaneously
-    MOD2 = "MOD2"  # No interpolation between motor axes
+class Interpolation(Enum):
+    MOD1 = 1  # Interpolation - all axis reach end simultaneously
+    MOD2 = 2  # No interpolation between motor axes
 
 
 # Interpolation mode
@@ -461,7 +461,7 @@ def poweroff():
     smc.poweroff()
 
 
-def switch_mode(mode):
+def switch_mode(mode: int):
     """ Switch operating mode back-and-forth. """
     global MOD
     MOD = mode
