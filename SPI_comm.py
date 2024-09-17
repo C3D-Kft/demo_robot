@@ -28,14 +28,14 @@ log = logging.getLogger("Main")
 
 class SPI:
     """ xxx """
+    def __init__(self):
+        self.motor = 0  # Choosen motor number (1-3, default zero)
+        self.spi = spidev.SpiDev()  # Enable SPI
 
     def init(self):
         """ Initializes motor drivers by sending the setup
         bytes to them via SPI communication.
         """
-        self.motor = 0  # Choosen motor number (1-3, default zero)
-        self.spi = spidev.SpiDev()  # Enable SPI
-
         # Open a connection to a specific bus and device (chip select pin)
         # We only have SPI bus 0 available on the RPi
         # Device is the chip select pin. Set to 0 or 1, depending on the
