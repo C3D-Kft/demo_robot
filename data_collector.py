@@ -20,10 +20,17 @@ log = logging.getLogger("Main")
 que = Queue()
 FLAG = False
 
-log.info("System detected: {0}".format(platform.system()))
+log.info("OS: {0}, {1}".format(platform.system(), platform.node()))
+# Linux
+# uname_result(system='Linux', node='raspberrypi', release='5.10.17-v7+',
+# version='#1414 SMP Fri Apr 30 13:18:35 BST 2021',
+# machine='armv7l', processor='')
+# Windows
+# uname_result(system='Windows', node='tm04', release='10',
+# version='10.0.19045', machine='AMD64')
 if platform.system() == "Windows":
     serial_port = 'COM11'
-elif platform.system() == "Linux":
+elif platform.system() == "Linux" and platform.node() == "raspberrypi":
     serial_port = '/dev/ttyACM0'
     # ‘/dev/ttyACM0’
 baud_rate = 9600
