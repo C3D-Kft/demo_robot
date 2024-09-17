@@ -24,21 +24,21 @@ www.C3D.hu
 
 
 import logging
-import os
 import sys
 from logging.handlers import RotatingFileHandler
-
+from pathlib import Path
 
 # Globális változók beállítása
-log_dirpath = "\\log"
-log_filename = "\\main.txt"
-init_directory = os.path.dirname(__file__)
+log_dirpath = Path("log")
+log_filename = Path("main.txt")
+init_directory = Path(__file__).parents[0]
 
 # Ha a naplófájl mappa hiányzik, létrehozom
-if not os.path.isdir(os.path.join(init_directory, log_dirpath)):
-    os.mkdir(os.path.join(init_directory, log_dirpath))
+folderpath = Path.joinpath(init_directory, log_dirpath)
+if not folderpath.is_dir():
+    folderpath.mkdir()
 
-log_file = os.path.join(init_directory + log_dirpath + log_filename)
+log_file = Path.joinpath(init_directory, log_dirpath, log_filename)
 FORMATTER = logging.Formatter(
     '%(asctime)s %(module)s [%(levelname)s] : %(message)s',
     datefmt='%Y/%m/%d %H:%M:%S'
