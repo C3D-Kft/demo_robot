@@ -14,8 +14,6 @@ import logging
 
 log = logging.getLogger("Main")
 
-# A print függvények egyszerűsége érdekében szöveggé lettek alakítva!
-
 
 class SpiDev:
 

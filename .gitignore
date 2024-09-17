@@ -1,9 +1,9 @@
+# Ignore specific (generated) file types
 *.pyc
 *.idea/
-screenshot_gui.jpg
+*.csv
 
 # Ignore developer folder (output for debug files, etc.)
 /log/
 /dev/
 /EXAMPLES_/
-test.py

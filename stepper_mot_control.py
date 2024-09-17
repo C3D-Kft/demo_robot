@@ -17,7 +17,7 @@ import RPi.GPIO as gpio
 
 # Stepper motorok (0, 1, 2) gpio pinoutjai - tömb formátumban tárolva
 # Ha az érték nulla, akkor a program átugorja
-## BOARD
+# NOTE: BOARD
 motor_step = [38, 29, 11]
 motor_dir = [36, 7, 13]
 motor_enable = [40, 32, 15]
@@ -25,7 +25,7 @@ motor_grip = [37, 35, 33, 31]
 spi_select = [18, 16]
 POWER = [3]
 
-##BCM
+# NOTE: BCM
 # motor_step = [20, 5, 17]
 # motor_dir = [16, 0, 27]
 # motor_enable = [21, 12, 22]
@@ -41,12 +41,13 @@ def init():
     a fenti paraméterek alapján.
     """
 
-    gpio.setmode(gpio.BOARD) # BOARD pin számozás, mindig változatlan
-    # gpio.setmode(gpio.BCM) # Broadcom pin számozás hardverspecifikus ezért változhat!
+    gpio.setmode(gpio.BOARD)  # BOARD pin számozás, mindig változatlan
+    # gpio.setmode(gpio.BCM)  # Broadcom pin számozás hardverspecifikus, változhat!
     gpio.setwarnings(False)
 
     # GPIO pinek engedélyezése
-    gpio_array = motor_step + motor_dir + motor_enable + motor_grip + spi_select + POWER
+    gpio_array = (motor_step + motor_dir + motor_enable
+                  + motor_grip + spi_select + POWER)
 
     # Ha az érték nulla, akkor átugrom, mert nincs beállítva
     for k in gpio_array:
@@ -119,28 +120,28 @@ def step_gripper(direction):
     global GRIPPER_STATUS
 
     step_table = [
-    [gpio.LOW, gpio.LOW, gpio.LOW, gpio.HIGH], #4
-    [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.HIGH], #4-3
-    [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.LOW], #3
-    [gpio.LOW, gpio.HIGH, gpio.HIGH, gpio.LOW], #3-2
-    [gpio.LOW, gpio.HIGH, gpio.LOW, gpio.LOW], #2
-    [gpio.HIGH, gpio.HIGH, gpio.LOW, gpio.LOW], #1-2
-    [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.LOW], #1
-    [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.HIGH] #1-4
+        [gpio.LOW, gpio.LOW, gpio.LOW, gpio.HIGH],  # 4
+        [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.HIGH],  # 4-3
+        [gpio.LOW, gpio.LOW, gpio.HIGH, gpio.LOW],  # 3
+        [gpio.LOW, gpio.HIGH, gpio.HIGH, gpio.LOW],  # 3-2
+        [gpio.LOW, gpio.HIGH, gpio.LOW, gpio.LOW],  # 2
+        [gpio.HIGH, gpio.HIGH, gpio.LOW, gpio.LOW],  # 1-2
+        [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.LOW],  # 1
+        [gpio.HIGH, gpio.LOW, gpio.LOW, gpio.HIGH]  # 1-4
     ]
 
     print("Move starts!")
 
-    for i in range(0,512):
+    for i in range(0, 512):
 
         if direction == 1:
             GRIPPER_STATUS += 1
-            if GRIPPER_STATUS == 8: # If out-of-range upwards
+            if GRIPPER_STATUS == 8:  # If out-of-range upwards
                 GRIPPER_STATUS = 0
 
         elif direction == 0:
             GRIPPER_STATUS -= 1
-            if GRIPPER_STATUS == -1: # If out-of-range downwards
+            if GRIPPER_STATUS == -1:  # If out-of-range downwards
                 GRIPPER_STATUS = 7
 
         # Set the coil pin output according to the actual step table
@@ -157,7 +158,6 @@ def step_gripper(direction):
 
 def onestep_mot(mot, time_unit=0.1):
     """ Négszögjel generálása egy adott motor tengely számára. """
-
     gpio.output(motor_step[mot], gpio.HIGH)
     time.sleep(time_unit)
     gpio.output(motor_step[mot], gpio.LOW)
@@ -166,15 +166,13 @@ def onestep_mot(mot, time_unit=0.1):
 
 def poweron():
     """ 24V tápfeszültség bekapcsolása. """
-
     gpio.output(POWER[0], gpio.HIGH)
 
 
 def poweroff():
     """ 24V tápfeszültség kikapcsolása. """
-
     gpio.output(POWER[0], gpio.LOW)
 
 
-def cleanup(): # GPIO pinout tisztítása
+def cleanup():  # GPIO pinout tisztítása
     gpio.cleanup()
