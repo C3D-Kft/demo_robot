@@ -20,22 +20,18 @@ log = logging.getLogger("Main")
 que = Queue()
 FLAG = False
 
-
-log.info("System detected: {0}".format(print(platform.system())))
+log.info("System detected: {0}".format(platform.system()))
 if platform.system() == "Windows":
     serial_port = 'COM11'
 elif platform.system() == "Linux":
-    serial_port = '/dev/ttyUSB0'
+    serial_port = '/dev/ttyACM0'
     # ‘/dev/ttyACM0’
-    # ‘/dev/ttyUSB0’
-
 baud_rate = 9600
 
 
 def main():
     # NOTE: Arduino restarts when a new serial comm. is initiated
     ser = serial.Serial(serial_port, baud_rate, timeout=5)
-
     while True:
         read_serial = ser.readline()
         que.put(read_serial)
