@@ -84,4 +84,3 @@ def save_data(filename):
                 file.write(f"{string}")  # Empties the queue
 
         log.info("File saved!")
-
