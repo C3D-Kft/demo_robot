@@ -13,15 +13,22 @@ www.C3D.hu
 import logging
 import threading
 import serial
+import platform
 from queue import Queue
 
 log = logging.getLogger("Main")
 que = Queue()
 FLAG = False
 
-# ‘/dev/ttyACM0’
-# ‘/dev/ttyUSB0’
-serial_port = 'COM11'
+
+log.info("System detected: {0}".format(print(platform.system())))
+if platform.system() == "Windows":
+    serial_port = 'COM11'
+elif platform.system() == "Linux":
+    serial_port = '/dev/ttyUSB0'
+    # ‘/dev/ttyACM0’
+    # ‘/dev/ttyUSB0’
+
 baud_rate = 9600
 
 
